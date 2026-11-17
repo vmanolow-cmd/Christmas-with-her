@@ -369,6 +369,63 @@ if(!RM&&'IntersectionObserver'in window){const io=new IntersectionObserver(es=>e
  add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('#air .ac',1);add('#outfits .ac',1);add('#city .ac',1);add('.pc',1);add('#gal button',1);add('.vid',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
 
 
+
+/* ---------- анимиран маршрут ---------- */
+(()=>{const box=$('#rmap');if(!box)return;
+ const HOME=[42.6977,23.3219],SOF=[42.6889,23.4151],BUD=[47.4337,19.2618],HOT=[47.4955,19.0535];
+ const DAYC=['#e9a3b4','#d4b06a','#8cc0e0'];
+ const RD=[
+  {n:'Ден 1 · 25.12',s:[[HOME,'','Тръгваме от вкъщи','start'],[SOF,'car','12:30 · Летище София'],[BUD,'fly','15:00 · Кацане в Будапеща'],[HOT,'car','16:00 · Багажът в хотела'],[[47.5066,19.0391],'car','16:30 · Площад Батяни, първият кадър'],[[47.5009,19.0539],'car','17:15 · Базиликата и елхата'],[HOT,'walk','19:30 · Коледна вечеря']]},
+  {n:'Ден 2 · 26.12',s:[[HOT,'','08:00 · Тръгваме от хотела','start'],[[47.4985,19.0706],'walk','08:00 · Закуска в New York Café'],[[47.5021,19.0350],'car','09:45 · Арките на Рибарския бастион'],[[47.4958,19.0402],'walk','11:00 · Кралският дворец и Хабсбургските стълби'],[[47.4937,19.0437],'walk','12:00 · Várkert Bazár'],[[47.4851,19.0531],'walk','12:45 · Мостът „Свобода“'],[[47.4878,19.0587],'walk','13:00 · Обяд в For Sale Pub'],[[47.4966,19.0507],'walk','14:30 · Улица Ваци и коледният базар'],[[47.4867,19.0470],'car','15:30 · Цитаделата по залез'],[HOT,'car','17:00 · Почивка в хотела'],[[47.4962,19.0476],'walk','18:10 · Малката принцеса'],[[47.4957,19.0482],'walk','18:30 · Качване на кораба'],[[47.5000,19.0463],'boat',''],[[47.5072,19.0443],'boat','Покрай Парламента с шампанско'],[[47.5125,19.0452],'boat',''],[[47.4930,19.0497],'boat',''],[[47.4862,19.0548],'boat','Обратно под мостовете'],[[47.4957,19.0482],'boat','21:30 · Обратно на кея'],[[47.5006,19.0530],'walk','22:00 · Бар на покрив']]},
+  {n:'Ден 3 · 27.12',s:[[HOT,'','08:00 · Закуска и спа','start'],[BUD,'car','11:30 · Летище Будапеща'],[SOF,'fly','15:45 · Кацане в София'],[HOME,'car','Вкъщи, със стотици снимки']]}];
+ $('#rdays').innerHTML=['Целият път',...RD.map(d=>d.n)].map((t,i)=>`<button class="${i?'':'on'}" data-d="${i-1}">${t}</button>`).join('');
+ let M,G,tok=0,sel=-1,inited=false;
+ const PLANE='<svg viewBox="0 0 24 24" width="34" height="34"><path fill="#f2d99b" stroke="#2a0f18" stroke-width=".8" d="M12 2c.8 0 1.4.8 1.4 1.8V9l7.6 4.6v2l-7.6-2.4v4.6l2.2 1.7V21L12 20l-3.6 1v-1.5l2.2-1.7v-4.6L3 15.6v-2L10.6 9V3.8C10.6 2.8 11.2 2 12 2z"/></svg>';
+ const EMO={car:'🚕',walk:'🚶',boat:'🛳️'};
+ const ico=(h,s=34)=>L.divIcon({className:'',html:`<div class="rmov">${h}</div>`,iconSize:[s,s],iconAnchor:[s/2,s/2]});
+ const wait=ms=>new Promise(r=>setTimeout(r,ms));
+ const cap=t=>{$('#rcap').innerHTML=t?`<div>${t.replace(/^([^·]+·)/,'<b>$1</b>')}</div>`:''};
+ const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+ function arc(a,b,t){const m=[(a[0]+b[0])/2+1.6,(a[1]+b[1])/2+.4];const u=1-t;return[u*u*a[0]+2*u*t*m[0]+t*t*b[0],u*u*a[1]+2*u*t*m[1]+t*t*b[1]]}
+ const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+ function move(a,b,mode,my){return new Promise(res=>{const fly=mode==='fly';const dur=RM?10:fly?4200:mode==='boat'?900:mode==='car'?1300:1000;
+  const mk=L.marker(a,{icon:ico(fly?PLANE:EMO[mode]||'•'),zIndexOffset:1000,interactive:false}).addTo(G);
+  const line=L.polyline([a],{color:fly?'#f2d99b':mode==='boat'?'#8cc0e0':'#d4b06a',weight:fly?3:4,opacity:.9,dashArray:mode==='walk'?'2 8':fly?'8 8':null,lineCap:'round'}).addTo(G);
+  const t0=performance.now();let prev=a;
+  (function f(now){if(my!==tok){res(false);return}const t=Math.min(1,(now-t0)/dur),e=ease(t),p=fly?arc(a,b,e):lerp(a,b,e);
+   mk.setLatLng(p);line.addLatLng(p);
+   if(fly){const p1=M.latLngToContainerPoint(prev),p2=M.latLngToContainerPoint(p);if(Math.hypot(p2.x-p1.x,p2.y-p1.y)>.5){const ang=Math.atan2(p2.x-p1.x,-(p2.y-p1.y))*180/Math.PI;const el=mk.getElement();if(el)el.firstChild.style.transform=`rotate(${ang}deg)`}}
+   prev=p;if(t<1)requestAnimationFrame(f);else{G.removeLayer(mk);res(true)}})(t0)})}
+ function pin(p,n,lab,col){const m=L.marker(p,{icon:L.divIcon({className:'',html:`<div class="rnum" style="--c:${col}">${n}</div>`,iconSize:[26,26],iconAnchor:[13,13]})}).addTo(G);if(lab)m.bindTooltip(lab.replace(/^[^·]+·\s*/,''),{direction:'top',offset:[0,-12],className:'rlab'});return m}
+ const cityB=d=>L.latLngBounds(d.s.filter(x=>x[0][1]<19.2).map(x=>x[0]));
+ async function playDay(di,my){const d=RD[di],col=DAYC[di];let n=0,cur=d.s[0][0];const seen=new Set();const key=p=>p[0].toFixed(4)+','+p[1].toFixed(4);
+  const D=RM?0:1;G.clearLayers();
+  if(di===1){M.flyToBounds(cityB(d),{padding:[40,40],duration:D*1.2})}else{M.flyTo(cur,di===2?14:12,{duration:D*1.2})}
+  await wait(D*1300);if(my!==tok)return false;
+  pin(cur,++n,d.s[0][2],col);seen.add(key(cur));cap(d.s[0][2]);await wait(D*800);
+  for(let i=1;i<d.s.length;i++){const [p,mode,lab]=d.s[i];if(my!==tok)return false;
+   if(mode==='fly'){M.flyToBounds(L.latLngBounds([cur,p]),{padding:[60,60],duration:D*1.4});await wait(D*1500);cap(di===2?'✈ Полет към София · 1 ч. 20 мин.':'✈ Полет към Будапеща · 1 ч. 25 мин.')}
+   else if(!M.getBounds().pad(-.12).contains(p)){M.flyToBounds(L.latLngBounds([cur,p]).extend(M.getCenter()),{padding:[50,50],maxZoom:15,duration:D*1.1});await wait(D*1200)}
+   const ok=await move(cur,p,mode,my);if(!ok)return false;cur=p;
+   if(mode==='fly'){M.flyTo(p,12,{duration:D*1.2});await wait(D*1300)}
+   if(lab){if(!seen.has(key(p))){pin(p,++n,lab,col);seen.add(key(p))}cap(lab);await wait(D*(mode==='boat'?500:1000))}}
+  return true}
+ async function play(which){const my=++tok;G.clearLayers();$('#rplay').classList.add('hid');
+  const days=which<0?[0,1,2]:[which];
+  for(const di of days){if(!await playDay(di,my))return;await wait(RM?0:900)}
+  if(my===tok){cap(which<0?'Коледа в Будапеща, 25–27.12 ♥':'');$('#rplay').classList.remove('hid');$('#rplay').innerHTML='<span>↻</span> Пусни отново'}}
+ function init(){if(inited||typeof L==='undefined')return;inited=true;
+  M=L.map('rmap',{scrollWheelZoom:false,zoomSnap:.25}).setView([45.2,21.4],6);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap',className:'mtiles'}).addTo(M);
+  const dn=(()=>{const h=new Date().getHours();return h>=7&&h<17})();box.classList.add(dn?'mday':'mnight');
+  G=L.layerGroup().addTo(M);
+  M.fitBounds(L.latLngBounds([SOF,BUD]),{padding:[40,40]});
+  pin(HOME,'🏠','София','#7a2a3e');pin(HOT,'🏨','Будапеща','#7a2a3e')}
+ new IntersectionObserver((e,o)=>{if(e[0].isIntersecting){init();o.disconnect()}},{rootMargin:'300px'}).observe(box);
+ $('#rplay').onclick=()=>{init();play(sel)};
+ $$('#rdays button').forEach(b=>b.onclick=()=>{$$('#rdays button').forEach(x=>x.classList.remove('on'));b.classList.add('on');sel=+b.dataset.d;init();play(sel)});
+})();
+
 /* ---------- кадрите ---------- */
 const SHOTS=[
  ['Парламентът от круиза','danubecruise_4','26.12 · вечер','С чаша шампанско на палубата, а зад вас светещият Парламент.','Палубата е студена, затова излезте за 5–10 минути само когато корабът минава покрай Парламента.'],
@@ -376,7 +433,9 @@ const SHOTS=[
  ['Арките на Рибарския бастион','bastion_1','26.12 · сутрин','Седнали в арката, а през нея се вижда Парламентът.','Отидете рано, за да няма хора в кадъра. Мекото сутрешно слънце пада откъм Пеща.'],
  ['Цитаделата по залез','duna_1','26.12 · около 16:00','Целият град и Дунава отгоре, по стълбите към терасите.','След ремонта Цитаделата е отворена от пролетта на 2026, а терасите са безплатни. Нагоре с такси, за да не се изморите.'],
  ['New York Café','nycafe_0','Сутрин · 7:00–9:00','Позлатата, колоните и полилеите, докато салонът е полупразен.','Сутрин опашката е най-къса. Седнете към средата на залата, за да се види таванът.'],
- ['Верижният мост нощем','chainbridge_2','Всяка вечер','Мостът с лъвовете и светлините, а отзад крепостта.','Най-добрият ъгъл е от кея откъм Пеща. С гимбала стават и хубави бавни видеа.']];
+ ['Верижният мост нощем','chainbridge_2','Всяка вечер','Мостът с лъвовете и светлините, а отзад крепостта.','Най-добрият ъгъл е от кея откъм Пеща. С гимбала стават и хубави бавни видеа.'],
+ ['Хабсбургските стълби и Várkert Bazár','varkert_0','26.12 · обед','Аркади, стълбища и куполи под Кралския дворец.','Слизате от крепостта по стълбите. На всеки завой има нов кадър, без тълпи.'],
+ ['Малката принцеса','princess_0','26.12 · преди круиза','Бронзовата принцеса на парапета, а отзад светещата крепост.','Тя е на 3 минути от пристанището на круиза, така че кадърът е по пътя. Седнете до нея на парапета.']];
 if($('#shots')){$('#shots').innerHTML=SHOTS.map((s,i)=>`<article class="card ac shot"><div class="ph"><img src="img/${s[1]}.webp" alt="${s[0]}" loading="lazy"><span class="pill tag">${s[2]}</span></div><div class="bd"><h3>${s[0]}</h3><p>${s[3]}</p><p class="tip">📸 ${s[4]}</p></div></article>`).join('');
  $$('#shots .ph').forEach((p,i)=>p.onclick=()=>openLB(SHOTS.map(s=>[s[1],s[0]]),i))}
 
