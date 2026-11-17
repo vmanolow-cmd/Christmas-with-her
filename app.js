@@ -355,4 +355,19 @@ if(FINE&&!RM)$$('.tilt').forEach(c=>{c.addEventListener('pointermove',e=>{const 
 if(!RM&&'IntersectionObserver'in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'});
  const add=(sel,stag)=>$$(sel).forEach((el,i)=>{el.classList.add('rv');if(stag)el.style.setProperty('--d',(i%3)*.08+'s');io.observe(el)});
  add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('#air .ac',1);add('#outfits .ac',1);add('#city .ac',1);add('.pc',1);add('#gal button',1);add('.vid',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
+
+/* ---------- плъзгачи на телефон ---------- */
+const MQ=matchMedia('(max-width:760px)');
+['#outfits','#acts','#rest','#vids'].forEach(sel=>{const box=$(sel);if(!box)return;box.classList.add('mslide');
+ const nav=document.createElement('div');nav.className='mnav';nav.innerHTML='<button aria-label="Назад">‹</button><span></span><div class="mbar"><i></i></div><button aria-label="Напред">›</button>';box.after(nav);
+ const [pb,nb]=nav.querySelectorAll('button'),lab=nav.querySelector('span'),bar=nav.querySelector('i');
+ const vis=()=>[...box.children].filter(c=>!c.classList.contains('hide')&&c.offsetParent!==null);
+ const idx=()=>{const v=vis(),x=box.scrollLeft+box.clientWidth/2;let k=0,b=1e9;v.forEach((c,i)=>{const d=Math.abs(c.offsetLeft+c.offsetWidth/2-x);if(d<b){b=d;k=i}});return k};
+ const upd=()=>{if(!MQ.matches)return;const v=vis(),n=v.length,i=n?idx():0;lab.textContent=n?(i+1)+' / '+n:'0';bar.style.transform=`scaleX(${n?(i+1)/n:0})`;pb.disabled=i<=0;nb.disabled=i>=n-1;nav.style.display=n>1?'':'none'};
+ const go=d=>{const v=vis(),t=v[Math.max(0,Math.min(v.length-1,idx()+d))];if(t)box.scrollTo({left:t.offsetLeft-(box.clientWidth-t.offsetWidth)/2,behavior:RM?'auto':'smooth'})};
+ pb.onclick=()=>go(-1);nb.onclick=()=>go(1);
+ let raf=0;box.addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(upd)},{passive:true});
+ let sig='';const chk=()=>{const s=[...box.children].map(c=>c.classList.contains('hide')?0:1).join('');if(s!==sig){sig=s;box.scrollLeft=0;upd()}};new MutationObserver(chk).observe(box,{attributes:true,subtree:true,attributeFilter:['class'],childList:true});
+ MQ.addEventListener('change',upd);upd();
+});
 })();

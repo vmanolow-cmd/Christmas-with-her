@@ -489,3 +489,20 @@ input[type=range]{margin:0;max-width:100%}
 .play{position:absolute;left:50%;top:50%;width:66px;height:66px;margin:-33px 0 0 -33px;border-radius:50%;display:grid;place-items:center;font-size:22px;color:#1d1209;background:linear-gradient(135deg,#f6e2ad,#d4b06a);box-shadow:0 0 0 8px rgba(212,176,106,.25),0 14px 30px -8px #000;transition:transform .4s var(--ease)}
 .vid:hover .play{transform:scale(1.12)}
 .vid .bd{padding:16px 18px 18px}.vid h3{font-size:26px;color:#fff}.vid p{font-size:14.5px;color:#d9c9c2;margin:6px 0 4px}
+
+/* заглавия: да не се режат опашките на буквите */
+.sh h2{line-height:1.2;padding:.04em .02em .14em;margin-bottom:6px}
+/* дълги списъци като плъзгач на телефон */
+.mnav{display:none}
+@media(max-width:760px){
+ .mslide{display:flex!important;gap:14px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -20px;padding:4px 20px 8px;scroll-padding:0 20px;align-items:flex-start}
+ .mslide::-webkit-scrollbar{display:none}
+ .mslide>*{flex:0 0 86%;max-width:86%;scroll-snap-align:center;min-width:0}
+ .mslide>.hide{display:none!important}
+ .mnav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:12px}
+ .mnav button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(212,176,106,.08);color:var(--gold2);font-size:22px;line-height:1;cursor:pointer;transition:opacity .2s}
+ .mnav button:disabled{opacity:.3}
+ .mnav .mbar{flex:0 1 160px;height:3px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}
+ .mnav .mbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));transform-origin:left;transition:transform .25s}
+ .mnav span{font-size:.85rem;color:var(--gold2);min-width:52px;text-align:center;font-variant-numeric:tabular-nums}
+}
