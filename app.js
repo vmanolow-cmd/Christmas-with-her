@@ -1,0 +1,286 @@
+/* Коледа с Венито — логика */
+(()=>{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FINE=matchMedia('(pointer:fine)').matches;
+const eur=n=>Math.round(n).toLocaleString('bg-BG').replace(/ /g,' ')+' €';
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1900)}
+function burst(el){if(RM)return;const r=el.getBoundingClientRect();for(let i=0;i<9;i++){const s=document.createElement('span');s.className='burst';s.textContent='♥';s.style.left=(r.left+r.width/2-8)+'px';s.style.top=(r.top+r.height/2-10)+'px';const a=Math.random()*Math.PI*2,d=40+Math.random()*50;s.style.setProperty('--dx',Math.cos(a)*d+'px');s.style.setProperty('--dy',Math.sin(a)*d-20+'px');document.body.appendChild(s);setTimeout(()=>s.remove(),1000)}}
+
+/* ---------- данни за избора ---------- */
+let fav=ld('bp-fav',{}),plan=ld('bp-plan',{}),rfav=ld('bp-rest',{});
+const hcap=h=>h.cap[0];
+
+/* ---------- лайтбокс ---------- */
+let LB=[],LI=0;
+const showLB=()=>{const [k,c]=LB[LI];$('#lbi').src='img/'+k+'.webp';$('#lbi').alt=c;$('#lbc').textContent=c};
+function openLB(list,i){LB=list;LI=Math.max(0,i);showLB();$('#lb').classList.add('on')}
+$('#lbx').onclick=()=>$('#lb').classList.remove('on');
+$('#lbp').onclick=()=>{LI=(LI-1+LB.length)%LB.length;showLB()};
+$('#lbn').onclick=()=>{LI=(LI+1)%LB.length;showLB()};
+$('#lb').onclick=e=>{if(e.target.id==='lb')$('#lb').classList.remove('on')};
+let tx=0;$('#lb').addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+$('#lb').addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)(d<0?$('#lbn'):$('#lbp')).click()});
+addEventListener('keydown',e=>{if(!$('#lb').classList.contains('on'))return;if(e.key==='Escape')$('#lbx').click();if(e.key==='ArrowRight')$('#lbn').click();if(e.key==='ArrowLeft')$('#lbp').click()});
+
+/* ---------- сняг ---------- */
+function snow(canvas,n){const x=canvas.getContext('2d'),host=canvas.parentElement;let F=[],raf,on=true,vis=true;
+ const rs=()=>{canvas.width=host.clientWidth*devicePixelRatio;canvas.height=host.clientHeight*devicePixelRatio};rs();addEventListener('resize',rs);
+ for(let i=0;i<n;i++)F.push({x:Math.random(),y:Math.random(),r:Math.random()*1.7+.4,s:Math.random()*.6+.25,d:Math.random()*7,o:Math.random()*.5+.4});
+ const loop=()=>{const W=canvas.width,H=canvas.height,dp=devicePixelRatio;x.clearRect(0,0,W,H);
+  F.forEach(f=>{f.y+=f.s*.0014;f.d+=.012;f.x+=Math.sin(f.d)*.0003;if(f.y>1.02){f.y=-.02;f.x=Math.random()}x.globalAlpha=f.o;x.fillStyle='#fff';x.beginPath();x.arc(f.x*W,f.y*H,f.r*dp,0,7);x.fill()});raf=requestAnimationFrame(loop)};
+ const set=v=>{on=v;cancelAnimationFrame(raf);if(on&&vis&&!RM)loop();else x.clearRect(0,0,canvas.width,canvas.height)};
+ new IntersectionObserver(e=>{vis=e[0].isIntersecting;set(on)}).observe(canvas);
+ return set}
+
+/* ---------- покана ---------- */
+const intro=$('#intro');
+if(ld('bp-intro',0)){intro.remove()}else{const s=snow($('#isnow'),70);s(true);document.body.style.overflow='hidden';
+ $('#openInv').onclick=()=>{intro.classList.add('gone');document.body.style.overflow='';sv('bp-intro',1);burst($('#openInv'));setTimeout(()=>{s(false);intro.remove()},1000)}}
+
+/* ---------- хиро ---------- */
+const setSnow=snow($('#snow'),110);let snowOn=true;setSnow(true);
+$('#snowbtn').onclick=()=>{snowOn=!snowOn;setSnow(snowOn);$('#snowbtn').setAttribute('aria-pressed',snowOn);$('#snowbtn').textContent=snowOn?'❄ Сняг':'❄ Без сняг'};
+const sl=$$('.slides img');let si=0;if(!RM)setInterval(()=>{sl[si].classList.remove('on');si=(si+1)%sl.length;sl[si].classList.add('on')},6500);
+const T=new Date('2026-12-25T14:35:00+02:00');
+function tick(){const d=T-new Date(),el=$('#count');if(d<=0){el.innerHTML='<div><b>♥</b><span>весела Коледа</span></div>';return}
+ const D=Math.floor(d/864e5),Hh=Math.floor(d/36e5)%24,Mm=Math.floor(d/6e4)%60,S=Math.floor(d/1e3)%60;
+ el.innerHTML=`<div><b>${D}</b><span>дни</span></div><div><b>${Hh}</b><span>часа</span></div><div><b>${Mm}</b><span>минути</span></div><div><b>${String(S).padStart(2,'0')}</b><span>секунди</span></div>`}
+tick();setInterval(tick,1000);
+if(!RM)addEventListener('scroll',()=>{const y=scrollY;if(y<innerHeight)$('.hin').style.transform=`translateY(${y*.25}px)`;$('.hin').style.opacity=Math.max(0,1-y/(innerHeight*.8))},{passive:true});
+
+/* ---------- игра: тесте ---------- */
+let order=H.map((_,i)=>i),pos=0,hist=[];
+function deckRender(){const dk=$('#deck');dk.innerHTML='';
+ if(pos>=order.length){const liked=H.filter(h=>fav[h.id]).map(h=>h.name);dk.innerHTML=`<div class="deckend"><div><h3>${liked.length?'Твоите любими':'Хм, нито един?'}</h3><p class="lead" style="margin:10px auto">${liked.length?liked.join(' · '):'Опитай пак, сигурно има един дворец за нас.'}</p><button class="btn sm" id="dAgain">Още веднъж</button></div></div>`;$('#dAgain').onclick=()=>{pos=0;hist=[];deckRender()};return}
+ order.slice(pos,pos+3).reverse().forEach((hi,k,arr)=>{const h=H[hi],top=k===arr.length-1;const c=document.createElement('div');c.className='dcard';
+  const depth=arr.length-1-k;c.style.transform=`translateY(${depth*12}px) scale(${1-depth*.04})`;c.style.zIndex=10-depth;
+  const cheap=h.rooms.filter(r=>r[4]).map(r=>r[4]);
+  c.innerHTML=`<img src="img/${h.ph[0]}.webp" alt="${h.name}"><span class="stamp s-yes">ХАРЕСВАМ</span><span class="stamp s-no">НЕ</span><div class="dc"><span class="pill">${h.brand}</span><h3>${h.name}</h3><p>${h.arch} · ${h.view}${cheap.length?' · от '+eur(Math.min(...cheap))+' за 2 нощи':''}</p></div>`;
+  dk.appendChild(c);if(top)drag(c,hi)});
+ $('#deckres').textContent=`${pos+1} от ${order.length}`}
+function decide(hi,yes,c){hist.push([hi,fav[H[hi].id]]);if(yes){fav[H[hi].id]=1;burst($('#dYes'))}else delete fav[H[hi].id];sv('bp-fav',fav);
+ c.style.transition='transform .5s,opacity .5s';c.style.transform=`translateX(${yes?520:-520}px) rotate(${yes?24:-24}deg)`;c.style.opacity=0;pos++;setTimeout(()=>{deckRender();refreshFav()},380)}
+function drag(c,hi){let x0=0,dx=0,down=false;
+ c.addEventListener('pointerdown',e=>{down=true;x0=e.clientX;c.setPointerCapture(e.pointerId);c.style.transition='none'});
+ c.addEventListener('pointermove',e=>{if(!down)return;dx=e.clientX-x0;c.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;c.querySelector('.s-yes').style.opacity=Math.max(0,dx/120);c.querySelector('.s-no').style.opacity=Math.max(0,-dx/120)});
+ const up=()=>{if(!down)return;down=false;if(Math.abs(dx)>110)decide(hi,dx>0,c);else{c.style.transition='transform .4s';c.style.transform='';c.querySelectorAll('.stamp').forEach(s=>s.style.opacity=0)}dx=0};
+ c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up)}
+$('#dYes').onclick=()=>{const c=$$('.dcard').pop();if(c)decide(order[pos],true,c)};
+$('#dNo').onclick=()=>{const c=$$('.dcard').pop();if(c)decide(order[pos],false,c)};
+$('#dUndo').onclick=()=>{if(!hist.length)return;const [hi,was]=hist.pop();if(was)fav[H[hi].id]=1;else delete fav[H[hi].id];sv('bp-fav',fav);pos=Math.max(0,pos-1);deckRender();refreshFav()};
+deckRender();
+
+/* ---------- хотели ---------- */
+const TT={v:'за 25–27.12',e:'оценка',f:'публикувана „от“',q:'по запитване'};
+let cur=0;
+function htabs(){$('#htabs').innerHTML=H.map((h,i)=>`<button class="htab ${i===cur?'on':''}" role="tab" aria-selected="${i===cur}" data-i="${i}"><img src="img/${h.ph[0]}.webp" alt="">${h.name}${fav[h.id]?' <span class="h">♥</span>':''}</button>`).join('');
+ $$('.htab').forEach(b=>b.onclick=()=>{cur=+b.dataset.i;htabs();hpanel();b.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'})})}
+function hpanel(){const h=H[cur],p=$('#hpanel');p.style.animation='none';p.offsetHeight;p.style.animation='';
+ const st=h.chips.slice(0,4);
+ p.innerHTML=`<div class="hp-top"><div><span class="kk">№${cur+1} · ${h.brand}</span><h3>${h.name}</h3><div class="meta">${h.addr} · ${h.year}</div></div><button class="heartbtn" style="position:static" aria-pressed="${!!fav[h.id]}" id="hfav" aria-label="Харесвам"></button></div>
+ <div class="slider"><button class="arr l" aria-label="Назад">‹</button><div class="track" id="htrack">${h.ph.map((k,j)=>`<figure class="hslide" data-j="${j}"><img src="img/${k}.webp" alt="${h.cap[j]}" loading="lazy"><figcaption>${h.cap[j]}</figcaption></figure>`).join('')}</div><button class="arr r" aria-label="Напред">›</button></div>
+ <div class="dots" id="hdots">${h.ph.map((_,j)=>`<i class="${j?'':'on'}"></i>`).join('')}</div>
+ <div class="hgrid"><div><p class="intro">${h.intro}</p><div class="stats">${st.map(c=>`<div class="stat"><b>${c[1]}</b><span>${c[0]}</span></div>`).join('')}</div>
+  <div class="box x"><h4>Коледната вечеря</h4><p>${h.din.replace(/<b>25 декември:<\/b>\s*/,'')}</p></div>
+  <div class="revs"><div class="box p"><b>Гостите хвалят</b><p>${h.plus}</p></div><div class="box m"><b>Забележки</b><p>${h.minus}</p></div></div></div>
+  <div><div class="box"><h4>Архитектура</h4><p>${h.arch}</p></div><div class="box"><h4>Стаите</h4><p>${h.roomsTxt}</p></div><div class="box"><h4>Ресторант и гледка</h4><p>${h.rest} · ${h.view}</p></div><div class="box"><h4>Спа</h4><p>${h.spa}</p></div>
+  <div class="btnrow"><a class="btn sm" href="${h.photos}" target="_blank" rel="noopener">Снимки на стаите ↗</a><a class="btn ghost sm" href="https://www.booking.com/searchresults.html?ss=${encodeURIComponent(h.full+' Budapest')}&checkin=2026-12-25&checkout=2026-12-27&group_adults=2&no_rooms=1&selected_currency=EUR" target="_blank" rel="noopener">Booking за 25–27.12</a><a class="btn ghost sm" href="${h.site}" target="_blank" rel="noopener">Сайт</a></div></div></div>
+ <div class="rooms"><h4>Стаите и цените · 2 нощувки за двама</h4><div class="rlist">${h.rooms.map(r=>`<div class="room"><b>${r[0]}</b><span class="sz">${r[1]!=='—'?r[1]+' м²':''}</span><p>${r[2]}</p><div class="pr"><strong>${r[3]}</strong><span class="t ${r[5]}">${TT[r[5]]}</span></div></div>`).join('')}</div><p class="note">${h.priceNote}</p></div>`;
+ const tr=$('#htrack');slider(tr.parentElement);
+ tr.addEventListener('scroll',()=>{const w=tr.firstElementChild.offsetWidth+14;const i=Math.round(tr.scrollLeft/w);$$('#hdots i').forEach((d,j)=>d.classList.toggle('on',j===i))},{passive:true});
+ $$('.hslide').forEach(f=>f.onclick=()=>openLB(h.ph.map((k,j)=>[k,h.cap[j]]),+f.dataset.j));
+ $('#hfav').onclick=e=>{fav[h.id]?delete fav[h.id]:(fav[h.id]=1);sv('bp-fav',fav);e.currentTarget.setAttribute('aria-pressed',!!fav[h.id]);if(fav[h.id]){burst(e.currentTarget);toast(h.name+' е в избора ♥')}htabs();refreshFav()};
+ spot()}
+function slider(wrap){const t=wrap.querySelector('.track'),l=wrap.querySelector('.arr.l'),r=wrap.querySelector('.arr.r');if(!t)return;
+ const step=()=>(t.firstElementChild?.offsetWidth||300)+14;if(l)l.onclick=()=>t.scrollBy({left:-step()});if(r)r.onclick=()=>t.scrollBy({left:step()})}
+htabs();hpanel();
+
+/* ---------- сравни ---------- */
+const opts=H.map((h,i)=>`<option value="${i}">${h.name}</option>`).join('');$('#c1').innerHTML=opts;$('#c2').innerHTML=opts;$('#c1').value=0;$('#c2').value=3;
+function cheapest(h){const v=h.rooms.filter(r=>r[4]);return v.length?eur(Math.min(...v.map(r=>r[4]))):(h.rooms.find(r=>r[5]==='f')||['','','','по запитване'])[3]}
+function cmp(){$('#cmpgrid').innerHTML=[$('#c1').value,$('#c2').value].map(i=>{const h=H[i];return `<div class="cmpcol"><div class="ph card"><img src="img/${h.ph[0]}.webp" alt="${h.name}"></div><h3>${h.name}</h3>${[['Архитектура',h.arch],['Стаите',h.roomsTxt],['Ресторант',h.rest],['Гледка',h.view],['Спа',h.spa],['Оценка',(h.chips.find(c=>/Booking|Expedia|Trip|Hotels|Michelin/.test(c[0]))||['','нов хотел']).join(' ').trim()],['2 нощувки от',cheapest(h)]].map(r=>`<div class="crow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}</div>`}).join('')}
+$('#c1').onchange=cmp;$('#c2').onchange=cmp;cmp();
+
+/* ---------- програма ---------- */
+let dcur=0;
+function days(){$('#daytabs').innerHTML=D.map((d,i)=>`<button class="daytab ${i===dcur?'on':''}" data-i="${i}" role="tab"><span>${d[1]}</span><b>${d[0]} дек.</b></button>`).join('');
+ $$('.daytab').forEach(b=>b.onclick=()=>{dcur=+b.dataset.i;days()});
+ const d=D[dcur];$('#daypanel').style.animation='none';$('#daypanel').offsetHeight;$('#daypanel').style.animation='';
+ $('#daypanel').innerHTML=`<div class="dayhero card ph"><img src="img/${d[2]}.webp" alt=""><div class="cap"><h3>${d[0]} декември</h3><span>${d[1]}</span></div></div><div class="tl">${d[3].map((s,i)=>`<div class="slot" style="animation-delay:${i*.09}s"><time>${s[0]}</time><b>${s[1]}</b><span>${s[2]}</span></div>`).join('')}</div>`}
+days();
+
+/* ---------- круиз ---------- */
+$('#cruise').innerHTML=CRU.map(c=>`<div class="flip" tabindex="0" role="button" aria-label="Обърни: ${c[0]}"><div class="fin"><div class="face"><div class="ph"><img src="img/${c[1]}.webp" alt="${c[0]}"></div><div class="fc"><div class="k">${c[2]}</div><h3>${c[0]}</h3><p>${c[3]}</p></div><span class="turn">обърни ↻</span></div><div class="face back"><div class="k">подробности</div><h3>${c[0]}</h3><dl>${c[4].map(d=>`<dt>${d[0]}</dt><dd>${d[1]}</dd>`).join('')}</dl><p style="margin-top:16px">Запитването е изпратено до ${c[5]}.</p><span class="turn">обърни ↻</span></div></div></div>`).join('')+`<div class="cnote" style="grid-column:1/-1">За 26 декември онлайн не се показа опция за маса до прозореца, затова чакаме отговор от компаниите. Ако никоя не гарантира такава маса, вечеряме в ресторант на сушата и правим отделен едночасов панорамен круиз, за около 25 € на човек.</div>`;
+$$('.flip').forEach(f=>{f.onclick=()=>f.classList.toggle('on');f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f.click()}}});
+
+/* ---------- активности ---------- */
+const FLT={y:['y','отворено'],c:['c','провери'],n:['n','затворено']};
+const AF=[['all','Всички'],['d25','Отворено на 25.12'],['d26','Отворено на 26.12'],['free','Безплатно'],['night','Вечер'],['warm','На топло'],['plan','♥ Избрани']];
+$('#af').innerHTML=AF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">${f[1]}</button>`).join('');
+const AL=A.map(a=>[a[1],a[0]]);
+$('#acts').innerHTML=A.map((a,i)=>`<article class="card ac" data-i="${i}"><div class="ph"><img src="img/${a[1]}.webp" alt="${a[0]}" loading="lazy"><span class="pill tag">${a[2]}</span><button class="heartbtn" data-i="${i}" aria-pressed="${!!plan[i]}" aria-label="В плана"></button></div>
+<div class="bd"><div class="k">${a[9]}</div><h3>${a[0]}</h3><p>${a[3]}</p><div class="flags"><span class="fl ${FLT[a[4]][0]}">25.12 · ${FLT[a[4]][1]}</span><span class="fl ${FLT[a[5]][0]}">26.12 · ${FLT[a[5]][1]}</span>${a[6]?'<span class="fl y">безплатно</span>':''}${a[7]?'<span class="fl">вечер</span>':''}</div>
+<div class="more"><div><dl><dt>Колко време</dt><dd>${a[10]}</dd><dt>Как се стига</dt><dd>${a[11]}</dd><dt>Празници</dt><dd>${a[13]}</dd><dt>Карта</dt><dd><a href="${M(a[12])}" target="_blank" rel="noopener">Google Maps ↗</a></dd></dl></div></div>
+<button class="tog" aria-expanded="false">Подробности</button></div></article>`).join('');
+$$('#acts .ph img').forEach(im=>im.onclick=()=>openLB(AL,+im.closest('.ac').dataset.i));
+let AFc='all';const afilt=()=>$$('#acts .ac').forEach(c=>{const i=c.dataset.i,a=A[i];const ok=AFc==='all'||(AFc==='d25'&&a[4]==='y')||(AFc==='d26'&&a[5]==='y')||(AFc==='free'&&a[6])||(AFc==='night'&&a[7])||(AFc==='warm'&&a[8])||(AFc==='plan'&&plan[i]);c.classList.toggle('hide',!ok)});
+$$('#af button').forEach(b=>b.onclick=()=>{$$('#af button').forEach(x=>x.classList.remove('on'));b.classList.add('on');AFc=b.dataset.f;afilt()});
+$$('#acts .heartbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=b.dataset.i;plan[i]?delete plan[i]:(plan[i]=1);sv('bp-plan',plan);b.setAttribute('aria-pressed',!!plan[i]);if(plan[i]){burst(b);toast(A[i][0]+' е в плана ♥')}afilt();refreshFav()});
+
+/* разгъване (общо) */
+document.addEventListener('click',e=>{const t=e.target.closest('.tog');if(!t)return;const c=t.closest('.ac');c.classList.toggle('open');const o=c.classList.contains('open');t.setAttribute('aria-expanded',o);t.textContent=o?'Скрий':'Подробности'});
+
+/* ---------- ресторанти ---------- */
+const ILL={Stand:'paprikas_x1','Essência':'tokaji_x0',Rumour:'somloi_x1',Salt:'palinka_x0'};
+const rimg=r=>r[2]||ILL[r[0]];
+const RF=[['all','Всички'],['x','Коледна вечеря'],['m','Michelin'],['c','Кафенета'],['b','Барове с гледка'],['fav','♥ Избрани']];
+$('#rf').innerHTML=RF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">${f[1]}</button>`).join('');
+const RL=R.map(r=>[rimg(r),r[0]]);
+$('#rest').innerHTML=R.map((r,i)=>`<article class="card ac" data-i="${i}"><div class="ph"><img src="img/${rimg(r)}.webp" alt="${r[0]}" loading="lazy"><span class="pill tag">${r[3]}</span>${r[2]?'':'<span class="illus">илюстрация</span>'}<button class="heartbtn" data-i="${i}" aria-pressed="${!!rfav[i]}" aria-label="Харесвам"></button></div>
+<div class="bd"><div class="k">${r[4]}</div><h3>${r[0]}</h3><p>${r[5]}</p>
+<div class="more"><div><dl><dt>Да опитате</dt><dd>${r[6]}</dd><dt>Цена</dt><dd>${r[7]}</dd><dt>Адрес</dt><dd>${r[8]}</dd><dt>Коледа</dt><dd>${r[9]}</dd><dt>Карта</dt><dd><a href="${M(r[10])}" target="_blank" rel="noopener">Google Maps ↗</a></dd></dl></div></div>
+<button class="tog" aria-expanded="false">Подробности</button></div></article>`).join('');
+$$('#rest .ph img').forEach(im=>im.onclick=()=>openLB(RL,+im.closest('.ac').dataset.i));
+let RFc='all';const rfilt=()=>$$('#rest .ac').forEach(c=>{const i=c.dataset.i;c.classList.toggle('hide',!(RFc==='all'||(RFc==='fav'?rfav[i]:R[i][1].includes(RFc))))});
+$$('#rf button').forEach(b=>b.onclick=()=>{$$('#rf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');RFc=b.dataset.f;rfilt()});
+$$('#rest .heartbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=b.dataset.i;rfav[i]?delete rfav[i]:(rfav[i]=1);sv('bp-rest',rfav);b.setAttribute('aria-pressed',!!rfav[i]);if(rfav[i]){burst(b);toast(R[i][0]+' е в избора ♥')}rfilt();refreshFav()});
+
+/* ---------- вкусове ---------- */
+$('#food').innerHTML=FD.map(f=>`<div class="flip food" tabindex="0" role="button" aria-label="Обърни: ${f[0]}"><div class="fin"><div class="face"><div class="ph"><img src="img/${f[2]}.webp" alt="${f[0]}" loading="lazy"></div><div class="fc"><div class="hu">${f[1]}</div><h3>${f[0]}</h3><p>${f[3].split('. ')[0]}.</p></div><span class="turn">обърни ↻</span></div><div class="face back"><div class="hu">${f[1]}</div><h3>${f[0]}</h3><p style="font-size:15.5px;margin-top:12px">${f[3]}</p><dl><dt>Къде</dt><dd>${f[4]}</dd></dl><span class="turn">обърни ↻</span></div></div></div>`).join('');
+$$('#food .flip').forEach(f=>{f.onclick=()=>f.classList.toggle('on');f.onkeydown=e=>{if(e.key==='Enter'){f.click()}}});
+slider($('#food').parentElement);
+
+/* ---------- карта ---------- */
+const COL={h:'#e9a3b4',s:'#8cc0e0',r:'#d4b06a',k:'#8fe0a8'};
+const MF=[['all','Всички'],['h','Хотели'],['s','Забележителности'],['r','Ядене и пиене'],['k','Круизи']];
+$('#mf').innerHTML=MF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">${f[1]}</button>`).join('');
+let MAP,LAY={};
+function initMap(){if(typeof L==='undefined'){$('#map').innerHTML='<p style="padding:20px">Картата не можа да се зареди.</p>';return}
+ MAP=L.map('map',{scrollWheelZoom:false}).setView([47.4995,19.056],14);
+ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'© OpenStreetMap © CARTO'}).addTo(MAP);
+ 'hsrk'.split('').forEach(t=>LAY[t]=L.layerGroup().addTo(MAP));
+ P.forEach(p=>{const ic=L.divIcon({className:'',html:`<div class="pin ${p[3]}" style="background:${COL[p[3]]}"></div>`,iconSize:[30,30],iconAnchor:[15,30],popupAnchor:[0,-28]});
+  L.marker([p[1],p[2]],{icon:ic,title:p[0]}).bindPopup(`<b>${p[0]}</b><br>${p[4]}<br><a href="${M(p[0]+' Budapest')}" target="_blank" rel="noopener">Упътване ↗</a>`).addTo(LAY[p[3]])});
+ MAP.fitBounds(P.filter(p=>p[2]<19.075).map(p=>[p[1],p[2]]),{padding:[20,20]})}
+const mo=new IntersectionObserver(e=>{if(e[0].isIntersecting){initMap();mo.disconnect()}},{rootMargin:'400px'});mo.observe($('#map'));
+$$('#mf button').forEach(b=>b.onclick=()=>{$$('#mf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');if(!MAP)return;const f=b.dataset.f;Object.entries(LAY).forEach(([k,g])=>f==='all'||f===k?g.addTo(MAP):MAP.removeLayer(g))});
+
+/* ---------- адвент ---------- */
+const ADV=[['Три града в един','Будапеща се ражда през 1873 г., когато Буда, Пеща и Обуда се обединяват в един град.','duna_1'],
+['Първият мост','Верижният мост е открит през 1849 г. Това е първият постоянен мост между Буда и Пеща.','chainbridge_2'],
+['96 метра','Парламентът и Базиликата са високи точно по 96 м, в чест на 896 г., когато унгарците се заселват тук. Нищо в центъра не бива да е по-високо.','parliament_1'],
+['Най-старото метро','Линия M1 под „Андраши“ е от 1896 г. и е най-старото метро в континентална Европа.','andrassy_2'],
+['Град на изворите','Под Будапеща има над сто термални извора, затова я наричат град на баните.','szechenyi_5'],
+['Микулаш','На 6 декември унгарските деца оставят лъснати ботушки на прозореца, а Микулаш (Св. Николай) ги пълни с лакомства.','christmas_5'],
+['Седемте кули','Рибарският бастион има седем кули, по една за всяко от седемте маджарски племена.','bastion_0'],
+['Тортата от 1885 г.','Торта „Добош“ е създадена в Будапеща през 1885 г. Карамеленият капак я пази свежа дълго време.','dobos_x0'],
+['Рубик','Рубиковият куб е измислен в Будапеща през 1974 г. от архитекта Ерньо Рубик.','opera_4'],
+['Химикалката','Химикалката е изобретение на унгареца Ласло Биро.','gerbeaud_4'],
+['Коледа на 24-и','Унгарците празнуват на Бъдни вечер, 24 декември, която наричат Szenteste, „Светата вечер“.','vorosmarty_4'],
+['Бейгли','Коледният сладкиш в Унгария е бейгли: навито тесто с орехи или мак.','kurtos_x1'],
+['Бонбони по елхата','На унгарската елха се окачват szaloncukor: шоколадови бонбони, увити в лъскава хартия.','matild_1'],
+['Базарът','Коледният базар на площад Вьорьошмарти се провежда от 1998 г. и е сред най-известните в Европа.','vorosmarty_1'],
+['Gerbeaud','Сладкарница Gerbeaud е отворена от 1858 г. и днес е символ на града.','gerbeaud_2'],
+['Островът','Остров Маргит е дълъг 2,5 км и е като парк насред Дунава.','duna_1'],
+['ЮНЕСКО','Бреговете на Дунава, Будайската крепост и булевард „Андраши“ са световно наследство на ЮНЕСКО.','castle_3'],
+['Банята от XVI век','Банята Рудаш е построена от османците през XVI век. Куполът ѝ още е оригинален.','rudas_2'],
+['Близнаците','Matild и Клотилдиният дворец са еднакви „близнаци“ от 1902 г. Днес в единия е Matild, а в другия St. Regis.','klotild_3'],
+['Площадът на героите','Площадът на героите е построен за хилядолетието на унгарската държава, отбелязано през 1896 г.','andrassy_2'],
+['Роднини с финландците','Унгарският е угро-фински език, далечен роднина на финския и естонския.','parisi_2'],
+['Бастионът','Рибарският бастион е построен между 1895 и 1902 г. и никога не е служил за защита. Правен е само заради гледката.','bastion_1'],
+['Кой носи подаръците','В Унгария подаръците под елхата не ги носи Дядо Коледа, а Jézuska, Младенецът Исус.','basilica_4'],
+['Утре заминаваме ♥','Утре по това време сме в Будапеща. Весела Коледа, Венито!','castle_0']];
+const now=new Date();
+const advOpen=ld('bp-adv',{});
+$('#adv').innerHTML=ADV.map((a,i)=>{const d=new Date(2026,11,i+1),un=now>=d,today=now.toDateString()===d.toDateString();return `<button class="door ${un?'':'locked'} ${today?'today':''} ${un&&advOpen[i]?'open':''}" data-i="${i}" aria-label="${i+1} декември"><span class="dfront"><b>${i+1}</b><i>${un?'отвори':'заключено'}</i></span><span class="dback" style="background-image:linear-gradient(rgba(14,10,12,.45),rgba(14,10,12,.75)),url(img/${a[2]}.webp)"><b style="font:600 20px 'Cormorant Garamond',serif;color:#fff">${a[0]}</b></span></button>`}).join('')+'<div class="advfact" id="advfact" style="grid-column:1/-1"></div>';
+const dleft=Math.ceil((new Date(2026,11,1)-now)/864e5);
+$('#advfact').innerHTML=dleft>0?`<b>Първото прозорче се отваря на 1 декември</b><span style="color:var(--mute)">Остават още ${dleft} дни. Дотогава вратичките са заключени.</span>`:'<b>Отворете днешното прозорче</b><span style="color:var(--mute)">Всеки ден по едно.</span>';
+$$('.door').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(b.classList.contains('locked')){b.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'none'}],{duration:300});toast('Отваря се на '+(i+1)+' декември');return}
+ b.classList.add('open');advOpen[i]=1;sv('bp-adv',advOpen);$('#advfact').innerHTML=`<b>${i+1} декември · ${ADV[i][0]}</b>${ADV[i][1]}`});
+
+/* ---------- куиз ---------- */
+const Q=[['Колко басейна има банята Сечени?',['8','12','18','25'],2,'szechenyi_3'],
+['От коя година е кафене New York?',['1858','1894','1912','1936'],1,'nycafe_0'],
+['Как се казва тайният бар на покрива на Matild Palace?',['The Duchess','Múzsa','Society25','BiBo'],0,'matild_0'],
+['Колко кули има Рибарският бастион?',['5','7','9','12'],1,'bastion_0'],
+['Кой ресторант получава първата звезда Michelin в Унгария?',['Stand','Babel','Costes','Borkonyha'],2,'costes_x0'],
+['Какво е курточ калач?',['Супа с паприка','Тесто, печено на жар','Плодова ракия','Сладко вино'],1,'kurtos_x0'],
+['Колко високи са Парламентът и Базиликата?',['86 м','96 м','106 м','120 м'],1,'parliament_3'],
+['Кой хотел е в пасаж, вдъхновен от Париж?',['W Budapest','Dorothea','Párisi Udvar','Anantara'],2,'parisi_4']];
+let qi=0,score=0;
+function quiz(){const z=$('#quiz');if(qi>=Q.length){const best=Math.max(score,ld('bp-qbest',0));sv('bp-qbest',best);
+ z.innerHTML=`<div class="ph"><img src="img/castle_0.webp" alt=""></div><div><div class="qn">резултат</div><h3>${score} от ${Q.length} ${score===Q.length?'♥ Перфектно!':score>=5?'· Браво!':'· Ще научиш всичко на място'}</h3><p class="lead">Най-добър резултат: ${best}/${Q.length}</p><button class="btn" id="qAgain">Още веднъж</button></div>`;$('#qAgain').onclick=()=>{qi=0;score=0;quiz()};if(score===Q.length)burst($('#qAgain'));return}
+ const q=Q[qi];z.innerHTML=`<div class="ph"><img src="img/${q[3]}.webp" alt=""></div><div><div class="qn">въпрос ${qi+1} от ${Q.length}</div><h3>${q[0]}</h3><div class="ans">${q[1].map((a,i)=>`<button data-i="${i}">${a}</button>`).join('')}</div><div class="qbar"><i style="width:${qi/Q.length*100}%"></i></div></div>`;
+ $$('.ans button').forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===q[2];$$('.ans button').forEach(x=>{x.disabled=true;if(+x.dataset.i===q[2])x.classList.add('ok')});if(!ok)b.classList.add('bad');else{score++;burst(b)}setTimeout(()=>{qi++;quiz()},1100)})}
+quiz();
+
+/* ---------- унгарски ---------- */
+const PH=[['Здрасти / Чао','Szia!','сия'],['Добър вечер','Jó estét!','йо ещет'],['Благодаря','Köszönöm!','кьосьоньом'],['Моля','Kérem','керем'],['Наздраве!','Egészségedre!','егесшегедре'],['Весела Коледа!','Boldog karácsonyt!','болдог карачоньт'],['Честит рожден ден!','Boldog születésnapot!','болдог сюлетешнапот'],['Обичам те','Szeretlek','серетлек'],['Едно греяно вино, моля','Egy forralt bort kérek','ед форалт борт керек'],['Сметката, моля','A számlát kérem','а самлат керем'],['Колко струва?','Mennyibe kerül?','меньибе керюл'],['Вкусно!','Finom!','фином'],['Добър апетит!','Jó étvágyat!','йо етвадят'],['Извинете','Bocsánat','бочанат'],['Да / Не','Igen / Nem','иген / нем'],['Красиво!','Gyönyörű!','дьоньорю']];
+$('#phr').innerHTML=PH.map(p=>`<button class="pc" aria-label="${p[0]}"><span class="pi"><span class="pf"><b>${p[0]}</b><span>натисни за унгарски</span></span><span class="pb"><b>${p[1]}</b><span>чете се: „${p[2]}“</span><i>${p[0]}</i></span></span></button>`).join('');
+$$('.pc').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
+
+/* ---------- бюджет ---------- */
+const cRoom=$('#cRoom');
+function fillRooms(){const cv=cRoom.value;let o='<option value="568|Corinthia · Deluxe">Corinthia · Deluxe – 568 € (оферта)</option>';
+ H.forEach(h=>h.rooms.filter(r=>r[4]).forEach(r=>{o+=`<option value="${r[4]}|${h.name} · ${r[0]}">${fav[h.id]?'♥ ':''}${h.name} · ${r[0]} – ${eur(r[4])}${r[5]==='e'?' (оценка)':''}</option>`}));
+ cRoom.innerHTML=o;cRoom.value=[...cRoom.options].some(x=>x.value===cv)?cv:'788|Matild Palace · King Deluxe';calc()}
+function calc(){const [rv,rn]=cRoom.value.split('|');const P2=[['Самолетни билети (платени)',392.47,'#8cc0e0'],[rn,+rv,'#e9a3b4'],['Вечеря 25.12',+$('#cDin').value,'#d4b06a'],['Круиз 26.12',+$('#cCr').value,'#8fe0a8'],['Други разходи',+$('#cEx').value,'#b8a7ad']];
+ const t=P2.reduce((a,p)=>a+p[1],0);$('#exV').textContent=$('#cEx').value;const tot=$('#tot');tot.textContent=eur(t);tot.classList.add('bump');setTimeout(()=>tot.classList.remove('bump'),250);
+ $('#donut').innerHTML=P2.map(p=>`<i style="width:${p[1]/t*100}%;background:${p[2]}"></i>`).join('');
+ $('#rows').innerHTML=P2.map(p=>`<div><span><span class="dot" style="background:${p[2]}"></span>${p[0]}</span><span>${eur(p[1])}</span></div>`).join('')+`<div><span><b>Остава да се плати</b></span><span><b>${eur(t-392.47)}</b></span></div>`}
+[cRoom,$('#cDin'),$('#cCr')].forEach(e=>e.onchange=calc);$('#cEx').oninput=calc;fillRooms();
+
+/* ---------- инструменти ---------- */
+const huf=$('#huf'),eurI=$('#eurI'),rate=$('#rate'),rr=()=>+rate.value||395;
+huf.oninput=()=>{eurI.value=huf.value?(huf.value/rr()).toFixed(2):''};eurI.oninput=()=>{huf.value=eurI.value?Math.round(eurI.value*rr()):''};rate.oninput=()=>huf.oninput();
+$('#quick').innerHTML=[1000,2500,5000,10000,20000,45000].map(v=>`<button data-v="${v}">${v.toLocaleString('bg-BG')} Ft</button>`).join('');
+$$('#quick button').forEach(b=>b.onclick=()=>{huf.value=b.dataset.v;huf.oninput();$$('#quick button').forEach(x=>x.classList.toggle('on',x===b))});huf.oninput();
+let ck=ld('bp-ck',{});
+$('#chk').innerHTML=CK.map((c,i)=>`<li><label><input type="checkbox" data-i="${i}" ${ck[i]?'checked':''}><span>${c}</span></label></li>`).join('');
+const pb=()=>$('#pb').style.width=(Object.keys(ck).filter(k=>k<CK.length).length/CK.length*100)+'%';pb();
+$$('#chk input').forEach(x=>x.onchange=()=>{x.checked?ck[x.dataset.i]=1:delete ck[x.dataset.i];sv('bp-ck',ck);pb();if(Object.keys(ck).length===CK.length)toast('Всичко е събрано ✓')});
+const TIPS=[['Пари','Плаща се във форинти (HUF), около 395 HUF за 1 €. С карта се плаща навсякъде. Ако терминалът предложи сметка в евро, изберете форинти, защото курсът е по-добър.'],['От летището','До центъра се стига за около 35 минути с кола. Хотелите предлагат трансфер, а на 25-и вечер това е най-лесното. Официалните таксита са на Főtaxi.'],['Празниците','25 и 26 декември са официални празници. Магазините почиват, а ресторантите работят с празнично меню. Резервирайте всичко предварително.'],['Банята','Вземете бански, джапанки и шапка за басейна. Билетите за Сечени е по-добре да са онлайн. Най-красиво е по здрач, сред парата.'],['Облекло','Студено и влажно, с вятър откъм Дунава. За вечерите е подходящо нещо елегантно, а за разходките удобни топли обувки.'],['Бакшиш','Обичайно е 10–15%. Проверете дали в сметката вече е включена такса обслужване („szervizdíj“).'],['Транспорт','Центърът се обикаля пеша. Трамвай 2 по брега на Дунава е най-красивият евтин маршрут.']];
+$('#tips').innerHTML=TIPS.map(t=>`<details><summary>${t[0]}</summary><p>${t[1]}</p></details>`).join('');
+
+/* ---------- галерия ---------- */
+const GAL=[['castle_0','Крепостта и Верижният мост'],['nycafe_2','Кафене New York'],['parisi_4','Párisi Udvar'],['basilica_4','Базиликата по Коледа'],['gresham2_2','Куполът на Gresham'],['szechenyi_5','Сечени нощем'],['matild_0','Matild Palace'],['christmas_5','Коледният базар'],['parliament_3','Парламентът от Дунава'],['bastion_1','Рибарският бастион'],['opera_4','Операта'],['dobos_x0','Торта „Добош“'],['drechsler_1','Дворецът Дрекслер'],['matthias_3','Църквата „Матиаш“'],['szentendre_5','Сентендре по Коледа'],['dorothea_3','Dorothea'],['vorosmarty_1','Вьорьошмарти'],['kurtos_x1','Курточ калач'],['gerbeaud_4','Gerbeaud'],['chainbridge_2','Верижният мост']];
+$('#gal').innerHTML=GAL.map((g,i)=>`<button data-i="${i}" aria-label="${g[1]}"><img src="img/${g[0]}.webp" alt="${g[1]}" loading="lazy"><span>${g[1]}</span></button>`).join('');
+$$('#gal button').forEach(b=>b.onclick=()=>openLB(GAL,+b.dataset.i));
+
+/* ---------- избор и споделяне ---------- */
+function picks(){return{h:H.filter(h=>fav[h.id]).map(h=>h.name),a:Object.keys(plan).filter(k=>A[k]).map(k=>A[k][0]),r:Object.keys(rfav).filter(k=>R[k]).map(k=>R[k][0])}}
+function refreshFav(){const p=picks(),n=p.h.length+p.a.length+p.r.length;$('#badge').hidden=!n;$('#badge').textContent=n;
+ const sec=(t,l)=>l.length?`<p><b>${t}:</b> ${l.join(' · ')}</p>`:'';
+ $('#mine').innerHTML=n?sec('Хотели',p.h)+sec('Места',p.a)+sec('Ресторанти и барове',p.r):'<p style="opacity:.8">Още нищо не е избрано. Натискай ♡ при хотелите, местата и ресторантите или изиграй играта „Избери нашия дворец“.</p>';
+ htabs();fillRooms()}
+refreshFav();
+$('#shareBtn').onclick=async()=>{const p=picks();const t='♥ Коледа в Будапеща · моят избор\n'+(p.h.length?'\nХотели: '+p.h.join(', '):'')+(p.a.length?'\nМеста: '+p.a.join(', '):'')+(p.r.length?'\nРесторанти: '+p.r.join(', '):'')+((p.h.length+p.a.length+p.r.length)?'':'\n(още нищо не съм избрала)');
+ const url=location.origin+location.pathname;
+ try{if(navigator.share){await navigator.share({title:'Коледа с Венито ♥',text:t,url});return}}catch(e){if(e.name==='AbortError')return}
+ try{await navigator.clipboard.writeText(t+'\n'+url);toast('Копирано, поставете го в чата')}catch(e){toast('Не можа да се сподели')}};
+
+/* ---------- навигация ---------- */
+const links=[...$$('.navin a')];
+$('#sheetIn').innerHTML=links.map(a=>`<a href="${a.getAttribute('href')}">${a.textContent}</a>`).join('');
+$('#moreBtn').onclick=()=>$('#sheet').classList.add('on');
+$('#sheet').onclick=e=>{if(e.target.id==='sheet'||e.target.tagName==='A')$('#sheet').classList.remove('on')};
+const secObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+id));const on=links.find(a=>a.classList.contains('on'));if(on&&FINE)on.scrollIntoView({inline:'center',block:'nearest'});$$('.tabbar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+id))}}),{rootMargin:'-45% 0px -50% 0px'});
+$$('.sec').forEach(s=>secObs.observe(s));
+const pg=$('#prog');addEventListener('scroll',()=>{const h=document.documentElement;pg.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+
+/* ---------- снимки (лиценз) ---------- */
+$('#credList').innerHTML=Object.entries(CR).map(([k,c])=>`<a href="${c[2]}" target="_blank" rel="noopener">${c[0]} · ${c[1]}</a>`).join('');
+$('#credBtn').onclick=()=>$('#credModal').classList.add('on');$('#credX').onclick=()=>$('#credModal').classList.remove('on');
+$('#credModal').onclick=e=>{if(e.target.id==='credModal')$('#credModal').classList.remove('on')};
+
+/* ---------- ефекти ---------- */
+function spot(){if(!FINE)return;$$('.card').forEach(c=>{if(c.dataset.sp)return;c.dataset.sp=1;c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',e.clientX-r.left+'px');c.style.setProperty('--my',e.clientY-r.top+'px')})})}
+spot();
+if(FINE&&!RM)$$('.tilt').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-4px)`});c.addEventListener('pointerleave',()=>c.style.transform='')});
+if(!RM&&'IntersectionObserver'in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'});
+ const add=(sel,stag)=>$$(sel).forEach((el,i)=>{el.classList.add('rv');if(stag)el.style.setProperty('--d',(i%3)*.08+'s');io.observe(el)});
+ add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('.pc',1);add('#gal button',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
+})();
