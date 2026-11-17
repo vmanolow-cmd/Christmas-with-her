@@ -46,7 +46,7 @@
 
 <nav class="topnav" aria-label="Раздели"><div class="navin">
  <a href="#putuvane">Пътуването</a><a href="#igra">Бърз избор</a><a href="#hoteli">Хотелите</a><a href="#sravni">Сравни</a><a href="#programa">Програма</a><a href="#vizii">Визии</a><a href="#kruiz">Круиз</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти</a><a href="#vkusno">Кухня</a><a href="#karta">Карта</a><a href="#transport">Транспорт</a><a href="#advent">Адвент</a><a href="#ezik">Унгарски</a><a href="#budjet">Варианти</a><a href="#instrumenti">Инструменти</a><a href="#klipove">Клипове</a><a href="#galeria">Галерия</a><a href="#izbor">Избраното</a>
-<a href="#zaedno">Бележки</a></div></nav>
+</div></nav>
 
 <main>
 <!-- ПЪТУВАНЕТО -->
@@ -93,7 +93,7 @@
 
 <!-- ВИЗИИ -->
 <section class="sec" id="vizii">
- <div class="sh"><span class="kk">в тон</span><h2>Еднакви визии</h2><p class="lead">Идеи за облекла в тон за всеки момент от пътуването. Всяка може да се редактира, а с „Добави визия“ се прави нова, със собствени цветове и линк.</p></div>
+ <div class="sh"><span class="kk">в тон</span><h2>Еднакви визии</h2><p class="lead">Идеи за облекла в тон за всеки момент от пътуването. Всяка има цветова палитра и линк към Pinterest с примери. С ♡ отбелязвате любимите.</p></div>
  <div class="chips" id="of"></div>
  <div class="grid3" id="outfits"></div>
 </section>
@@ -198,15 +198,6 @@
 </section>
 
 <!-- ИЗБОР -->
-<section class="sec" id="zaedno">
- <div class="sh"><span class="kk">заедно</span><h2>Нашите бележки</h2><p class="lead">Идеи, желания и неща за проверка. Всеки може да добавя, отмята и трие.</p></div>
- <div class="syncbar"><p class="note" id="syncNote"></p><button class="chipbtn" id="whoChip">Кой си?</button></div>
- <div class="nlay">
-  <div class="card notes"><form id="noteForm" class="addslot"><input name="text" maxlength="500" placeholder="Напр. да резервираме маса в New York Café" aria-label="Нова бележка" required><button class="btn sm">Добави</button></form><ul id="notesList"></ul></div>
-  <div class="card logc"><h3>Последни промени</h3><ul id="logList"></ul></div>
- </div>
-</section>
-
 <section class="sec" id="izbor">
  <div class="share card">
   <div><span class="kk">избрано</span><h2>Избраното</h2><p class="lead">Всичко, отбелязано със сърце: хотели, места и ресторанти. Може да се изпрати във Viber, WhatsApp или Messenger.</p><div id="mine"></div></div>
@@ -225,17 +216,6 @@
  <button id="moreBtn"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Още</button>
 </nav>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Раздели"><div class="sin" id="sheetIn"></div></div>
-<div class="modal" id="whoModal" role="dialog" aria-modal="true" aria-label="Кой си"><div class="min whobox"><h3>Кой разглежда?</h3><p class="note">За да се вижда кой какво е добавил или променил.</p><div class="btnrow"><button class="btn" data-who="Венито">Венито</button><button class="btn ghost" data-who="Владо">Владо</button></div></div></div>
-<div class="modal" id="ofModal" role="dialog" aria-modal="true" aria-label="Визия"><div class="min"><button class="mx" id="ofX" type="button" aria-label="Затвори">✕</button><h3>Визия</h3>
-<form id="ofForm" class="ofform">
- <label>Име<input name="title" maxlength="80" required placeholder="Напр. Вечеря в бордо"></label>
- <label>Кога<input name="when" maxlength="60" placeholder="Напр. Вечерта на 25.12"></label>
- <label>Вид<select name="cat"><option value="x">Вечер</option><option value="d">Ден</option><option value="h">В хотела</option></select></label>
- <div class="cols3"><label>Цвят 1<span><input type="color" name="c0"><input name="n0" maxlength="20" placeholder="име"></span></label><label>Цвят 2<span><input type="color" name="c1"><input name="n1" maxlength="20" placeholder="име"></span></label><label>Цвят 3<span><input type="color" name="c2"><input name="n2" maxlength="20" placeholder="име"></span></label></div>
- <label>Описание<textarea name="desc" maxlength="700" rows="4" placeholder="Какво обличаме, какви обувки, аксесоари…"></textarea></label>
- <label>Линк (по желание)<input name="link" type="url" maxlength="300" placeholder="https://…"></label>
- <div class="btnrow"><button class="btn" type="submit">Запази</button><button class="btn ghost" type="button" id="ofDel">Изтрий</button></div>
-</form></div></div>
 <div class="modal" id="credModal" role="dialog" aria-modal="true" aria-label="Снимки"><div class="min"><button class="mx" id="credX" aria-label="Затвори">✕</button><h3>Снимките</h3><p class="note">Всички снимки са от Wikimedia Commons, със свободни лицензи.</p><div id="credList"></div></div></div>
 <div class="toast" id="toast" role="status"></div>
 <div id="lb" role="dialog" aria-modal="true" aria-label="Снимка"><button id="lbx" aria-label="Затвори">✕</button><button id="lbp" aria-label="Предишна">‹</button><figure><img id="lbi" alt=""><figcaption id="lbc"></figcaption></figure><button id="lbn" aria-label="Следваща">›</button></div>
