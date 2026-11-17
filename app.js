@@ -1,7 +1,8 @@
 /* Коледа с Венито — логика */
 (()=>{
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const hcenter=(box,el)=>{if(!box||!el)return;box.scrollTo({left:el.offsetLeft-box.clientWidth/2+el.offsetWidth/2,behavior:RM?'auto':'smooth'})};
 const FINE=matchMedia('(pointer:fine)').matches;
 const eur=n=>Math.round(n).toLocaleString('bg-BG').replace(/ /g,' ')+' €';
 const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
@@ -49,12 +50,12 @@ function tick(){const d=T-new Date(),el=$('#count');if(d<=0){el.innerHTML='<div>
  const D=Math.floor(d/864e5),Hh=Math.floor(d/36e5)%24,Mm=Math.floor(d/6e4)%60,S=Math.floor(d/1e3)%60;
  el.innerHTML=`<div><b>${D}</b><span>дни</span></div><div><b>${Hh}</b><span>часа</span></div><div><b>${Mm}</b><span>минути</span></div><div><b>${String(S).padStart(2,'0')}</b><span>секунди</span></div>`}
 tick();setInterval(tick,1000);
-if(!RM)addEventListener('scroll',()=>{const y=scrollY;if(y<innerHeight)$('.hin').style.transform=`translateY(${y*.25}px)`;$('.hin').style.opacity=Math.max(0,1-y/(innerHeight*.8))},{passive:true});
+if(!RM){const hin=$('.hin');let tk=false;addEventListener('scroll',()=>{if(tk)return;tk=true;requestAnimationFrame(()=>{const y=scrollY;if(y<innerHeight*1.1){hin.style.transform=`translate3d(0,${y*.22}px,0)`;hin.style.opacity=Math.max(0,1-y/(innerHeight*.75))}tk=false})},{passive:true})}
 
 /* ---------- игра: тесте ---------- */
 let order=H.map((_,i)=>i),pos=0,hist=[];
 function deckRender(){const dk=$('#deck');dk.innerHTML='';
- if(pos>=order.length){const liked=H.filter(h=>fav[h.id]).map(h=>h.name);dk.innerHTML=`<div class="deckend"><div><h3>${liked.length?'Твоите любими':'Хм, нито един?'}</h3><p class="lead" style="margin:10px auto">${liked.length?liked.join(' · '):'Опитай пак, сигурно има един дворец за нас.'}</p><button class="btn sm" id="dAgain">Още веднъж</button></div></div>`;$('#dAgain').onclick=()=>{pos=0;hist=[];deckRender()};return}
+ if(pos>=order.length){const liked=H.filter(h=>fav[h.id]).map(h=>h.name);dk.innerHTML=`<div class="deckend"><div><h3>${liked.length?'Твоите любими':'Нито един?'}</h3><p class="lead" style="margin:10px auto">${liked.length?liked.join(' · '):'Опитай пак, може би някой ще ти хареса.'}</p><button class="btn sm" id="dAgain">Още веднъж</button></div></div>`;$('#dAgain').onclick=()=>{pos=0;hist=[];deckRender()};return}
  order.slice(pos,pos+3).reverse().forEach((hi,k,arr)=>{const h=H[hi],top=k===arr.length-1;const c=document.createElement('div');c.className='dcard';
   const depth=arr.length-1-k;c.style.transform=`translateY(${depth*12}px) scale(${1-depth*.04})`;c.style.zIndex=10-depth;
   const cheap=h.rooms.filter(r=>r[4]).map(r=>r[4]);
@@ -77,7 +78,7 @@ deckRender();
 const TT={v:'за 25–27.12',e:'оценка',f:'публикувана „от“',q:'по запитване'};
 let cur=0;
 function htabs(){$('#htabs').innerHTML=H.map((h,i)=>`<button class="htab ${i===cur?'on':''}" role="tab" aria-selected="${i===cur}" data-i="${i}"><img src="img/${h.ph[0]}.webp" alt="">${h.name}${fav[h.id]?' <span class="h">♥</span>':''}</button>`).join('');
- $$('.htab').forEach(b=>b.onclick=()=>{cur=+b.dataset.i;htabs();hpanel();b.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'})})}
+ $$('.htab').forEach(b=>b.onclick=()=>{cur=+b.dataset.i;htabs();hpanel();hcenter($('#htabs'),$(`.htab[data-i="${cur}"]`))})}
 function hpanel(){const h=H[cur],p=$('#hpanel');p.style.animation='none';p.offsetHeight;p.style.animation='';
  const st=h.chips.slice(0,4);
  p.innerHTML=`<div class="hp-top"><div><span class="kk">№${cur+1} · ${h.brand}</span><h3>${h.name}</h3><div class="meta">${h.addr} · ${h.year}</div></div><button class="heartbtn" style="position:static" aria-pressed="${!!fav[h.id]}" id="hfav" aria-label="Харесвам"></button></div>
@@ -117,13 +118,29 @@ $('#cruise').innerHTML=CRU.map(c=>`<div class="flip" tabindex="0" role="button" 
 $$('.flip').forEach(f=>{f.onclick=()=>f.classList.toggle('on');f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f.click()}}});
 
 /* ---------- активности ---------- */
+const AX={'Коледните базари':'Освен двата големи базара има по-малки в Будайската крепост, в Óbuda и в двора Gozsdu. Пред Базиликата вечер върху фасадата се прожектира светлинно шоу. Носете малко форинти в брой за щандовете, макар че повечето вече приемат карти.',
+'Банята Сечени':'Сградата е от 1913 г. Външните басейни са с топла вода от около 30 до 38 °C и се пушат в студа, а местните играят шах във водата. Вътре има над десет по-малки басейна, сауни и парни бани. Вземете си кърпа или наемете на място.',
+'Банята Рудаш':'Османският купол над осмоъгълния басейн е от XVI век и още е оригинален. Басейнът на покрива с изглед към Дунава и мостовете е най-хубавото място за залез. В петък и събота има нощно къпане.',
+'Рибарският бастион':'Построен е между 1895 и 1902 г. и е кръстен на гилдията на рибарите, която пазела тази част от стената. Долните тераси са безплатни, а горната се плаща срещу малка такса. Нощем е осветен и почти празен.',
+'Църквата „Матиаш“':'Тук през 1867 г. са коронясани Франц Йосиф и императрица Сиси за крале на Унгария. Покривът е от цветни плочки Жолнаи, а отвътре стените са изцяло изрисувани.',
+'Будайската крепост':'Фуникулерът от Верижния мост работи от 1870 г. и качва за около минута. На хълма са Кралският дворец с Националната галерия и Историческия музей, тесни средновековни улички и гледка към цяла Пеща.',
+'Разходка по Дунава':'По брега на Пеща, между Парламента и Верижния мост, са „Обувките на брега на Дунава“: 60 чифта железни обувки, паметник на жертвите от 1944–1945 г. Най-красиво е след залез, когато светнат Парламентът и Крепостта.',
+'Трамвай 2':'Линията минава по самия бряг на Пеща, покрай Парламента, Верижния мост и Вигадо. Седнете отдясно, ако пътувате на юг, за най-хубавата гледка към Буда.',
+'Парламентът':'Строен е от 1885 до 1904 г. и има 691 помещения. Обиколката минава през Главното стълбище и куполната зала, където се пази Свещената корона на Свети Стефан. Билетите се свършват, затова се купуват онлайн дни по-рано.',
+'Базиликата „Св. Стефан“':'Завършена е през 1905 г. Вътре се пази Светата десница, мумифицираната ръка на Свети Стефан. До панорамната тераса на купола се стига с асансьор или по стълбите.',
+'Държавната опера':'Открита е през 1884 г. по проект на Миклош Ибл. Отвътре е залата с позлата и стенописи, които са сред най-красивите в Европа. През декември често се дава „Лешникотрошачката“.',
+'„Андраши“':'Булевардът е от 1870-те години, а под него минава метро M1. По него са Операта, Домът на терора и луксозните бутици. Свършва при Площада на героите и Градския парк.',
+'Gerbeaud':'Основана е през 1858 г. от Хенрик Куглер, а от 1884 г. я води швейцарецът Емил Гербо, на когото е кръстена. Освен торта „Добош“ опитайте и торта „Естерхази“.',
+'Руинните барове':'Szimpla Kert е първият руинен бар, от началото на 2000-те. Всяка стая е различна: стари вани, колела, Трабант. В неделя сутрин тук има фермерски пазар.',
+'Синагогата на улица „Дохан“':'Построена е между 1854 и 1859 г. и е с около 3000 места. Комплексът включва Еврейския музей и Мемориала на дървото на живота.',
+'Сентендре':'Градчето е заселено от сърби през XVII–XVIII век, затова има няколко православни църкви. Има малки галерии, Музей на марципана и уютни кафенета по калдъръмените улички.'};
 const FLT={y:['y','отворено'],c:['c','провери'],n:['n','затворено']};
 const AF=[['all','Всички'],['d25','Отворено на 25.12'],['d26','Отворено на 26.12'],['free','Безплатно'],['night','Вечер'],['warm','На топло'],['plan','♥ Избрани']];
 $('#af').innerHTML=AF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">${f[1]}</button>`).join('');
 const AL=A.map(a=>[a[1],a[0]]);
 $('#acts').innerHTML=A.map((a,i)=>`<article class="card ac" data-i="${i}"><div class="ph"><img src="img/${a[1]}.webp" alt="${a[0]}" loading="lazy"><span class="pill tag">${a[2]}</span><button class="heartbtn" data-i="${i}" aria-pressed="${!!plan[i]}" aria-label="В плана"></button></div>
 <div class="bd"><div class="k">${a[9]}</div><h3>${a[0]}</h3><p>${a[3]}</p><div class="flags"><span class="fl ${FLT[a[4]][0]}">25.12 · ${FLT[a[4]][1]}</span><span class="fl ${FLT[a[5]][0]}">26.12 · ${FLT[a[5]][1]}</span>${a[6]?'<span class="fl y">безплатно</span>':''}${a[7]?'<span class="fl">вечер</span>':''}</div>
-<div class="more"><div><dl><dt>Колко време</dt><dd>${a[10]}</dd><dt>Как се стига</dt><dd>${a[11]}</dd><dt>Празници</dt><dd>${a[13]}</dd><dt>Карта</dt><dd><a href="${M(a[12])}" target="_blank" rel="noopener">Google Maps ↗</a></dd></dl></div></div>
+<div class="more"><div>${AX[a[0]]?`<p style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">${AX[a[0]]}</p>`:''}<dl><dt>Колко време</dt><dd>${a[10]}</dd><dt>Как се стига</dt><dd>${a[11]}</dd><dt>Празници</dt><dd>${a[13]}</dd><dt>Карта</dt><dd><a href="${M(a[12])}" target="_blank" rel="noopener">Google Maps ↗</a></dd></dl></div></div>
 <button class="tog" aria-expanded="false">Подробности</button></div></article>`).join('');
 $$('#acts .ph img').forEach(im=>im.onclick=()=>openLB(AL,+im.closest('.ac').dataset.i));
 let AFc='all';const afilt=()=>$$('#acts .ac').forEach(c=>{const i=c.dataset.i,a=A[i];const ok=AFc==='all'||(AFc==='d25'&&a[4]==='y')||(AFc==='d26'&&a[5]==='y')||(AFc==='free'&&a[6])||(AFc==='night'&&a[7])||(AFc==='warm'&&a[8])||(AFc==='plan'&&plan[i]);c.classList.toggle('hide',!ok)});
@@ -160,7 +177,7 @@ $('#mf').innerHTML=MF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">
 let MAP,LAY={};
 function initMap(){if(typeof L==='undefined'){$('#map').innerHTML='<p style="padding:20px">Картата не можа да се зареди.</p>';return}
  MAP=L.map('map',{scrollWheelZoom:false}).setView([47.4995,19.056],14);
- L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'© OpenStreetMap © CARTO'}).addTo(MAP);
+ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap',className:'darktiles'}).addTo(MAP);
  'hsrk'.split('').forEach(t=>LAY[t]=L.layerGroup().addTo(MAP));
  P.forEach(p=>{const ic=L.divIcon({className:'',html:`<div class="pin ${p[3]}" style="background:${COL[p[3]]}"></div>`,iconSize:[30,30],iconAnchor:[15,30],popupAnchor:[0,-28]});
   L.marker([p[1],p[2]],{icon:ic,title:p[0]}).bindPopup(`<b>${p[0]}</b><br>${p[4]}<br><a href="${M(p[0]+' Budapest')}" target="_blank" rel="noopener">Упътване ↗</a>`).addTo(LAY[p[3]])});
@@ -192,7 +209,7 @@ const ADV=[['Три града в един','Будапеща се ражда п
 ['Роднини с финландците','Унгарският е угро-фински език, далечен роднина на финския и естонския.','parisi_2'],
 ['Бастионът','Рибарският бастион е построен между 1895 и 1902 г. и никога не е служил за защита. Правен е само заради гледката.','bastion_1'],
 ['Кой носи подаръците','В Унгария подаръците под елхата не ги носи Дядо Коледа, а Jézuska, Младенецът Исус.','basilica_4'],
-['Утре заминаваме ♥','Утре по това време сме в Будапеща. Весела Коледа, Венито!','castle_0']];
+['Утре заминаваме','Полетът е утре в 14:35. Весела Коледа!','castle_0']];
 const now=new Date();
 const advOpen=ld('bp-adv',{});
 $('#adv').innerHTML=ADV.map((a,i)=>{const d=new Date(2026,11,i+1),un=now>=d,today=now.toDateString()===d.toDateString();return `<button class="door ${un?'':'locked'} ${today?'today':''} ${un&&advOpen[i]?'open':''}" data-i="${i}" aria-label="${i+1} декември"><span class="dfront"><b>${i+1}</b><i>${un?'отвори':'заключено'}</i></span><span class="dback" style="background-image:linear-gradient(rgba(14,10,12,.45),rgba(14,10,12,.75)),url(img/${a[2]}.webp)"><b style="font:600 20px 'Cormorant Garamond',serif;color:#fff">${a[0]}</b></span></button>`}).join('')+'<div class="advfact" id="advfact" style="grid-column:1/-1"></div>';
@@ -200,22 +217,6 @@ const dleft=Math.ceil((new Date(2026,11,1)-now)/864e5);
 $('#advfact').innerHTML=dleft>0?`<b>Първото прозорче се отваря на 1 декември</b><span style="color:var(--mute)">Остават още ${dleft} дни. Дотогава вратичките са заключени.</span>`:'<b>Отворете днешното прозорче</b><span style="color:var(--mute)">Всеки ден по едно.</span>';
 $$('.door').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(b.classList.contains('locked')){b.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'none'}],{duration:300});toast('Отваря се на '+(i+1)+' декември');return}
  b.classList.add('open');advOpen[i]=1;sv('bp-adv',advOpen);$('#advfact').innerHTML=`<b>${i+1} декември · ${ADV[i][0]}</b>${ADV[i][1]}`});
-
-/* ---------- куиз ---------- */
-const Q=[['Колко басейна има банята Сечени?',['8','12','18','25'],2,'szechenyi_3'],
-['От коя година е кафене New York?',['1858','1894','1912','1936'],1,'nycafe_0'],
-['Как се казва тайният бар на покрива на Matild Palace?',['The Duchess','Múzsa','Society25','BiBo'],0,'matild_0'],
-['Колко кули има Рибарският бастион?',['5','7','9','12'],1,'bastion_0'],
-['Кой ресторант получава първата звезда Michelin в Унгария?',['Stand','Babel','Costes','Borkonyha'],2,'costes_x0'],
-['Какво е курточ калач?',['Супа с паприка','Тесто, печено на жар','Плодова ракия','Сладко вино'],1,'kurtos_x0'],
-['Колко високи са Парламентът и Базиликата?',['86 м','96 м','106 м','120 м'],1,'parliament_3'],
-['Кой хотел е в пасаж, вдъхновен от Париж?',['W Budapest','Dorothea','Párisi Udvar','Anantara'],2,'parisi_4']];
-let qi=0,score=0;
-function quiz(){const z=$('#quiz');if(qi>=Q.length){const best=Math.max(score,ld('bp-qbest',0));sv('bp-qbest',best);
- z.innerHTML=`<div class="ph"><img src="img/castle_0.webp" alt=""></div><div><div class="qn">резултат</div><h3>${score} от ${Q.length} ${score===Q.length?'♥ Перфектно!':score>=5?'· Браво!':'· Ще научиш всичко на място'}</h3><p class="lead">Най-добър резултат: ${best}/${Q.length}</p><button class="btn" id="qAgain">Още веднъж</button></div>`;$('#qAgain').onclick=()=>{qi=0;score=0;quiz()};if(score===Q.length)burst($('#qAgain'));return}
- const q=Q[qi];z.innerHTML=`<div class="ph"><img src="img/${q[3]}.webp" alt=""></div><div><div class="qn">въпрос ${qi+1} от ${Q.length}</div><h3>${q[0]}</h3><div class="ans">${q[1].map((a,i)=>`<button data-i="${i}">${a}</button>`).join('')}</div><div class="qbar"><i style="width:${qi/Q.length*100}%"></i></div></div>`;
- $$('.ans button').forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===q[2];$$('.ans button').forEach(x=>{x.disabled=true;if(+x.dataset.i===q[2])x.classList.add('ok')});if(!ok)b.classList.add('bad');else{score++;burst(b)}setTimeout(()=>{qi++;quiz()},1100)})}
-quiz();
 
 /* ---------- унгарски ---------- */
 const PH=[['Здрасти / Чао','Szia!','сия'],['Добър вечер','Jó estét!','йо ещет'],['Благодаря','Köszönöm!','кьосьоньом'],['Моля','Kérem','керем'],['Наздраве!','Egészségedre!','егесшегедре'],['Весела Коледа!','Boldog karácsonyt!','болдог карачоньт'],['Честит рожден ден!','Boldog születésnapot!','болдог сюлетешнапот'],['Обичам те','Szeretlek','серетлек'],['Едно греяно вино, моля','Egy forralt bort kérek','ед форалт борт керек'],['Сметката, моля','A számlát kérem','а самлат керем'],['Колко струва?','Mennyibe kerül?','меньибе керюл'],['Вкусно!','Finom!','фином'],['Добър апетит!','Jó étvágyat!','йо етвадят'],['Извинете','Bocsánat','бочанат'],['Да / Не','Igen / Nem','иген / нем'],['Красиво!','Gyönyörű!','дьоньорю']];
@@ -254,10 +255,10 @@ $$('#gal button').forEach(b=>b.onclick=()=>openLB(GAL,+b.dataset.i));
 function picks(){return{h:H.filter(h=>fav[h.id]).map(h=>h.name),a:Object.keys(plan).filter(k=>A[k]).map(k=>A[k][0]),r:Object.keys(rfav).filter(k=>R[k]).map(k=>R[k][0])}}
 function refreshFav(){const p=picks(),n=p.h.length+p.a.length+p.r.length;$('#badge').hidden=!n;$('#badge').textContent=n;
  const sec=(t,l)=>l.length?`<p><b>${t}:</b> ${l.join(' · ')}</p>`:'';
- $('#mine').innerHTML=n?sec('Хотели',p.h)+sec('Места',p.a)+sec('Ресторанти и барове',p.r):'<p style="opacity:.8">Още нищо не е избрано. Натискай ♡ при хотелите, местата и ресторантите или изиграй играта „Избери нашия дворец“.</p>';
+ $('#mine').innerHTML=n?sec('Хотели',p.h)+sec('Места',p.a)+sec('Ресторанти и барове',p.r):'<p style="opacity:.8">Още нищо не е избрано. Натискай ♡ при хотелите, местата и ресторантите или в „Бърз избор“.</p>';
  htabs();fillRooms()}
 refreshFav();
-$('#shareBtn').onclick=async()=>{const p=picks();const t='♥ Коледа в Будапеща · моят избор\n'+(p.h.length?'\nХотели: '+p.h.join(', '):'')+(p.a.length?'\nМеста: '+p.a.join(', '):'')+(p.r.length?'\nРесторанти: '+p.r.join(', '):'')+((p.h.length+p.a.length+p.r.length)?'':'\n(още нищо не съм избрала)');
+$('#shareBtn').onclick=async()=>{const p=picks();const t='♥ Коледа в Будапеща · моят избор\n'+(p.h.length?'\nХотели: '+p.h.join(', '):'')+(p.a.length?'\nМеста: '+p.a.join(', '):'')+(p.r.length?'\nРесторанти: '+p.r.join(', '):'')+((p.h.length+p.a.length+p.r.length)?'':'\n(още нищо не е избрано)');
  const url=location.origin+location.pathname;
  try{if(navigator.share){await navigator.share({title:'Коледа с Венито ♥',text:t,url});return}}catch(e){if(e.name==='AbortError')return}
  try{await navigator.clipboard.writeText(t+'\n'+url);toast('Копирано, поставете го в чата')}catch(e){toast('Не можа да се сподели')}};
@@ -267,9 +268,9 @@ const links=[...$$('.navin a')];
 $('#sheetIn').innerHTML=links.map(a=>`<a href="${a.getAttribute('href')}">${a.textContent}</a>`).join('');
 $('#moreBtn').onclick=()=>$('#sheet').classList.add('on');
 $('#sheet').onclick=e=>{if(e.target.id==='sheet'||e.target.tagName==='A')$('#sheet').classList.remove('on')};
-const secObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+id));const on=links.find(a=>a.classList.contains('on'));if(on&&FINE)on.scrollIntoView({inline:'center',block:'nearest'});$$('.tabbar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+id))}}),{rootMargin:'-45% 0px -50% 0px'});
+const secObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+id));const on=links.find(a=>a.classList.contains('on'));if(on)hcenter($('.navin'),on);$$('.tabbar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+id))}}),{rootMargin:'-45% 0px -50% 0px'});
 $$('.sec').forEach(s=>secObs.observe(s));
-const pg=$('#prog');addEventListener('scroll',()=>{const h=document.documentElement;pg.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+const pg=$('#prog');let pk=false;addEventListener('scroll',()=>{if(pk)return;pk=true;requestAnimationFrame(()=>{const h=document.documentElement;pg.style.transform=`scaleX(${h.scrollTop/(h.scrollHeight-h.clientHeight)})`;pk=false})},{passive:true});
 
 /* ---------- снимки (лиценз) ---------- */
 $('#credList').innerHTML=Object.entries(CR).map(([k,c])=>`<a href="${c[2]}" target="_blank" rel="noopener">${c[0]} · ${c[1]}</a>`).join('');

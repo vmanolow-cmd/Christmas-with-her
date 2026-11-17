@@ -12,7 +12,7 @@ button{font-family:inherit}
 :focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 
-#prog{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--gold3),var(--gold2),var(--rose));z-index:80;box-shadow:0 0 12px var(--gold)}
+#prog{position:fixed;top:0;left:0;height:2px;width:100%;transform:scaleX(0);transform-origin:0 50%;will-change:transform;background:linear-gradient(90deg,var(--gold3),var(--gold2),var(--rose));z-index:80;box-shadow:0 0 12px var(--gold)}
 
 /* бутони */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 26px;border-radius:999px;border:0;cursor:pointer;font:700 15px Inter,sans-serif;color:#1d1209;text-decoration:none;background:linear-gradient(135deg,#f6e2ad,#d4b06a 45%,#a8843f);background-size:200% 100%;box-shadow:0 10px 30px -10px rgba(212,176,106,.6);transition:transform .3s var(--ease),background-position .6s,box-shadow .3s}
@@ -400,3 +400,36 @@ input[type=range]{width:100%;accent-color:var(--gold);min-height:32px}
 /* появяване */
 .rv{opacity:0;transform:translateY(34px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0s)}
 .rv.in{opacity:1;transform:none}
+
+/* ===== подредба по устройства ===== */
+html{overflow-x:clip}
+.hin{will-change:transform,opacity}
+.slides img{will-change:transform,opacity}
+/* таблет */
+@media(min-width:761px) and (max-width:1099px){
+ .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .trip{grid-template-columns:repeat(3,minmax(0,1fr))}.tcard{min-height:300px}.tc h3{font-size:26px}
+ .hslide{flex-basis:82%;height:400px}
+ .phr{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .adv{grid-template-columns:repeat(6,1fr)}
+ .masonry{columns:3}
+ .cruise{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* компютър */
+@media(min-width:1100px){
+ .hlay{display:grid;grid-template-columns:270px minmax(0,1fr);gap:30px;align-items:start}
+ .htabs{flex-direction:column;overflow:visible;position:sticky;top:84px;padding:0;scroll-snap-type:none}
+ .htab{width:100%;border-radius:16px;padding:8px 14px 8px 8px}
+ .htab img{width:48px;height:48px;border-radius:12px}
+ .hpanel .hp-top{margin-top:0}
+ .hslide{flex-basis:calc(50% - 7px);height:380px}
+ #igra .deckwrap{grid-template-columns:auto 1fr;justify-items:start;align-items:center;gap:40px 60px}
+ #igra .deck{grid-row:span 2;width:400px;height:540px}
+ #igra .deckbtns,#igra .deckres{justify-self:start}
+ .adv{grid-template-columns:repeat(8,1fr)}
+ .phr{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(min-width:1100px) and (hover:hover){.sec{scroll-margin-top:70px}}
+.darktiles{filter:invert(1) hue-rotate(195deg) brightness(.85) contrast(.9) saturate(.35)}
+.leaflet-container{background:#1a1418}
