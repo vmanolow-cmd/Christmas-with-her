@@ -7,6 +7,30 @@ const FINE=matchMedia('(pointer:fine)').matches;
 const eur=n=>Math.round(n).toLocaleString('bg-BG').replace(/ /g,' ')+' €';
 const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+
+/* ---------- споделяне между двамата ---------- */
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const S={on:false,v:-1,outfits:[],notes:[],slots:[],log:[]};
+const KMAP={'bp-fav':'fav','bp-plan':'plan','bp-rest':'rfav','bp-of':'ofav'};
+let ME=ld('bp-me','');
+function askWho(){return new Promise(res=>{if(ME)return res(ME);const m=$('#whoModal');m.classList.add('on');$$('#whoModal [data-who]').forEach(b=>b.onclick=()=>{ME=b.dataset.who;sv('bp-me',ME);m.classList.remove('on');whoChip();res(ME)})})}
+function whoChip(){const c=$('#whoChip');if(c)c.textContent=ME?'Ти си: '+ME:'Кой си?'}
+async function api(body){if(!S.on)return null;try{const r=await fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who:ME,...body})});if(!r.ok)throw 0;const st=await r.json();applyRemote(st,true);return st}catch(e){toast('Не можа да се запише, опитай пак');return null}}
+const _sv=sv;
+const svs=(k,v,msg)=>{_sv(k,v);if(KMAP[k]&&S.on){askWho().then(()=>api({op:'map',kind:KMAP[k],val:v,msg}))}};
+function applyRemote(st,force){if(!st||(!force&&st.v===S.v))return;S.v=st.v;
+ const put=(obj,src)=>{Object.keys(obj).forEach(k=>delete obj[k]);Object.assign(obj,src||{})};
+ put(fav,st.fav);put(plan,st.plan);put(rfav,st.rfav);if(typeof ofav!=='undefined')put(ofav,st.ofav);
+ S.outfits=st.outfits||[];S.notes=st.notes||[];S.slots=st.slots||[];S.log=st.log||[];
+ rerender()}
+async function pull(){try{const r=await fetch('/api/state',{cache:'no-store'});if(r.status===503||!r.ok){S.on=false;syncBanner();return}const st=await r.json();
+ if(!S.on){S.on=true;syncBanner();
+  const empty=!Object.keys(st.fav||{}).length&&!Object.keys(st.plan||{}).length&&!Object.keys(st.rfav||{}).length&&!Object.keys(st.ofav||{}).length;
+  if(empty&&(Object.keys(fav).length||Object.keys(plan).length||Object.keys(rfav).length)){applyRemote(st);return}}
+ applyRemote(st)}catch(e){S.on=false;syncBanner()}}
+function syncBanner(){const b=$('#syncNote');if(b)b.innerHTML=S.on?'<span class="dotlive"></span> Споделено: промените се виждат и при двамата.':'Споделянето още не е включено, затова промените се пазят само на това устройство.'}
+
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1900)}
 function burst(el){if(RM)return;const r=el.getBoundingClientRect();for(let i=0;i<9;i++){const s=document.createElement('span');s.className='burst';s.textContent='♥';s.style.left=(r.left+r.width/2-8)+'px';s.style.top=(r.top+r.height/2-10)+'px';const a=Math.random()*Math.PI*2,d=40+Math.random()*50;s.style.setProperty('--dx',Math.cos(a)*d+'px');s.style.setProperty('--dy',Math.sin(a)*d-20+'px');document.body.appendChild(s);setTimeout(()=>s.remove(),1000)}}
 
@@ -62,7 +86,7 @@ function deckRender(){const dk=$('#deck');dk.innerHTML='';
   c.innerHTML=`<img src="img/${h.ph[0]}.webp" alt="${h.name}"><span class="stamp s-yes">ХАРЕСВАМ</span><span class="stamp s-no">НЕ</span><div class="dc"><span class="pill">${h.brand}</span><h3>${h.name}</h3><p>${h.arch} · ${h.view}${cheap.length?' · от '+eur(Math.min(...cheap))+' за 2 нощи':''}</p></div>`;
   dk.appendChild(c);if(top)drag(c,hi)});
  $('#deckres').textContent=`${pos+1} от ${order.length}`}
-function decide(hi,yes,c){hist.push([hi,fav[H[hi].id]]);if(yes){fav[H[hi].id]=1;burst($('#dYes'))}else delete fav[H[hi].id];sv('bp-fav',fav);
+function decide(hi,yes,c){hist.push([hi,fav[H[hi].id]]);if(yes){fav[H[hi].id]=1;burst($('#dYes'))}else delete fav[H[hi].id];svs('bp-fav',fav,(yes?'хареса ':'не хареса ')+H[hi].name);
  c.style.transition='transform .5s,opacity .5s';c.style.transform=`translateX(${yes?520:-520}px) rotate(${yes?24:-24}deg)`;c.style.opacity=0;pos++;setTimeout(()=>{deckRender();refreshFav()},380)}
 function drag(c,hi){let x0=0,dx=0,down=false;
  c.addEventListener('pointerdown',e=>{down=true;x0=e.clientX;c.setPointerCapture(e.pointerId);c.style.transition='none'});
@@ -71,7 +95,7 @@ function drag(c,hi){let x0=0,dx=0,down=false;
  c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up)}
 $('#dYes').onclick=()=>{const c=$$('.dcard').pop();if(c)decide(order[pos],true,c)};
 $('#dNo').onclick=()=>{const c=$$('.dcard').pop();if(c)decide(order[pos],false,c)};
-$('#dUndo').onclick=()=>{if(!hist.length)return;const [hi,was]=hist.pop();if(was)fav[H[hi].id]=1;else delete fav[H[hi].id];sv('bp-fav',fav);pos=Math.max(0,pos-1);deckRender();refreshFav()};
+$('#dUndo').onclick=()=>{if(!hist.length)return;const [hi,was]=hist.pop();if(was)fav[H[hi].id]=1;else delete fav[H[hi].id];svs('bp-fav',fav);pos=Math.max(0,pos-1);deckRender();refreshFav()};
 deckRender();
 
 /* ---------- хотели ---------- */
@@ -93,7 +117,7 @@ function hpanel(){const h=H[cur],p=$('#hpanel');p.style.animation='none';p.offse
  const tr=$('#htrack');slider(tr.parentElement);
  tr.addEventListener('scroll',()=>{const w=tr.firstElementChild.offsetWidth+14;const i=Math.round(tr.scrollLeft/w);$$('#hdots i').forEach((d,j)=>d.classList.toggle('on',j===i))},{passive:true});
  $$('.hslide').forEach(f=>f.onclick=()=>openLB(h.ph.map((k,j)=>[k,h.cap[j]]),+f.dataset.j));
- $('#hfav').onclick=e=>{fav[h.id]?delete fav[h.id]:(fav[h.id]=1);sv('bp-fav',fav);e.currentTarget.setAttribute('aria-pressed',!!fav[h.id]);if(fav[h.id]){burst(e.currentTarget);toast(h.name+' е в избора ♥')}htabs();refreshFav()};
+ $('#hfav').onclick=e=>{fav[h.id]?delete fav[h.id]:(fav[h.id]=1);svs('bp-fav',fav,(fav[h.id]?'хареса ':'махна ')+h.name);e.currentTarget.setAttribute('aria-pressed',!!fav[h.id]);if(fav[h.id]){burst(e.currentTarget);toast(h.name+' е в избора ♥')}htabs();refreshFav()};
  spot()}
 function slider(wrap){const t=wrap.querySelector('.track'),l=wrap.querySelector('.arr.l'),r=wrap.querySelector('.arr.r');if(!t)return;
  const step=()=>(t.firstElementChild?.offsetWidth||300)+14;if(l)l.onclick=()=>t.scrollBy({left:-step()});if(r)r.onclick=()=>t.scrollBy({left:step()})}
@@ -106,11 +130,16 @@ function cmp(){$('#cmpgrid').innerHTML=[$('#c1').value,$('#c2').value].map(i=>{c
 $('#c1').onchange=cmp;$('#c2').onchange=cmp;cmp();
 
 /* ---------- програма ---------- */
-let dcur=0;
+let dcur=0;S.slots=ld('bp-slots',[]);
 function days(){$('#daytabs').innerHTML=D.map((d,i)=>`<button class="daytab ${i===dcur?'on':''}" data-i="${i}" role="tab"><span>${d[1]}</span><b>${d[0]} дек.</b></button>`).join('');
  $$('.daytab').forEach(b=>b.onclick=()=>{dcur=+b.dataset.i;days()});
  const d=D[dcur];$('#daypanel').style.animation='none';$('#daypanel').offsetHeight;$('#daypanel').style.animation='';
- $('#daypanel').innerHTML=`<div class="dayhero card ph"><img src="img/${d[2]}.webp" alt=""><div class="cap"><h3>${d[0]} декември</h3><span>${d[1]}</span></div></div><div class="tl">${d[3].map((s,i)=>`<div class="slot" style="animation-delay:${i*.09}s"><time>${s[0]}</time><b>${s[1]}</b><span>${s[2]}</span></div>`).join('')}</div>`}
+ const mine=S.slots.filter(x=>x.day===dcur).map(x=>[x.time,x.title,x.desc,x]);const all=[...d[3].map(x=>[...x,null])];mine.sort((a,b)=>String(a[0]).localeCompare(String(b[0]))).forEach(m=>{const t=/^\d{1,2}:\d{2}$/.test(m[0])?m[0].padStart(5,'0'):null;let at=all.length;if(t){const k=all.findIndex(x=>/^\d{1,2}:\d{2}/.test(x[0])&&x[0].padStart(5,'0')>t);if(k>=0)at=k}all.splice(at,0,m)});
+ $('#daypanel').innerHTML=`<div class="dayhero card ph"><img src="img/${d[2]}.webp" alt=""><div class="cap"><h3>${d[0]} декември</h3><span>${d[1]}</span></div></div><div class="tl">${all.map((s,i)=>`<div class="slot ${s[3]?'mine':''}" style="animation-delay:${i*.07}s"><time>${esc(s[0])}</time><b>${esc(s[1])}</b><span>${esc(s[2])}</span>${s[3]?`<em class="by">добавено от ${esc(s[3].by||'')} <button class="lnk" data-del="${esc(s[3].id)}">изтрий</button></em>`:''}</div>`).join('')}
+ <form class="addslot" id="addSlot"><input name="time" placeholder="20:00" maxlength="8" aria-label="Час"><input name="title" placeholder="Какво добавяме към деня…" maxlength="80" aria-label="Какво" required><button class="btn sm">Добави</button></form></div>`;
+ $('#addSlot').onsubmit=async e=>{e.preventDefault();const f=e.target;await askWho();const item={id:'s'+Date.now().toString(36),day:dcur,time:f.time.value.trim()||'—',title:f.title.value.trim(),desc:''};
+  if(S.on)await api({op:'upsert',list:'slots',item,msg:'добави към програмата: '+item.title});else{S.slots.push({...item,by:ME});sv('bp-slots',S.slots)}days()};
+ $$('#daypanel [data-del]').forEach(b=>b.onclick=async()=>{const id=b.dataset.del,it=S.slots.find(x=>x.id===id);if(S.on)await api({op:'remove',list:'slots',id,msg:'махна от програмата: '+(it?it.title:'')});else{S.slots=S.slots.filter(x=>x.id!==id);sv('bp-slots',S.slots)}days()})}
 days();
 
 
@@ -126,10 +155,33 @@ const OF=[['Бордо и злато','Коледната вечеря · 25.12'
 const OFF=[['all','Всички'],['x','Вечер'],['d','Ден'],['h','В хотела'],['fav','♥ Избрани']];
 let ofav=ld('bp-of',{});
 $('#of').innerHTML=OFF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">${f[1]}</button>`).join('');
-$('#outfits').innerHTML=OF.map((o,i)=>`<article class="card ac outfit" data-i="${i}"><div class="sw">${o[3].map(c=>`<span style="background:${c[0]}"><i>${c[1]}</i></span>`).join('')}<button class="heartbtn" data-i="${i}" aria-pressed="${!!ofav[i]}" aria-label="Харесвам"></button></div><div class="bd"><div class="k">${o[1]}</div><h3>${o[0]}</h3><p>${o[4]}</p><a class="btn ghost sm" style="margin-top:14px" href="https://www.pinterest.com/search/pins/?q=${encodeURIComponent(o[5])}" target="_blank" rel="noopener">Примери в Pinterest ↗</a></div></article>`).join('');
-let OFc='all';const ofilt=()=>$$('#outfits .ac').forEach(c=>{const i=c.dataset.i;c.classList.toggle('hide',!(OFc==='all'||(OFc==='fav'?ofav[i]:OF[i][2]===OFc)))});
-$$('#of button').forEach(b=>b.onclick=()=>{$$('#of button').forEach(x=>x.classList.remove('on'));b.classList.add('on');OFc=b.dataset.f;ofilt()});
-$$('#outfits .heartbtn').forEach(b=>b.onclick=()=>{const i=b.dataset.i;ofav[i]?delete ofav[i]:(ofav[i]=1);sv('bp-of',ofav);b.setAttribute('aria-pressed',!!ofav[i]);if(ofav[i]){burst(b);toast(OF[i][0]+' е в избора ♥')}ofilt();refreshFav()});
+function outfitsAll(){const ov={};S.outfits.forEach(o=>ov[o.id]=o);
+ const base=OF.map((o,i)=>{const k=String(i),x=ov['b'+i];const it={key:k,id:'b'+i,title:o[0],when:o[1],cat:o[2],colors:o[3],desc:o[4],q:o[5],builtin:true};return x?{...it,...x,key:k,id:'b'+i,builtin:true,edited:true}:it}).filter(o=>!o.hidden);
+ const cust=S.outfits.filter(o=>!o.id.startsWith('b')&&!o.hidden).map(o=>({...o,key:o.id}));return[...base,...cust]}
+let OFc='all';
+function renderOutfits(){const L=outfitsAll();window._OFL=L;
+ $('#outfits').innerHTML=L.map((o,n)=>`<article class="card ac outfit ${OFc==='all'||(OFc==='fav'?ofav[o.key]:o.cat===OFc)?'':'hide'}" data-k="${esc(o.key)}"><div class="sw">${(o.colors||[]).map(c=>`<span style="background:${esc(c[0])}"><i>${esc(c[1])}</i></span>`).join('')}<button class="heartbtn" data-k="${esc(o.key)}" aria-pressed="${!!ofav[o.key]}" aria-label="Харесвам"></button></div><div class="bd"><div class="k">${esc(o.when)}</div><h3>${esc(o.title)}</h3><p>${esc(o.desc)}</p>${o.by||o.ed?`<p class="note">${o.builtin?'Редактирано':'Добавено'} от ${esc(o.ed||o.by)}</p>`:''}<div class="btnrow">${o.q?`<a class="btn ghost sm" href="https://www.pinterest.com/search/pins/?q=${encodeURIComponent(o.q)}" target="_blank" rel="noopener">Pinterest ↗</a>`:''}${o.link?`<a class="btn ghost sm" href="${esc(o.link)}" target="_blank" rel="noopener">Линк ↗</a>`:''}<button class="btn ghost sm" data-ed="${esc(o.id)}">Редактирай</button></div></div></article>`).join('')+`<button class="card addcard" id="addOutfit"><span>+</span>Добави визия</button>`;
+ $$('#outfits .heartbtn').forEach(b=>b.onclick=()=>{const k=b.dataset.k,o=L.find(x=>x.key===k);ofav[k]?delete ofav[k]:(ofav[k]=1);svs('bp-of',ofav,(ofav[k]?'хареса визия ':'махна визия ')+o.title);b.setAttribute('aria-pressed',!!ofav[k]);if(ofav[k]){burst(b);toast(o.title+' е в избора ♥')}renderOutfits();refreshFav()});
+ $$('#outfits [data-ed]').forEach(b=>b.onclick=()=>editOutfit(L.find(x=>x.id===b.dataset.ed)));
+ $('#addOutfit').onclick=()=>editOutfit(null)}
+function editOutfit(o){const m=$('#ofModal');m.classList.add('on');const f=$('#ofForm');
+ const c=(o&&o.colors)||[['#5b1a2b','бордо'],['#d4b06a','злато'],['#151012','черно']];
+ f.title.value=o?o.title:'';f.when.value=o?o.when:'';f.cat.value=o?o.cat:'d';f.desc.value=o?o.desc:'';f.link.value=o&&o.link?o.link:'';
+ [0,1,2].forEach(i=>{f['c'+i].value=(c[i]||['#888888'])[0];f['n'+i].value=(c[i]||['',''])[1]||''});
+ $('#ofDel').hidden=!o;$('#ofDel').textContent=o&&o.builtin?'Скрий':'Изтрий';
+ f.onsubmit=async e=>{e.preventDefault();await askWho();const id=o?o.id:'c'+Date.now().toString(36);
+  const item={id,title:f.title.value.trim()||'Визия',when:f.when.value.trim(),cat:f.cat.value,desc:f.desc.value.trim(),link:/^https?:\/\//.test(f.link.value.trim())?f.link.value.trim():'',colors:[0,1,2].map(i=>[f['c'+i].value,f['n'+i].value.trim()])};
+  if(S.on){await api({op:'upsert',list:'outfits',item,msg:(o?'редактира визия „':'добави визия „')+item.title+'“'})}else{const i=S.outfits.findIndex(x=>x.id===id);i>=0?S.outfits[i]=item:S.outfits.push(item);sv('bp-outfits',S.outfits)}
+  m.classList.remove('on');renderOutfits();toast('Записано')};
+ $('#ofDel').onclick=async()=>{if(!o)return;await askWho();
+  if(o.builtin){const item={id:o.id,title:o.title,hidden:true};if(S.on)await api({op:'upsert',list:'outfits',item,msg:'скри визия „'+o.title+'“'});else{S.outfits=S.outfits.filter(x=>x.id!==o.id);S.outfits.push(item);sv('bp-outfits',S.outfits)}}
+  else{if(S.on)await api({op:'remove',list:'outfits',id:o.id,msg:'изтри визия „'+o.title+'“'});else{S.outfits=S.outfits.filter(x=>x.id!==o.id);sv('bp-outfits',S.outfits)}}
+  m.classList.remove('on');renderOutfits()};
+ $('#ofX').onclick=()=>m.classList.remove('on')}
+const ofilt=()=>renderOutfits();
+$$('#of button').forEach(b=>b.onclick=()=>{$$('#of button').forEach(x=>x.classList.remove('on'));b.classList.add('on');OFc=b.dataset.f;renderOutfits()});
+S.outfits=ld('bp-outfits',[]);
+renderOutfits();
 
 /* ---------- круиз ---------- */
 $('#cruise').innerHTML=CRU.map(c=>`<div class="flip" tabindex="0" role="button" aria-label="Обърни: ${c[0]}"><div class="fin"><div class="face"><div class="ph"><img src="img/${c[1]}.webp" alt="${c[0]}"></div><div class="fc"><div class="k">${c[2]}</div><h3>${c[0]}</h3><p>${c[3]}</p></div><span class="turn">обърни ↻</span></div><div class="face back"><div class="k">подробности</div><h3>${c[0]}</h3><dl>${c[4].map(d=>`<dt>${d[0]}</dt><dd>${d[1]}</dd>`).join('')}</dl><p style="margin-top:16px">Запитването е изпратено до ${c[5]}.</p><span class="turn">обърни ↻</span></div></div></div>`).join('')+`<div class="cnote" style="grid-column:1/-1">За 26 декември онлайн не се показа опция за маса до прозореца, затова чакаме отговор от компаниите. Ако никоя не гарантира такава маса, вечеряме в ресторант на сушата и правим отделен едночасов панорамен круиз, за около 25 € на човек.</div>`;
@@ -163,7 +215,7 @@ $('#acts').innerHTML=A.map((a,i)=>`<article class="card ac" data-i="${i}"><div c
 $$('#acts .ph img').forEach(im=>im.onclick=()=>openLB(AL,+im.closest('.ac').dataset.i));
 let AFc='all';const afilt=()=>$$('#acts .ac').forEach(c=>{const i=c.dataset.i,a=A[i];const ok=AFc==='all'||(AFc==='d25'&&a[4]==='y')||(AFc==='d26'&&a[5]==='y')||(AFc==='free'&&a[6])||(AFc==='night'&&a[7])||(AFc==='warm'&&a[8])||(AFc==='plan'&&plan[i]);c.classList.toggle('hide',!ok)});
 $$('#af button').forEach(b=>b.onclick=()=>{$$('#af button').forEach(x=>x.classList.remove('on'));b.classList.add('on');AFc=b.dataset.f;afilt()});
-$$('#acts .heartbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=b.dataset.i;plan[i]?delete plan[i]:(plan[i]=1);sv('bp-plan',plan);b.setAttribute('aria-pressed',!!plan[i]);if(plan[i]){burst(b);toast(A[i][0]+' е в плана ♥')}afilt();refreshFav()});
+$$('#acts .heartbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=b.dataset.i;plan[i]?delete plan[i]:(plan[i]=1);svs('bp-plan',plan,(plan[i]?'добави в плана ':'махна от плана ')+A[i][0]);b.setAttribute('aria-pressed',!!plan[i]);if(plan[i]){burst(b);toast(A[i][0]+' е в плана ♥')}afilt();refreshFav()});
 
 /* разгъване (общо) */
 document.addEventListener('click',e=>{const t=e.target.closest('.tog');if(!t)return;const c=t.closest('.ac');c.classList.toggle('open');const o=c.classList.contains('open');t.setAttribute('aria-expanded',o);t.textContent=o?'Скрий':'Подробности'});
@@ -181,7 +233,7 @@ $('#rest').innerHTML=R.map((r,i)=>`<article class="card ac" data-i="${i}"><div c
 $$('#rest .ph img').forEach(im=>im.onclick=()=>openLB(RL,+im.closest('.ac').dataset.i));
 let RFc='all';const rfilt=()=>$$('#rest .ac').forEach(c=>{const i=c.dataset.i;c.classList.toggle('hide',!(RFc==='all'||(RFc==='fav'?rfav[i]:R[i][1].includes(RFc))))});
 $$('#rf button').forEach(b=>b.onclick=()=>{$$('#rf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');RFc=b.dataset.f;rfilt()});
-$$('#rest .heartbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=b.dataset.i;rfav[i]?delete rfav[i]:(rfav[i]=1);sv('bp-rest',rfav);b.setAttribute('aria-pressed',!!rfav[i]);if(rfav[i]){burst(b);toast(R[i][0]+' е в избора ♥')}rfilt();refreshFav()});
+$$('#rest .heartbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=b.dataset.i;rfav[i]?delete rfav[i]:(rfav[i]=1);svs('bp-rest',rfav,(rfav[i]?'хареса ':'махна ')+R[i][0]);b.setAttribute('aria-pressed',!!rfav[i]);if(rfav[i]){burst(b);toast(R[i][0]+' е в избора ♥')}rfilt();refreshFav()});
 
 /* ---------- вкусове ---------- */
 $('#food').innerHTML=FD.map(f=>`<div class="flip food" tabindex="0" role="button" aria-label="Обърни: ${f[0]}"><div class="fin"><div class="face"><div class="ph"><img src="img/${f[2]}.webp" alt="${f[0]}" loading="lazy"></div><div class="fc"><div class="hu">${f[1]}</div><h3>${f[0]}</h3><p>${f[3].split('. ')[0]}.</p></div><span class="turn">обърни ↻</span></div><div class="face back"><div class="hu">${f[1]}</div><h3>${f[0]}</h3><p style="font-size:15.5px;margin-top:12px">${f[3]}</p><dl><dt>Къде</dt><dd>${f[4]}</dd></dl><span class="turn">обърни ↻</span></div></div></div>`).join('');
@@ -318,7 +370,7 @@ $('#gal').innerHTML=GAL.map((g,i)=>`<button data-i="${i}" aria-label="${g[1]}"><
 $$('#gal button').forEach(b=>b.onclick=()=>openLB(GAL,+b.dataset.i));
 
 /* ---------- избор и споделяне ---------- */
-function picks(){const o=typeof OF!=='undefined'?Object.keys(ld('bp-of',{})).filter(k=>OF[k]).map(k=>OF[k][0]):[];return{h:H.filter(h=>fav[h.id]).map(h=>h.name),a:Object.keys(plan).filter(k=>A[k]).map(k=>A[k][0]),r:Object.keys(rfav).filter(k=>R[k]).map(k=>R[k][0]),o}}
+function picks(){const OL=window._OFL||[];const o=Object.keys(ofav).map(k=>(OL.find(x=>x.key===k)||{}).title).filter(Boolean);return{h:H.filter(h=>fav[h.id]).map(h=>h.name),a:Object.keys(plan).filter(k=>A[k]).map(k=>A[k][0]),r:Object.keys(rfav).filter(k=>R[k]).map(k=>R[k][0]),o}}
 function refreshFav(){const p=picks(),n=p.h.length+p.a.length+p.r.length+p.o.length;$('#badge').hidden=!n;$('#badge').textContent=n;
  const sec=(t,l)=>l.length?`<p><b>${t}:</b> ${l.join(' · ')}</p>`:'';
  $('#mine').innerHTML=n?sec('Хотели',p.h)+sec('Места',p.a)+sec('Ресторанти и барове',p.r)+sec('Визии',p.o):'<p style="opacity:.8">Още нищо не е избрано. Натискай ♡ при хотелите, местата и ресторантите или в „Бърз избор“.</p>';
@@ -328,6 +380,23 @@ $('#shareBtn').onclick=async()=>{const p=picks();const t='♥ Коледа в Б
  const url=location.origin+location.pathname;
  try{if(navigator.share){await navigator.share({title:'Коледа с Венито ♥',text:t,url});return}}catch(e){if(e.name==='AbortError')return}
  try{await navigator.clipboard.writeText(t+'\n'+url);toast('Копирано, поставете го в чата')}catch(e){toast('Не можа да се сподели')}};
+
+
+/* ---------- бележки и промени ---------- */
+function renderNotes(){const N=S.notes;$('#notesList').innerHTML=N.length?N.map(n=>`<li class="${n.done?'done':''}"><label><input type="checkbox" data-id="${esc(n.id)}" ${n.done?'checked':''}><span>${esc(n.text)}</span></label><em>${esc(n.by||'')}</em><button class="lnk" data-del="${esc(n.id)}" aria-label="Изтрий">✕</button></li>`).join(''):'<li class="empty">Още няма бележки. Добавете идея, желание или нещо за проверка.</li>';
+ $$('#notesList input').forEach(x=>x.onchange=async()=>{const n=S.notes.find(y=>y.id===x.dataset.id);n.done=x.checked;await askWho();if(S.on)await api({op:'upsert',list:'notes',item:n,msg:(n.done?'отметна: ':'махна отметката: ')+n.text});else sv('bp-notes',S.notes);renderNotes()});
+ $$('#notesList [data-del]').forEach(b=>b.onclick=async()=>{const n=S.notes.find(y=>y.id===b.dataset.del);await askWho();if(S.on)await api({op:'remove',list:'notes',id:n.id,msg:'изтри бележка: '+n.text});else{S.notes=S.notes.filter(y=>y!==n);sv('bp-notes',S.notes)}renderNotes()})}
+$('#noteForm').onsubmit=async e=>{e.preventDefault();const t=e.target.text.value.trim();if(!t)return;await askWho();const item={id:'n'+Date.now().toString(36),text:t,done:false};
+ if(S.on)await api({op:'upsert',list:'notes',item,msg:'добави бележка: '+t});else{S.notes.push({...item,by:ME});sv('bp-notes',S.notes)}e.target.reset();renderNotes()};
+const ago=t=>{const d=(Date.now()-t)/1000;if(d<60)return'току-що';if(d<3600)return Math.floor(d/60)+' мин';if(d<86400)return Math.floor(d/3600)+' ч';return new Date(t).toLocaleDateString('bg-BG',{day:'numeric',month:'short'})};
+function renderLog(){const L=S.log.slice(0,40);$('#logList').innerHTML=L.length?L.map(l=>`<li><b>${esc(l.who)}</b> ${esc(l.txt)}<time>${ago(l.t)}</time></li>`).join(''):`<li class="empty">${S.on?'Още няма промени.':'Списъкът с промени ще се появи, когато споделянето е включено.'}</li>`}
+S.notes=ld('bp-notes',[]);
+function rerender(){try{htabs();const hb=$('#hfav');if(hb)hb.setAttribute('aria-pressed',!!fav[H[cur].id]);
+ $$('#acts .heartbtn').forEach(b=>b.setAttribute('aria-pressed',!!plan[b.dataset.i]));$$('#rest .heartbtn').forEach(b=>b.setAttribute('aria-pressed',!!rfav[b.dataset.i]));
+ afilt();rfilt();renderOutfits();days();renderNotes();renderLog();refreshFav()}catch(e){}}
+$('#whoChip').onclick=()=>{ME='';askWho()};whoChip();
+renderNotes();renderLog();syncBanner();
+pull();setInterval(()=>{if(!document.hidden)pull()},20000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
 
 /* ---------- навигация ---------- */
 const links=[...$$('.navin a')];
@@ -349,5 +418,5 @@ spot();
 if(FINE&&!RM)$$('.tilt').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-4px)`});c.addEventListener('pointerleave',()=>c.style.transform='')});
 if(!RM&&'IntersectionObserver'in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'});
  const add=(sel,stag)=>$$(sel).forEach((el,i)=>{el.classList.add('rv');if(stag)el.style.setProperty('--d',(i%3)*.08+'s');io.observe(el)});
- add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('#air .ac',1);add('#outfits .ac',1);add('#city .ac',1);add('.pc',1);add('#gal button',1);add('.vid',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
+ add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('#air .ac',1);add('#city .ac',1);add('.pc',1);add('#gal button',1);add('.vid',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
 })();
