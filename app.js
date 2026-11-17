@@ -389,32 +389,40 @@ if(!RM&&'IntersectionObserver'in window){const io=new IntersectionObserver(es=>e
  const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
  function arc(a,b,t){const m=[(a[0]+b[0])/2+1.6,(a[1]+b[1])/2+.4];const u=1-t;return[u*u*a[0]+2*u*t*m[0]+t*t*b[0],u*u*a[1]+2*u*t*m[1]+t*t*b[1]]}
  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
- function move(a,b,mode,my){return new Promise(res=>{const fly=mode==='fly';const dur=RM?10:fly?4200:mode==='boat'?900:mode==='car'?1300:1000;
+ const cam=(fn)=>new Promise(r=>{if(RM){fn();return r()}let done=false;const fin=()=>{if(!done){done=true;M.off('moveend',fin);setTimeout(r,120)}};M.stop();M.once('moveend',fin);fn();setTimeout(fin,2600)});
+ const brg=(p,q)=>Math.atan2((q[1]-p[1])*Math.cos(p[0]*Math.PI/180),q[0]-p[0])*180/Math.PI;
+ function move(a,b,mode,my){return new Promise(res=>{const fly=mode==='fly';const dist=M.latLngToContainerPoint(a).distanceTo(M.latLngToContainerPoint(b));
+  const dur=RM?10:fly?4500:Math.max(700,Math.min(1800,dist*4));
   const mk=L.marker(a,{icon:ico(fly?PLANE:EMO[mode]||'•'),zIndexOffset:1000,interactive:false}).addTo(G);
-  const line=L.polyline([a],{color:fly?'#f2d99b':mode==='boat'?'#8cc0e0':'#d4b06a',weight:fly?3:4,opacity:.9,dashArray:mode==='walk'?'2 8':fly?'8 8':null,lineCap:'round'}).addTo(G);
-  const t0=performance.now();let prev=a;
-  (function f(now){if(my!==tok){res(false);return}const t=Math.min(1,(now-t0)/dur),e=ease(t),p=fly?arc(a,b,e):lerp(a,b,e);
-   mk.setLatLng(p);line.addLatLng(p);
-   if(fly){const p1=M.latLngToContainerPoint(prev),p2=M.latLngToContainerPoint(p);if(Math.hypot(p2.x-p1.x,p2.y-p1.y)>.5){const ang=Math.atan2(p2.x-p1.x,-(p2.y-p1.y))*180/Math.PI;const el=mk.getElement();if(el)el.firstChild.style.transform=`rotate(${ang}deg)`}}
-   prev=p;if(t<1)requestAnimationFrame(f);else{G.removeLayer(mk);res(true)}})(t0)})}
- function pin(p,n,lab,col){const m=L.marker(p,{icon:L.divIcon({className:'',html:`<div class="rnum" style="--c:${col}">${n}</div>`,iconSize:[26,26],iconAnchor:[13,13]})}).addTo(G);if(lab)m.bindTooltip(lab.replace(/^[^·]+·\s*/,''),{direction:'top',offset:[0,-12],className:'rlab'});return m}
+  const line=L.polyline([a],{color:fly?'#f2d99b':mode==='boat'?'#8cc0e0':'#d4b06a',weight:fly?3:5,opacity:.95,dashArray:mode==='walk'?'1 9':fly?'8 8':null,lineCap:'round'}).addTo(G);
+  const t0=performance.now();let prev=a,last=0;
+  (function f(now){if(my!==tok){G.removeLayer(mk);res(false);return}const t=Math.min(1,(now-t0)/dur),e=ease(t),p=fly?arc(a,b,e):lerp(a,b,e);
+   mk.setLatLng(p);if(now-last>30||t===1){line.addLatLng(p);last=now}
+   if(fly&&(Math.abs(p[0]-prev[0])+Math.abs(p[1]-prev[1])>1e-4)){const el=mk.getElement();if(el)el.firstChild.style.transform=`rotate(${brg(prev,p)}deg)`;prev=p}
+   if(t<1)requestAnimationFrame(f);else{G.removeLayer(mk);res(true)}})(t0)})}
+ let side=0;
+ function pin(p,n,lab,col,cur){const m=L.marker(p,{icon:L.divIcon({className:'',html:`<div class="rnum ${cur?'now':''}" style="--c:${col}">${n}</div>`,iconSize:[30,30],iconAnchor:[15,15]}),zIndexOffset:500}).addTo(G);
+  if(lab){side^=1;m.bindTooltip(lab.replace(/^[^·]+·\s*/,''),{direction:side?'right':'left',offset:[side?14:-14,0],className:'rlab'});if(cur!==false)m.openTooltip()}return m}
  const cityB=d=>L.latLngBounds(d.s.filter(x=>x[0][1]<19.2).map(x=>x[0]));
- async function playDay(di,my){const d=RD[di],col=DAYC[di];let n=0,cur=d.s[0][0];const seen=new Set();const key=p=>p[0].toFixed(4)+','+p[1].toFixed(4);
-  const D=RM?0:1;G.clearLayers();
-  if(di===1){M.flyToBounds(cityB(d),{padding:[40,40],duration:D*1.2})}else{M.flyTo(cur,di===2?14:12,{duration:D*1.2})}
-  await wait(D*1300);if(my!==tok)return false;
-  pin(cur,++n,d.s[0][2],col);seen.add(key(cur));cap(d.s[0][2]);await wait(D*800);
+ async function playDay(di,my){const d=RD[di],col=DAYC[di];let n=0,cur=d.s[0][0],lastPin=null;const seen=new Map();const key=p=>p[0].toFixed(4)+','+p[1].toFixed(4);
+  G.clearLayers();side=0;
+  await cam(()=>di===1?M.flyToBounds(cityB(d),{padding:[50,50],duration:1.2}):M.flyTo(cur,di===2?14:12,{duration:1.2}));
+  if(my!==tok)return false;
+  const mark=(p,lab)=>{if(lastPin){lastPin.getElement()?.firstChild.classList.remove('now');lastPin.closeTooltip()}const k=key(p);if(seen.has(k)){lastPin=seen.get(k)}else{lastPin=pin(p,++n,lab,col,true);seen.set(k,lastPin)}lastPin.getElement()?.firstChild.classList.add('now');lastPin.openTooltip()};
+  mark(cur,d.s[0][2]);cap(d.s[0][2]);await wait(RM?0:900);
   for(let i=1;i<d.s.length;i++){const [p,mode,lab]=d.s[i];if(my!==tok)return false;
-   if(mode==='fly'){M.flyToBounds(L.latLngBounds([cur,p]),{padding:[60,60],duration:D*1.4});await wait(D*1500);cap(di===2?'✈ Полет към София · 1 ч. 20 мин.':'✈ Полет към Будапеща · 1 ч. 25 мин.')}
-   else if(!M.getBounds().pad(-.12).contains(p)){M.flyToBounds(L.latLngBounds([cur,p]).extend(M.getCenter()),{padding:[50,50],maxZoom:15,duration:D*1.1});await wait(D*1200)}
-   const ok=await move(cur,p,mode,my);if(!ok)return false;cur=p;
-   if(mode==='fly'){M.flyTo(p,12,{duration:D*1.2});await wait(D*1300)}
-   if(lab){if(!seen.has(key(p))){pin(p,++n,lab,col);seen.add(key(p))}cap(lab);await wait(D*(mode==='boat'?500:1000))}}
+   if(mode==='fly'){await cam(()=>M.flyToBounds(L.latLngBounds([cur,p]),{padding:[70,70],duration:1.4}));cap(di===2?'✈ Полет към София · 1 ч. 20 мин.':'✈ Полет към Будапеща · 1 ч. 25 мин.')}
+   else if(!M.getBounds().pad(-.15).contains(p)){await cam(()=>M.flyToBounds(L.latLngBounds([cur,p]),{padding:[70,70],maxZoom:15,duration:1.1}))}
+   if(my!==tok)return false;
+   const wasOut=cur[1]>19.2;const ok=await move(cur,p,mode,my);if(!ok)return false;cur=p;
+   if(mode==='fly'){await cam(()=>M.flyTo(p,12,{duration:1.2}))}
+   else if(wasOut&&p[1]<19.2&&di!==2){await cam(()=>M.flyToBounds(cityB(d),{padding:[50,50],maxZoom:15,duration:1.2}))}
+   if(lab){if(mode!=='boat'||/Парламента|кея/.test(lab))mark(p,lab);cap(lab);await wait(RM?0:(mode==='boat'?600:1300))}}
   return true}
  async function play(which){const my=++tok;G.clearLayers();$('#rplay').classList.add('hid');
   const days=which<0?[0,1,2]:[which];
   for(const di of days){if(!await playDay(di,my))return;await wait(RM?0:900)}
-  if(my===tok){cap(which<0?'Коледа в Будапеща, 25–27.12 ♥':'');$('#rplay').classList.remove('hid');$('#rplay').innerHTML='<span>↻</span> Пусни отново'}}
+  if(my===tok){cap(which<0?'Коледа в Будапеща, 25–27.12 ♥':'');$('#rplay').classList.remove('hid');$('#rplay').classList.add('again');$('#rplay').innerHTML='<span>↻</span> Отново'}}
  function init(){if(inited||typeof L==='undefined')return;inited=true;
   M=L.map('rmap',{scrollWheelZoom:false,zoomSnap:.25}).setView([45.2,21.4],6);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap',className:'mtiles'}).addTo(M);
