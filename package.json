@@ -1,0 +1,5 @@
+{
+  "name": "christmas-with-her",
+  "private": true,
+  "dependencies": { "@vercel/blob": "^2.9.0" }
+}

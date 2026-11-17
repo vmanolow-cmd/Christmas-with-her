@@ -16,7 +16,7 @@ const hcap=h=>h.cap[0];
 
 /* ---------- лайтбокс ---------- */
 let LB=[],LI=0;
-const showLB=()=>{const [k,c]=LB[LI];$('#lbi').src='img/'+k+'.webp';$('#lbi').alt=c;$('#lbc').textContent=c};
+const showLB=()=>{const [k,c]=LB[LI];$('#lbi').src=/^https?:/.test(k)?k:'img/'+k+'.webp';$('#lbi').alt=c;$('#lbc').textContent=c};
 function openLB(list,i){LB=list;LI=Math.max(0,i);showLB();$('#lb').classList.add('on')}
 $('#lbx').onclick=()=>$('#lb').classList.remove('on');
 $('#lbp').onclick=()=>{LI=(LI-1+LB.length)%LB.length;showLB()};
@@ -370,4 +370,21 @@ const MQ=matchMedia('(max-width:760px)');
  let sig='';const chk=()=>{const s=[...box.children].map(c=>c.classList.contains('hide')?0:1).join('');if(s!==sig){sig=s;box.scrollLeft=0;upd()}};new MutationObserver(chk).observe(box,{attributes:true,subtree:true,attributeFilter:['class'],childList:true});
  MQ.addEventListener('change',upd);upd();
 });
+
+/* ---------- нашите снимки ---------- */
+(()=>{const G2=$('#ugal'),IN=$('#upIn'),NOTE=$('#upNote');if(!G2)return;let PHOTOS=[],ON=null;
+ const render=()=>{if(ON===false){G2.innerHTML='<div class="empty">Качването още не е включено.</div>';return}
+  G2.innerHTML=PHOTOS.length?PHOTOS.map((p,i)=>`<figure data-i="${i}"><img src="${p.url}" alt="" loading="lazy"><button class="ud" data-u="${p.url}" aria-label="Изтрий">✕</button></figure>`).join(''):'<div class="empty">Още няма снимки. Първата може да е от летището ✈</div>';
+  $$('#ugal figure').forEach(f=>f.onclick=e=>{if(e.target.closest('.ud'))return;openLB(PHOTOS.map(p=>[p.url,'']),+f.dataset.i)});
+  $$('#ugal .ud').forEach(b=>b.onclick=async e=>{e.stopPropagation();if(!b.classList.contains('sure')){b.classList.add('sure');b.textContent='Изтрий?';setTimeout(()=>{b.classList.remove('sure');b.textContent='✕'},3000);return}
+   b.textContent='…';try{const r=await fetch('/api/photos?u='+encodeURIComponent(b.dataset.u),{method:'DELETE'});if(!r.ok)throw 0;PHOTOS=PHOTOS.filter(p=>p.url!==b.dataset.u);render();toast('Снимката е изтрита')}catch(_){toast('Не стана, опитай пак');render()}})};
+ const load=async()=>{try{const r=await fetch('/api/photos',{cache:'no-store'});if(r.status===503){ON=false;render();return}if(!r.ok)throw 0;ON=true;PHOTOS=await r.json();render()}catch(_){ON=false;render()}};
+ const shrink=f=>new Promise((res,rej)=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const m=1800,k=Math.min(1,m/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.86).split(',')[1])};im.onerror=()=>{URL.revokeObjectURL(u);rej()};im.src=u});
+ IN.onchange=async()=>{const fs=[...IN.files];IN.value='';if(!fs.length)return;if(ON===false){toast('Качването още не е включено');return}
+  const lab=IN.parentElement;lab.classList.add('busy');let ok=0;
+  for(let i=0;i<fs.length;i++){NOTE.textContent=`Качване ${i+1} от ${fs.length}…`;G2.insertAdjacentHTML('afterbegin','<figure class="ph0" id="upTmp">качване…</figure>');
+   try{const data=await shrink(fs[i]);const r=await fetch('/api/photos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});if(!r.ok)throw 0;const p=await r.json();PHOTOS.unshift(p);ok++}catch(_){toast('Една снимка не можа да се качи')}
+   render()}
+  lab.classList.remove('busy');NOTE.textContent='';if(ok){toast(ok===1?'Снимката е качена ♥':ok+' снимки са качени ♥');burst(lab)}};
+ load();setInterval(()=>{if(!document.hidden&&ON)load()},60000)})();
 })();

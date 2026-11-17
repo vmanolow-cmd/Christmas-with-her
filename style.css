@@ -506,3 +506,26 @@ input[type=range]{margin:0;max-width:100%}
  .mnav .mbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));transform-origin:left;transition:transform .25s}
  .mnav span{font-size:.85rem;color:var(--gold2);min-width:52px;text-align:center;font-variant-numeric:tabular-nums}
 }
+
+/* кръгчета */
+.duo{display:inline-flex;align-items:center;position:relative;margin-bottom:14px;animation:duoIn 1s cubic-bezier(.2,.8,.2,1) both}
+.duo img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--gold2);box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 4px rgba(212,176,106,.15);transition:transform .4s}
+.duo img+.dh+img{margin-left:-14px}
+.duo:hover img:first-child{transform:translateX(-6px) rotate(-4deg)}.duo:hover img:last-child{transform:translateX(6px) rotate(4deg)}
+.duo .dh{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);z-index:2;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--wine);color:#fff;font-size:13px;border:2px solid var(--gold2);animation:beat 1.6s ease-in-out infinite}
+.duo.big img{width:84px;height:84px}.duo.big{margin:-4px 0 12px}
+@keyframes duoIn{from{opacity:0;transform:translateY(12px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes beat{0%,100%{transform:translateX(-50%) scale(1)}15%{transform:translateX(-50%) scale(1.2)}30%{transform:translateX(-50%) scale(1)}}
+@media(max-width:760px){.duo img{width:54px;height:54px}.duo.big img{width:76px;height:76px}}
+/* качени снимки */
+.upbar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:20px}
+.upbar .note{margin:0}
+.upbtn{cursor:pointer}.upbtn.busy{opacity:.6;pointer-events:none}
+.ugrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(46%,220px),1fr));gap:10px}
+.ugrid figure{position:relative;margin:0;aspect-ratio:1;border-radius:16px;overflow:hidden;border:1px solid var(--line);cursor:zoom-in;animation:duoIn .6s both}
+.ugrid img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.ugrid figure:hover img{transform:scale(1.06)}
+.ugrid .ud{position:absolute;top:8px;right:8px;border:0;border-radius:999px;background:rgba(14,10,12,.7);backdrop-filter:blur(6px);color:#fff;font:inherit;font-size:.75rem;padding:6px 10px;cursor:pointer;opacity:.85}
+.ugrid .ud.sure{background:var(--wine)}
+.ugrid .empty{grid-column:1/-1;text-align:center;padding:40px 16px;border:1px dashed var(--line);border-radius:18px;opacity:.75}
+.ugrid .ph0{display:grid;place-items:center;background:rgba(212,176,106,.06);color:var(--gold2);font-size:.85rem}

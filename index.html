@@ -19,7 +19,7 @@
 <!-- покана -->
 <div id="intro" aria-modal="true" role="dialog" aria-label="Покана">
  <div class="env">
-  <div class="seal">В</div>
+  <div class="duo big" aria-hidden="true"><img src="img/venito.webp" alt=""><span class="dh">♥</span><img src="img/vlado.webp" alt=""></div>
   <p class="script">Венито,</p>
   <p class="inv">имам една коледна покана за теб…</p>
   <button class="btn" id="openInv">Отвори ♥</button>
@@ -34,6 +34,7 @@
  <canvas id="snow" aria-hidden="true"></canvas>
  <button class="snowbtn" id="snowbtn" aria-pressed="true">❄ Сняг</button>
  <div class="hin">
+  <div class="duo" aria-hidden="true"><img src="img/venito.webp" alt=""><span class="dh">♥</span><img src="img/vlado.webp" alt=""></div>
   <div class="kick">Будапеща · 25 – 27 декември 2026</div>
   <h1><span class="script">Коледа</span> с Венито <span class="heart">♥</span></h1>
   <p class="sub">Хотели, програма, ресторанти, круиз по Дунава и всичко друго за трите дни в Будапеща, на едно място.</p>
@@ -46,7 +47,7 @@
 
 <nav class="topnav" aria-label="Раздели"><div class="navin">
  <a href="#putuvane">Пътуването</a><a href="#igra">Бърз избор</a><a href="#hoteli">Хотелите</a><a href="#sravni">Сравни</a><a href="#programa">Програма</a><a href="#vizii">Визии</a><a href="#kruiz">Круиз</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти</a><a href="#vkusno">Кухня</a><a href="#karta">Карта</a><a href="#transport">Транспорт</a><a href="#advent">Адвент</a><a href="#budjet">Варианти</a><a href="#instrumenti">Инструменти</a><a href="#klipove">Клипове</a><a href="#galeria">Галерия</a><a href="#izbor">Избраното</a>
-</div></nav>
+<a href="#snimki">Нашите снимки</a></div></nav>
 
 <main>
 <!-- ПЪТУВАНЕТО -->
@@ -202,6 +203,12 @@
  </div>
 </section>
 </main>
+
+<section class="sec" id="snimki">
+ <div class="sh"><span class="kk">спомени</span><h2>Нашите снимки</h2><p class="lead">Качвайте снимки от пътуването направо от телефона. Виждат се тук и при двамата.</p></div>
+ <div class="upbar"><label class="btn big upbtn"><input type="file" id="upIn" accept="image/*" multiple hidden>＋ Качи снимки</label><p class="note" id="upNote"></p></div>
+ <div class="ugrid" id="ugal"></div>
+</section>
 
 <footer class="foot"><p class="script">Коледа 2026</p><p>Будапеща · 25 – 27 декември 2026</p><button class="tiny" id="credBtn">Снимки: Wikimedia Commons</button></footer>
 
