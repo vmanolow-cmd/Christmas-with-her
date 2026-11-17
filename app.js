@@ -114,23 +114,6 @@ function days(){$('#daytabs').innerHTML=D.map((d,i)=>`<button class="daytab ${i=
 days();
 
 
-/* ---------- рожден ден ---------- */
-const BD=[['Торта в стаята','dobos_x0','Хотелите могат да сложат торта и пенливо вино в стаята. Corinthia вече го предложи сам, а при останалите е достатъчно едно изречение в имейла или на рецепцията.','Пишете на хотела или кажете на рецепцията при настаняване.'],
-['Свещичка на десерта','nycafe_2','На коледната вечеря помолете сервитьора да донесе десерта със свещичка. Кажете му „születésnap“, което значи рожден ден.','Шепнешком на сервитьора, докато другият не гледа.'],
-['Унгарско пенливо','tokaji_x0','Унгария има отлични пенливи вина, например Törley. За финал на вечерта има и сладко Токай Асу.','В хотелския бар, в стаята или на покривен бар.'],
-['Коктейл на покрива','matild_0','След вечерята: The Duchess в Matild, BiBo в Dorothea или High Note с изглед към Базиликата.','Проверете дали работят на 25-и вечерта.'],
-['Подарък от базара','christmas_5','Коледните базари са пълни с ръчна изработка: керамика, кожа, бижута, дърворезба. Нещо малко и унгарско, което да остане за спомен.','Базарът пред Базиликата е отворен на 25-и до 20 ч.'],
-['Частна лодка','parliament_3','Вместо общ круиз: малка частна лодка по Дунава за час, само за двама. Консиержът на Four Seasons урежда такива разходки.','Попитайте хотела 1–2 седмици по-рано.'],
-['Масаж за двама','fourseasonslobby_x0','St. Regis е от малкото места в Будапеща с масаж за двама. В Four Seasons и Matild също има спа процедури.','Резервирайте предварително, на празниците местата са малко.'],
-['Сутрешна снимка','bastion_0','На 26-и сутрин Рибарският бастион е почти празен и светлината е мека. Идеално за общата снимка от рождения ден.','Около 9:00, преди групите.'],
-['Картичка','castle_0','Няколко реда на хартия, оставени на възглавницата или подадени на вечерята. Нищо не струва и се помни най-дълго.','Напишете я още в София.']];
-let bd=ld('bp-bd',{});
-$('#bd').innerHTML=BD.map((b,i)=>`<article class="card ac bdc" data-i="${i}"><div class="ph"><img src="img/${b[1]}.webp" alt="${b[0]}" loading="lazy"><button class="heartbtn chkbtn" data-i="${i}" aria-pressed="${!!bd[i]}" aria-label="Ще го направя"></button></div><div class="bd"><h3>${b[0]}</h3><p>${b[2]}</p><p class="note" style="margin-top:10px">${b[3]}</p></div></article>`).join('');
-$$('#bd .chkbtn').forEach(b=>b.onclick=()=>{const i=b.dataset.i;bd[i]?delete bd[i]:(bd[i]=1);sv('bp-bd',bd);b.setAttribute('aria-pressed',!!bd[i]);if(bd[i]){burst(b);toast('Отбелязано, остава тайна')}bdc()});
-function bdc(){const n=Object.keys(bd).length,d=Math.max(0,Math.ceil((new Date(2026,11,25)-new Date())/864e5));$('#bdcount').innerHTML=`<div><b>${d}</b><span>дни до 25 декември</span></div><div><b>${n} / ${BD.length}</b><span>идеи отбелязани</span></div><div><b>„Boldog születésnapot!“</b><span>честит рожден ден на унгарски · „болдог сюлетешнапот“</span></div>`}
-bdc();
-
-
 /* ---------- визии ---------- */
 const OF=[['Бордо и злато','Коледната вечеря · 25.12','x',[['#5b1a2b','бордо'],['#d4b06a','злато'],['#151012','черно']],'Тя: рокля от бордо кадифе и златни бижута. Той: тъмен костюм с вратовръзка или кърпичка в бордо. Класически коледен тон, който прилича на интериора в дворците.','couple matching burgundy velvet christmas dinner outfit'],
 ['Черно и шампанско','Круизът · 26.12','x',[['#0e0c0d','черно'],['#e8d6b0','шампанско'],['#8a8a8a','сребро']],'Тя: черна рокля с акцент в цвят шампанско. Той: черно поло и сако. Елегантно и топло на кораба, а на снимка до прозореца с осветения Парламент изглежда страхотно.','couple matching black champagne evening outfit'],
@@ -284,7 +267,7 @@ $$('.door').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(b.classList.contai
  b.classList.add('open');advOpen[i]=1;sv('bp-adv',advOpen);$('#advfact').innerHTML=`<b>${i+1} декември · ${ADV[i][0]}</b>${ADV[i][1]}`});
 
 /* ---------- унгарски ---------- */
-const PH=[['Здрасти / Чао','Szia!','сия'],['Добър вечер','Jó estét!','йо ещет'],['Благодаря','Köszönöm!','кьосьоньом'],['Моля','Kérem','керем'],['Наздраве!','Egészségedre!','егесшегедре'],['Весела Коледа!','Boldog karácsonyt!','болдог карачоньт'],['Честит рожден ден!','Boldog születésnapot!','болдог сюлетешнапот'],['Обичам те','Szeretlek','серетлек'],['Едно греяно вино, моля','Egy forralt bort kérek','ед форалт борт керек'],['Сметката, моля','A számlát kérem','а самлат керем'],['Колко струва?','Mennyibe kerül?','меньибе керюл'],['Вкусно!','Finom!','фином'],['Добър апетит!','Jó étvágyat!','йо етвадят'],['Извинете','Bocsánat','бочанат'],['Да / Не','Igen / Nem','иген / нем'],['Красиво!','Gyönyörű!','дьоньорю']];
+const PH=[['Здрасти / Чао','Szia!','сия'],['Добър вечер','Jó estét!','йо ещет'],['Благодаря','Köszönöm!','кьосьоньом'],['Моля','Kérem','керем'],['Наздраве!','Egészségedre!','егесшегедре'],['Весела Коледа!','Boldog karácsonyt!','болдог карачоньт'],['Обичам те','Szeretlek','серетлек'],['Едно греяно вино, моля','Egy forralt bort kérek','ед форалт борт керек'],['Сметката, моля','A számlát kérem','а самлат керем'],['Колко струва?','Mennyibe kerül?','меньибе керюл'],['Вкусно!','Finom!','фином'],['Добър апетит!','Jó étvágyat!','йо етвадят'],['Извинете','Bocsánat','бочанат'],['Да / Не','Igen / Nem','иген / нем'],['Красиво!','Gyönyörű!','дьоньорю']];
 $('#phr').innerHTML=PH.map(p=>`<button class="pc" aria-label="${p[0]}"><span class="pi"><span class="pf"><b>${p[0]}</b><span>натисни за унгарски</span></span><span class="pb"><b>${p[1]}</b><span>чете се: „${p[2]}“</span><i>${p[0]}</i></span></span></button>`).join('');
 $$('.pc').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
 
@@ -366,5 +349,5 @@ spot();
 if(FINE&&!RM)$$('.tilt').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-4px)`});c.addEventListener('pointerleave',()=>c.style.transform='')});
 if(!RM&&'IntersectionObserver'in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'});
  const add=(sel,stag)=>$$(sel).forEach((el,i)=>{el.classList.add('rv');if(stag)el.style.setProperty('--d',(i%3)*.08+'s');io.observe(el)});
- add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('#bd .ac',1);add('#air .ac',1);add('#outfits .ac',1);add('#city .ac',1);add('.bdcount');add('.pc',1);add('#gal button',1);add('.vid',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
+ add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('#air .ac',1);add('#outfits .ac',1);add('#city .ac',1);add('.pc',1);add('#gal button',1);add('.vid',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
 })();
