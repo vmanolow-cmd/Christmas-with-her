@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Коледа в Будапеща</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: празнично, елегантно, като покана за коледен бал в дворец
+   IDEA: луксозна туристическа брошура + бележник за избор на хотел
+   PICTURE: истински снимки на дворците и нощната Будапеща, на цял екран
+   COLOUR and TYPE: бордо на токайско вино, нощно синьо на Дунава, злато; Cormorant Garamond + Inter
+   LAYOUT: фото-хиро, обратно броене, хотели с галерии и цени по стаи, калкулатор, програма по дни */
+:root{color-scheme:light dark;
+--bg:light-dark(#fbf8f4,#120a0e);--ink:light-dark(#23161b,#f3e9e4);--mute:light-dark(#6b5960,#bba9b0);
+--wine:#5b1a2b;--wine2:light-dark(#7a2a3e,#e08ea3);--dan:light-dark(#22506e,#8cc0e0);--gold:#c9a24a;--gold2:light-dark(#9a7520,#e4c27a);
+--card:light-dark(#fff,#1c1116);--line:light-dark(#eadfd8,#38262e);--soft:light-dark(#f4ece6,#22151b);--ok:light-dark(#2f6b45,#86d0a0)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;line-height:1.05;text-wrap:balance;margin:0}
+h2{font-size:clamp(34px,4.6vw,52px);margin-bottom:12px}h3{font-size:clamp(28px,3vw,36px)}
+p{margin:0 0 12px;max-width:70ch}a{color:var(--wine2)}
+img{display:block;max-width:100%}
+.band{padding:clamp(32px,5vw,72px) max(5vw,16px)}.wrap{max-width:1240px;margin:0 auto}
+.lead{font-size:17px;color:var(--mute);max-width:68ch}
+html{scroll-padding-top:72px;scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+/* hero */
+.hero{position:relative;min-height:min(92vh,820px);display:flex;align-items:flex-end;color:#fff;background:#140a10}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.9}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,8,14,.15) 0%,rgba(20,8,14,.25) 45%,rgba(40,10,22,.92) 100%)}
+.hero .in{position:relative;z-index:1;width:100%;max-width:1240px;margin:0 auto;padding:0 max(5vw,16px) clamp(28px,5vw,60px)}
+.kick{color:#f0d79a;font-weight:600;font-size:15px;margin-bottom:10px}
+.hero h1{font-size:clamp(52px,8vw,108px);letter-spacing:-.01em}
+.hero h1 i{color:#f0d79a;font-weight:500}
+.hero p{font-size:clamp(16px,1.6vw,19px);color:#f1e2da;max-width:60ch;margin-top:14px}
+.count{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.count div{background:rgba(255,255,255,.1);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:10px 16px;min-width:88px}
+.count b{display:block;font-family:"Cormorant Garamond",serif;font-size:38px;line-height:1;color:#fff}
+.count span{font-size:13px;color:#ecd9d0}
+.cap{position:absolute;right:12px;bottom:8px;z-index:2;font-size:11px;color:rgba(255,255,255,.7)}
+nav.scroll{display:flex;gap:4px;overflow-x:auto;padding:10px max(5vw,16px);background:var(--card);border-bottom:1px solid var(--line);z-index:20;position:relative}
+@media(min-width:900px){nav.scroll{position:sticky;top:0}}
+nav a{flex:none;padding:0 14px;border-radius:999px;text-decoration:none;color:var(--ink);font-size:14px;font-weight:500;min-height:44px;display:flex;align-items:center}
+nav a:hover,nav a:focus-visible{background:var(--soft);outline:2px solid var(--gold);outline-offset:-2px}
+/* trip strip */
+.trip{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;margin-top:18px}
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.tcard small{color:var(--gold2);font-weight:600;font-size:13px}
+.tcard strong{display:block;font-family:"Cormorant Garamond",serif;font-size:28px;line-height:1.1;margin:4px 0}
+.tcard .t{font-size:15px;color:var(--mute)}
+.note{border-left:3px solid var(--gold);background:var(--soft);padding:14px 18px;border-radius:0 12px 12px 0;margin:18px 0;max-width:86ch;font-size:15px}
+/* hotel */
+.hotel{padding:clamp(36px,5vw,64px) 0;border-top:1px solid var(--line)}
+.hhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-end;margin-bottom:16px}
+.num{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:20px;color:var(--gold2)}
+.meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--mute);margin-top:6px}
+.fav{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--wine2);background:transparent;color:var(--wine2);font:600 14px Inter,sans-serif;cursor:pointer}
+.fav[aria-pressed=true]{background:var(--wine);color:#fff;border-color:var(--wine)}
+.fav:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.gal{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:200px 200px;gap:8px;border-radius:16px;overflow:hidden}
+.gal button{padding:0;border:0;cursor:zoom-in;background:#222;position:relative;overflow:hidden}
+.gal img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.gal button:hover img{transform:scale(1.04)}
+.gal button:first-child{grid-row:span 2}
+.gal.n3{grid-template-columns:2fr 1fr}.gal.n4 button:nth-child(2){grid-column:span 2}
+.gal .more{position:absolute;inset:auto 10px 10px auto;background:rgba(0,0,0,.6);color:#fff;font-size:13px;padding:5px 10px;border-radius:999px}
+@media(max-width:700px){.gal,.gal.n3,.gal.n4{grid-template-columns:1fr 1fr;grid-template-rows:230px 120px}.gal button:first-child{grid-column:span 2;grid-row:auto}.gal.n4 button:nth-child(2){grid-column:auto}.gal button:nth-child(n+4){display:none}}
+.hgrid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(18px,3vw,40px);margin-top:22px}
+@media(max-width:900px){.hgrid{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{font-size:13px;padding:6px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line);white-space:nowrap}
+.chip b{color:var(--wine2)}
+.side{display:grid;gap:12px;align-content:start}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:15px}
+.box h4{margin:0 0 6px;font:600 14px Inter,sans-serif;color:var(--dan)}
+.box ul{margin:0;padding-left:18px}.box li{margin:3px 0}
+.rev{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:600px){.rev{grid-template-columns:1fr}}
+.rev div{font-size:15px;padding:12px 14px;border-radius:12px;background:var(--soft)}
+.rev b{display:block;font-size:13px;margin-bottom:4px}.rev .p b{color:var(--ok)}.rev .m b{color:var(--wine2)}
+/* rooms */
+.rooms{margin-top:22px}
+.rooms h4{font:600 15px Inter,sans-serif;margin:0 0 8px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card);border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--wine);color:#fff;font-weight:600}
+td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px;white-space:nowrap;vertical-align:1px}
+.tag.v{background:light-dark(#dff1e5,#1d3a28);color:var(--ok)}.tag.e{background:light-dark(#fbefd5,#3a2e14);color:var(--gold2)}.tag.f{background:light-dark(#e3eef6,#162c3b);color:var(--dan)}.tag.q{background:var(--soft);color:var(--mute)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--mute);margin:10px 0}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;border:1px solid var(--wine2);color:var(--wine2)}
+.btn.pri{background:var(--wine);color:#fff;border-color:var(--wine)}
+.din{margin-top:12px;font-size:15px;padding:12px 14px;border-radius:12px;border:1px dashed var(--gold);background:light-dark(#fffaf0,#21180c)}
+.din b{color:var(--gold2)}
+/* compare */
+.scroll{overflow-x:auto}
+.cmp td:first-child{font-weight:600}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--soft);font-size:12px;white-space:nowrap}
+/* calc */
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,3vw,28px)}
+@media(max-width:800px){.calc{grid-template-columns:1fr}}
+.calc label{display:block;font-size:14px;font-weight:600;margin:12px 0 6px}
+select{width:100%;min-height:46px;font:16px Inter,sans-serif;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+input[type=range]{width:100%;accent-color:#7a2a3e;min-height:30px}
+.total{font-family:"Cormorant Garamond",serif;font-size:clamp(52px,7vw,80px);line-height:1;color:var(--wine2)}
+.rows div{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.rows div span:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}
+.bar{height:12px;border-radius:999px;background:var(--soft);overflow:hidden;display:flex;margin:16px 0 6px}
+.bar i{display:block;height:100%}
+/* cruise */
+.cr{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:16px}
+.crc{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.crc .ph{height:170px;background:#0d1b26 center/cover}
+.crc .b{padding:16px 18px}.crc h3{font-size:28px}
+.crc dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px;margin:10px 0 0}.crc dt{color:var(--mute)}.crc dd{margin:0}
+/* acts */
+.dark{background:light-dark(#18303f,#0b1720);color:#eef3f7}.dark .lead,.dark p{color:#c9d6df}.dark h2,.dark h3{color:#fff}
+.acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:18px;margin-top:22px}
+.act{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;overflow:hidden}
+.act .zoom{display:block;width:100%;padding:0;border:0;cursor:zoom-in;background:#000}
+.act img{width:100%;height:210px;object-fit:cover}
+.act .b{padding:16px 18px}.act h3{font-size:27px;margin:2px 0 6px}
+.act .tg{font-size:13px;color:#f0cf86;font-weight:600}.act p{font-size:15px;margin:0}.act a{color:#f0cf86}
+.xmas{display:inline-block;margin-top:8px;font-size:13px;padding:4px 10px;border-radius:999px;background:rgba(240,207,134,.16);color:#f6dfa6}
+.fbar{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 6px}
+.fch{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.28);background:transparent;color:#eef3f7;font:600 14px Inter,sans-serif;cursor:pointer}
+.fch.on{background:#f0cf86;color:#1b2a35;border-color:#f0cf86}
+.plan{margin:12px 0 4px;padding:14px 16px;border-radius:14px;background:rgba(240,207,134,.1);border:1px solid rgba(240,207,134,.3);font-size:15px;color:#f3e7c9}
+.plan b{color:#fff}.plan ol{margin:8px 0 0;padding-left:20px;columns:2 260px}.plan li{margin:2px 0}
+.plan button{min-height:36px;margin-top:8px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;cursor:pointer;font:500 13px Inter,sans-serif}
+.act{display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s}
+.act:hover{transform:translateY(-3px);box-shadow:0 14px 30px -14px rgba(0,0,0,.6)}
+.act.hide{display:none}
+.act .ph{position:relative}.act .ph .add{position:absolute;top:10px;right:10px;width:auto;min-height:40px;padding:0 14px;border-radius:999px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);color:#fff;border:1px solid rgba(255,255,255,.35);font:600 13px Inter,sans-serif;cursor:pointer}
+.act .ph .add[aria-pressed=true]{background:#f0cf86;color:#1b2a35;border-color:#f0cf86}
+.act .b{flex:1;display:flex;flex-direction:column}
+.flags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.fl{font-size:12px;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.fl.y{background:rgba(134,208,160,.18);color:#a9e4bd}.fl.c{background:rgba(240,207,134,.16);color:#f6dfa6}.fl.n{background:rgba(224,142,163,.18);color:#f2b3c3}
+.more{margin-top:12px;min-height:40px;align-self:flex-start;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font:500 13px Inter,sans-serif;cursor:pointer}
+.det{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed rgba(255,255,255,.2);font-size:14px}
+.act.open .det{display:block}
+.det dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0}.det dt{color:#9fb3c1}.det dd{margin:0;color:#e6eef3}
+.empty{grid-column:1/-1;padding:24px;text-align:center;color:#c9d6df;border:1px dashed rgba(255,255,255,.25);border-radius:14px}
+/* days */
+.days{display:grid;gap:18px}
+.day{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+@media(max-width:820px){.day{grid-template-columns:1fr}}
+.day .ph{position:relative;min-height:220px}.day .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.day .ph div{position:absolute;inset:auto 0 0 0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff}
+.day .ph h3{font-size:34px;color:#fff}.day .ph span{font-size:14px;color:#f1e2da}
+.day .sl{padding:10px 20px}
+.slot{display:grid;grid-template-columns:70px minmax(0,1fr);gap:12px;padding:11px 0;border-bottom:1px dashed var(--line)}.slot:last-child{border:0}
+.slot time{font-family:"Cormorant Garamond",serif;font-size:24px;font-weight:700;color:var(--dan);white-space:nowrap;line-height:1.1}
+.slot b{display:block}.slot span{font-size:15px;color:var(--mute)}
+/* food */
+.food{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px}
+.food div{padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:15px}
+.food b{display:block;font-family:"Cormorant Garamond",serif;font-size:23px}
+.tips{columns:2 320px;column-gap:30px}.tips p{break-inside:avoid;font-size:15px}
+.src{font-size:13px;color:var(--mute);columns:2 320px}.src a,.src span{display:block;margin:3px 0;word-break:break-word}
+footer{background:var(--wine);color:#ecd9d0;font-size:14px;text-align:center}
+/* lightbox */
+#lb{position:fixed;inset:0;background:rgba(10,4,8,.94);z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;padding:16px}
+#lb.on{display:flex}#lb img{max-height:80vh;max-width:min(96vw,1280px);border-radius:8px;object-fit:contain}
+#lb p{color:#ddd;font-size:13px;text-align:center;margin:10px 0 0;max-width:90ch}
+#lb button{position:absolute;min-width:48px;min-height:48px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.4);color:#fff;font-size:22px;cursor:pointer}
+#lbx{top:14px;right:14px}#lbp{left:12px;top:50%}#lbn{right:12px;top:50%}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:8px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 12px;padding-inline-start:8.5em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;font-weight:600;color:var(--mute)}.stack td:empty{display:none}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+
+<header class="hero">
+ <img src="img/castle_0.webp" alt="Верижният мост и Будайската крепост нощем" fetchpriority="high">
+ <div class="in">
+  <div class="kick">25 – 27 декември 2026 · Коледа и рожден ден</div>
+  <h1>Коледа в <i>Будапеща</i></h1>
+  <p>Три дни в двореца: седем петзвездни хотела с впечатляваща архитектура, вечеря по Дунава с гледка към осветения Парламент, коледни базари и термални бани под звездите.</p>
+  <div class="count" id="count" aria-live="polite"></div>
+ </div>
+ <span class="cap">Снимка: Paul Mannix, CC BY-SA 2.0</span>
+</header>
+
+<nav class="scroll" aria-label="Раздели">
+ <a href="#putuvane">Пътуването</a><a href="#hoteli">Хотелите</a><a href="#sravnenie">Сравнение</a><a href="#budjet">Бюджет</a><a href="#kruiz">Круиз 26.12</a><a href="#programa">Програма</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти</a><a href="#praktichno">Практично</a><a href="#iztochnici">Източници</a>
+</nav>
+
+<section class="band" id="putuvane"><div class="wrap">
+ <h2>Пътуването накратко</h2>
+ <p class="lead">Полетите са купени, датите са ясни. Остава да се избере хотелът, да се резервира вечерята на 25-и и круизът на 26-и.</p>
+ <div class="trip">
+  <div class="tcard"><small>Петък, 25 декември · полет</small><strong>София 14:35 → Будапеща 15:00</strong><div class="t">Wizz Air W6 4349 · директен · в хотела около 16:30–17:00</div></div>
+  <div class="tcard"><small>Неделя, 27 декември · полет</small><strong>Будапеща 13:25 → София 15:45</strong><div class="t">Wizz Air W6 4350 · тръгване от хотела около 11:00</div></div>
+  <div class="tcard"><small>Багаж</small><strong>2 малки чанти + чекиран</strong><div class="t">По една малка чанта 10 кг (40×30×20) и чекиран багаж 20 кг и 10 кг</div></div>
+ </div>
+ <div class="note"><b>Какво искаме от хотела:</b> впечатляваща архитектура, красива стая и хубав ресторант за коледната вечеря на 25-и. Спа центърът е бонус. <b>На 26-и:</b> вечеря на круиз по Дунава с гарантирана маса до прозореца.</div>
+ <div class="note"><b>Празнични дни:</b> 25 и 26 декември са официални празници в Унгария. Много магазини са затворени, а атракциите работят с по-кратко време. Коледният базар пред Базиликата работи на 25 и 26 декември от 11 до 20 ч. Банята Сечени на 26-и е отворена от 10 до 20 ч. <b>Банята Гелерт е затворена за ремонт до 2028 г.</b></div>
+</div></section>
+
+<section class="band" id="hoteli" style="padding-top:0"><div class="wrap">
+ <h2>Седемте хотела</h2>
+ <p class="lead">Всички са петзвездни дворци в центъра на Пеща. Натиснете снимка, за да я видите на цял екран. Със сърцето отбелязвате любимите си: изборът се пази в този браузър и се появява в сравнението и в калкулатора.</p>
+ <div class="legend"><span><span class="tag v">за 25–27.12</span> истинска цена от твоите снимки за датите ви</span><span><span class="tag e">оценка</span> изчислена спрямо истинска цена на същия хотел</span><span><span class="tag f">публикувана „от“</span> най-ниска публикувана цена, не за вашите дати</span><span><span class="tag q">запитване</span> цена само при запитване</span></div>
+ <div id="hotelList"></div>
+</div></section>
+
+<section class="band" id="sravnenie" style="background:var(--soft)"><div class="wrap">
+ <h2>Един до друг</h2>
+ <p class="lead">Сравнение по това, което е важно за вас: архитектура, стая, ресторант за 25-и и цена за двете нощувки.</p>
+ <div class="scroll"><table class="stack cmp"><thead><tr><th>Хотел</th><th>Архитектура</th><th>Стаите</th><th>Ресторант за 25.12</th><th>Гледка</th><th>Спа</th><th>2 нощувки (най-евтино)</th></tr></thead><tbody id="cmp"></tbody></table></div>
+ <div class="note" style="background:var(--card)"><b>За сравнение: Corinthia.</b> Вече имате оферта: Superior стая за <b>504 €</b> или Deluxe за <b>568 €</b> за двете нощувки. Включени са закуска, достъп до Royal Spa, 50 € кредит за храна и напитки, торта и пенливо вино за рождения ден. Коледната вечеря на 25-и е отделно: 45 000 HUF на човек (~230 € за двама), с неограничени напитки. Стаите обаче не ви харесаха, затова Corinthia не е в списъка.</div>
+</div></section>
+
+<section class="band" id="budjet"><div class="wrap">
+ <h2>Калкулатор на бюджета</h2>
+ <p class="lead">Изберете хотел и стая, вечеря и круиз. Сумата е за двама, заедно с вече платените самолетни билети. Стаите с цена „по запитване“ не се показват.</p>
+ <div class="calc">
+  <div>
+   <label for="cRoom">Хотел и стая (2 нощувки)</label><select id="cRoom"></select>
+   <label for="cDin">Вечеря на 25 декември</label>
+   <select id="cDin"><option value="230">Коледна вечеря в хотела (~230 €)</option><option value="200">KOLLÁZS, празнично меню (150–250 €)</option><option value="180">Spago или по-скромна вечеря (140–220 €)</option><option value="0">Вече включена / без вечеря</option></select>
+   <label for="cCr">Круиз на 26 декември</label>
+   <select id="cCr"><option value="178">Silverline Táltos + маса до прозореца (~178 €)</option><option value="198">River Diva, бюфет и напитки (~198 €)</option><option value="220">Legenda, вечеря на свещи (~220 €)</option><option value="0">Без круиз</option></select>
+   <label for="cEx">Други разходи: трансфери, кафенета, бани, коктейли · <span id="exV">300</span> €</label>
+   <input type="range" id="cEx" min="100" max="800" step="25" value="300">
+  </div>
+  <div>
+   <div style="font-size:14px;color:var(--mute)">Общо за двама</div>
+   <div class="total" id="tot">—</div>
+   <div class="bar" id="bar"></div>
+   <div class="rows" id="rows"></div>
+   <p style="font-size:13px;color:var(--mute);margin-top:10px">Хотелите с оценка имат истинската цена само ориентировъчно. Окончателната е при резервация, с данъците (туристическа такса ~4%) и закуската.</p>
+  </div>
+ </div>
+</div></section>
+
+<section class="band" id="kruiz" style="background:var(--soft)"><div class="wrap">
+ <h2>Вечеря на Дунава · 26 декември</h2>
+ <p class="lead">Най-важното е маса до панорамен прозорец, за да се вижда осветеният Парламент. Писмата до трите компании искат гарантирана маса, снимки на салона и план на масите. Не резервираме, преди някой да потвърди писмено.</p>
+ <div class="cr" id="cruise"></div>
+ <p style="font-size:13px;color:var(--mute);margin-top:12px">Оценките са от GetYourGuide и Google към ноември 2026. Цените са публикуваните тарифи на операторите. Наличността за 26.12 предстои да се потвърди.</p>
+</div></section>
+
+<section class="band" id="programa"><div class="wrap">
+ <h2>Трите дни, час по час</h2>
+ <p class="lead">Програма по реалните полети. Пасва на всеки от хотелите, защото всички са в центъра.</p>
+ <div class="days" id="days"></div>
+</div></section>
+
+<section class="band dark" id="aktivnosti"><div class="wrap">
+ <h2>Какво да правим</h2>
+ <p class="lead">Филтрирайте по ден и вид, натиснете карта за подробности и добавете любимите в „Моят план“. Планът се пази в този браузър.</p>
+ <div class="fbar" role="group" aria-label="Филтри">
+  <button class="fch on" data-f="all">Всички</button><button class="fch" data-f="d25">Отворено на 25.12</button><button class="fch" data-f="d26">Отворено на 26.12</button><button class="fch" data-f="free">Безплатно</button><button class="fch" data-f="night">Вечер</button><button class="fch" data-f="warm">На топло</button><button class="fch" data-f="plan">♥ Моят план</button>
+ </div>
+ <div class="plan" id="plan" aria-live="polite"></div>
+ <div class="acts" id="acts"></div>
+</div></section>
+
+<section class="band" id="hrana"><div class="wrap">
+ <h2>Ресторанти, кафенета, барове</h2>
+ <p class="lead">Будапеща има седем ресторанта със звезди Michelin през 2026 г. На Коледа много от тях са затворени или предлагат само празнично меню, затова резервирайте рано.</p>
+ <h3 style="margin:18px 0 10px">Звезди Michelin</h3><div class="food" id="mich"></div>
+ <h3 style="margin:26px 0 10px">Исторически кафенета и барове с гледка</h3><div class="food" id="bars"></div>
+</div></section>
+
+<section class="band" id="praktichno" style="background:var(--soft)"><div class="wrap">
+ <h2>Практично</h2>
+ <div class="tips">
+  <p><b>Валута.</b> Плаща се в унгарски форинт (HUF), около 395 HUF за 1 € през 2026 г. С карта се плаща почти навсякъде. Когато терминалът предложи сметка в евро, изберете форинти, защото курсът е по-добър.</p>
+  <p><b>От летището.</b> До центъра се стига за около 35 минути с кола. Хотелите предлагат трансфер, а на 25-и вечер това е най-лесното. Таксита има пред терминала, като Főtaxi е официалната компания.</p>
+  <p><b>Рождения ден.</b> Споменете го при резервацията. Corinthia вече предложи торта и пенливо вино, а и останалите хотели обикновено правят подобен жест.</p>
+  <p><b>Отказ от резервация.</b> Тарифите с предплащане (Advance Purchase) обикновено не се възстановяват. Four Seasons предлага безплатен отказ до 18 декември.</p>
+  <p><b>Бани.</b> Вземете бански, джапанки и шапка за басейна, ако ще плувате. Билетите за Сечени е по-добре да са онлайн. Вечер, на пара и под звездите, е най-красиво.</p>
+  <p><b>Облекло.</b> Около 0–5 °C, с влажен вятър откъм Дунава. За ресторантите и коледната вечеря е подходящо елегантно облекло.</p>
+  <p><b>Бакшиш.</b> 10–15%. Проверете дали в сметката вече е включена такса обслужване („szervizdíj“).</p>
+  <p><b>Транспорт.</b> Центърът се обикаля пеша. Трамвай 2 по брега на Дунава е най-евтиният „круиз“. Метро M1 е най-старото в континентална Европа.</p>
+ </div>
+</div></section>
+
+<section class="band" id="iztochnici"><div class="wrap">
+ <h2 style="font-size:36px">Източници и снимки</h2>
+ <p style="font-size:14px;color:var(--mute)">Цените за 25–27.12 са от екранните снимки от сайтовете на хотелите, събрани в разговора. Останалите цени, типовете стаи и фактите са от сайтовете по-долу. Всички снимки са от Wikimedia Commons, със свободен лиценз. Хотелите пазят своите снимки на стаите в официалните си галерии, затова там има бутон „Снимки на стаите“.</p>
+ <div class="src">
+  <a href="https://www.anantara.com/en/new-york-palace-budapest/rooms">Anantara – стаи</a>
+  <a href="https://www.hyatt.com/unbound-collection/en-US/budub-parisi-udvar-hotel/faqs">Hyatt – Párisi Udvar, типове стаи</a>
+  <a href="https://www.budapestbylocals.com/four-seasons-gresham-palace/">Budapest by Locals – стаи на Four Seasons</a>
+  <a href="https://www.privateupgrades.com/hungary/four-seasons-budapest-hotel-budapest">PrivateUpgrades – цени по стаи Four Seasons</a>
+  <a href="https://www.privateupgrades.com/hungary/the-st-regis-budapest-hotel-budapest">PrivateUpgrades – цени по стаи St. Regis</a>
+  <a href="https://privateupgrades.com/hungary/parisi-udvar-hotel-budapest">PrivateUpgrades – цени Párisi Udvar</a>
+  <a href="https://www.travelocity.com/Budapest-Hotels-The-St-Regis-Budapest.h125658421.Hotel-Information">Travelocity – стаи St. Regis</a>
+  <a href="https://marriott.com/en-us/hotels/budwh-w-budapest/rooms/suites">Marriott – апартаменти на W</a>
+  <a href="https://www.lastminute.co.nz/Budapest-Hotels-W-Budapest.h94774058.Hotel-Information">Lastminute – стаи на W</a>
+  <a href="https://conferencehotelgroup.com/img/hotels/files/9060/3D Dorothea Hotel, Budapest, Autograph Collection.pdf">Dorothea – фактически лист</a>
+  <a href="https://www.marriott.com/en-us/hotels/budkc-dorothea-hotel-budapest-autograph-collection/rooms/suites">Marriott – апартаменти Dorothea</a>
+  <a href="https://www.sellingtravel.co.uk/the-dorothea-hungary/">Selling Travel – Dorothea, цена Heritage</a>
+  <a href="https://takeoff.to/hotel/matild-palace-a-luxury-collection-hotel">Takeoff – стаи на Matild</a>
+  <a href="https://www.marriott.com/en-us/hotels/budlc-matild-palace-a-luxury-collection-hotel-budapest/rooms/signature-suites">Marriott – апартаменти Matild</a>
+  <a href="https://hotelsforkings.pages.dev/city/budapest/matild-palace">Hotels for Kings – цени апартаменти Matild</a>
+  <a href="https://www.roomertravel.com/featured/w-budapest.h1410853">Roomer – W Budapest</a>
+  <a href="https://welovebudapest.com/en/article/2026/04/29/budapest-s-newest-luxury-hotel-we-visited-the-st.-regis-budapest/">We Love Budapest – St. Regis</a>
+  <a href="https://guide.michelin.com/hu/en/hotels-stays/budapest/w-budapest-14320">Michelin Guide – хотели</a>
+  <a href="https://hungarytoday.hu/?p=384522">Hungary Today – ключове Michelin</a>
+  <a href="https://www.tripadvisor.com/602514">Tripadvisor – Anantara</a>
+  <a href="https://www.businessclass.com/hotel/review/Four-Seasons-Hotel-Gresham-Palace-Budapest">BusinessClass – Four Seasons</a>
+  <a href="https://forbestravelguide.com/hotels/budapest-hungary/w-budapest">Forbes Travel Guide – W</a>
+  <a href="https://travellingforbusiness.co.uk/?p=6955">Travelling for Business – Dorothea</a>
+  <a href="https://www.inyourpocket.com/hungary/budapest/events/budapest-christmas-markets">In Your Pocket – коледни базари 2026</a>
+  <a href="https://www.timeout.com/news/one-of-budapests-most-iconic-thermal-baths-is-closing-for-renovations-until-2028-100125">Time Out – Гелерт затворена</a>
+  <a href="https://hungaryunlocked.com/budapest-michelin-restaurants-review-tips/">Hungary Unlocked – Michelin 2026</a>
+  <a href="https://thebettervacation.com/budapest/budapest-dinner-cruise/amp/">The Better Vacation – круизи</a>
+ </div>
+ <h3 style="font-size:26px;margin:26px 0 8px">Автори на снимките</h3>
+ <div class="src" id="credits"></div>
+</div></section>
+
+<footer class="band">Коледа в Будапеща · 25–27 декември 2026 · събрано през ноември 2026</footer>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Снимка на цял екран"><button id="lbx" aria-label="Затвори">✕</button><button id="lbp" aria-label="Предишна">‹</button><img id="lbi" alt=""><p id="lbc"></p><button id="lbn" aria-label="Следваща">›</button></div>
+
+<script>
+{
+const CR={"castle_0": ["Paul Mannix", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:The_Szechenyi_Chain_Bridge_and_Royal_Palace_(Buda_Castle),_Budapest,_Hungary.jpg", 1280, 857], "matild_0": ["Yair-haklai", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Matild_Palace_(Budapest).jpg", 1280, 891], "klotild_4": ["Dguendel", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_the_Klotild_Palace.jpg", 1280, 1065], "matild_1": ["Elekes Andor", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Matild_Palace.jpg", 871, 1280], "nycafe_2": ["Sandy Horvath-Dori from Grand Junction, CO, USA", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Interior_of_New_York_Palace,_Cafe_Budapest_(8344808702).jpg", 1280, 852], "nypalace_4": ["Fred Romero from Paris, France", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_-_New_York-palota_(37595301645).jpg", 1280, 853], "nycafe_0": ["Gzzz", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Clocks_in_New_York_Caf%C3%A9_Budapest_(2).jpg", 1280, 946], "nycafe2_0": ["Globetrotter19", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Tower_of_New_York_Palace._-_9-11_Erzs%C3%A9bet_Boulevard,_Budapest.JPG", 1280, 853], "parisi_4": ["Jorge Franganillo", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_P%C3%A1risi_Udvar_(54204580532).jpg", 1280, 853], "parisi_2": ["Jorge Franganillo", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_P%C3%A1risi_Udvar_(54175977849).jpg", 1280, 855], "parisi_1": ["I would appreciate being notified if you use my work outside", "CC BY 3.0", "https://commons.wikimedia.org/wiki/File:Budape%C5%A1%C5%A5,_Belv%C3%A1ros,_V%C3%A1ci_%C3%BAt,_Parisi_udvar.JPG", 1280, 914], "parisi_5": ["Jorge Franganillo", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_P%C3%A1risi_Udvar_(54175952733).jpg", 1280, 853], "gresham_0": ["Ivanhoe", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Gresham_Palace_Budapest_2009-12.jpg", 1280, 781], "gresham2_2": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Gresham-palota,_19.jpg", 1280, 871], "gresham2_1": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Gresham-palota,_20.jpg", 1280, 871], "gresham_1": ["michael clarke stuff", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Gresham_palota.jpg", 1280, 860], "klotild_3": ["Dguendel", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_the_Klotild_Palaces,_the_Inner_City_Parish_Church_and_the_Elisabeth_bridge.jpg", 943, 1280], "klotild_2": ["Yelkrokoyade", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Klotild_Palaces_Budapest.jpg", 960, 1280], "klotild_5": ["Takkk", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Franciscan_Square_%26_Klotild_Palaces_-_20_February_1963.jpg", 1280, 828], "drechsler_1": ["Salome mi", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Drechsler_Palace.jpg", 1280, 960], "drechsler_3": ["Fred Romero from Paris, France", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_-_Drechsler-palota_(38386823532).jpg", 1280, 853], "drechsler_0": ["Yair-haklai", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Drechsler_Palace-Former_Ballet_Institute,_Budapest.jpg", 1280, 721], "opera_3": ["Stavros Argyropoulos", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_-_Hungarian_state_opera.jpg", 1280, 669], "dorothea_3": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Dorottya_utca_2,_Dorothea_Hotel,_2.jpg", 1280, 871], "dorothea_4": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Dorottya_utca_2,_Dorothea_Hotel,_4.jpg", 1280, 871], "dorothea_5": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Dorottya_utca_2,_Dorothea_Hotel,_1.jpg", 1280, 871], "christmas_5": ["Top Budapest", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_Christmas_Market_(8228486664).jpg", 1280, 960], "vorosmarty_1": ["ucsendre", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Budapest,_V%C3%B6r%C3%B6smarty_t%C3%A9r_(2009_kar%C3%A1csonyi_v%C3%A1s%C3%A1r)_-_panoramio_(2)-crop.jpg", 1280, 853], "vorosmarty_4": ["Elekes Andor", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Kar%C3%A1csonyi_V%C3%A1s%C3%A1r_(3).jpg", 1280, 960], "basilica_4": ["Random photos 1989", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Szent_Istv%C3%A1n_Bazilika,_l%C3%A9pcs%C5%91.jpg", 1280, 960], "basilica_0": ["Carlos Delgado", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Szent_Istv%C3%A1n-bazilika_-_01.jpg", 1280, 960], "szechenyi_5": ["Mister No", "CC BY 3.0", "https://commons.wikimedia.org/wiki/File:Sz%C3%A9chenyi_Thermal_Bath_-_panoramio.jpg", 1280, 853], "szechenyi_3": ["Slyronit", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Sz%C3%A9chenyi_thermal_bath,_Budapest.jpg", 1280, 853], "parliament_1": ["Bengt Olof ÅRADSSON", "CC BY 2.5", "https://commons.wikimedia.org/wiki/File:BP_parliament_at_night_B%C3%85n.JPG", 1280, 720], "parliament_3": ["HoremWeb", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest_Parlament_by_night_WUXGA.jpg", 1280, 960], "danubecruise_4": ["Bybbisch94, Christian Gebhardt", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:20230430.Budapest_bei_Nacht.-022.jpg", 1280, 960], "bastion_0": ["Perituss", "CC0", "https://commons.wikimedia.org/wiki/File:Fisherman%27s_Bastion_2014.jpg", 1280, 853], "bastion_1": ["Ermell", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest_Fisherman%27s_Bastion-20080321-RM-100000.jpg", 1280, 960], "matthias_3": ["John Samuel", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Roof_of_Matthias_Church,_Budapest_01.jpg", 1280, 853], "castle_3": ["Jorge Láscar from Australia", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Lascar_Buda_Castle_(4544182334).jpg", 1280, 850], "opera_4": ["Chad K", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Painted_Ceiling,_Hungarian_State_Opera_House.jpg", 1280, 960], "andrassy_2": ["Christo", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Andr%C3%A1ssy_%C3%BAt,_2.jpg", 1280, 721], "szimpla_3": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Szimpla_Kert,_2.jpg", 1280, 960], "dohany_0": ["Acediscovery", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Dohany-Street-Synagogue-Budapest.jpg", 1280, 960], "szentendre_5": ["Rengier", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:F%C5%91_t%C3%A9r,_Szentendre.jpg", 1280, 960], "gerbeaud_4": ["G Da", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:The_Gerbeaud_cafe_in_Budapest_-_panoramio.jpg", 1280, 960], "gerbeaud_2": ["Gmihail at Serbian Wikipedia", "CC BY-SA 3.0 rs", "https://commons.wikimedia.org/wiki/File:Caf%C3%A9_Gerbeaud,_Budapest1.jpg", 1280, 853], "chainbridge_2": ["Arian Zwegers", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Sz%C3%A9chenyi_Chain_Bridge_(6931125833).jpg", 1280, 853], "duna_1": ["Karelj", "Public domain", "https://commons.wikimedia.org/wiki/File:Budapest_Danube_panorama_1.jpg", 1280, 853], "rudas_2": ["Globetrotter19", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:T%C3%A1ltos_(ship,_2014)_and_Rudas_Baths_from_Jane_Haining_quay,_2016_Budapest.jpg", 1280, 960], "christmas_2": ["Top Budapest", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:De%C3%A1k_Ferenc_utca,_Budapest_Christmas_Market_2012_(8227168833).jpg", 1280, 960]}
+;
+const G=q=>'https://www.google.com/search?tbm=isch&q='+encodeURIComponent(q);
+const M=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+const BK=s=>'https://www.booking.com/searchresults.html?ss='+encodeURIComponent(s)+'&checkin=2026-12-25&checkout=2026-12-27&group_adults=2&no_rooms=1&group_children=0&selected_currency=EUR';
+const eur=n=>Math.round(n).toLocaleString('bg-BG').replace(/ /g,' ')+' €';
+let store={};try{store=JSON.parse(localStorage.getItem('bp-fav')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('bp-fav',JSON.stringify(store))}catch(e){}};
+
+/* rooms: [име, м², описание, показвана цена, цена за 2 нощувки в € (за калкулатора) или 0, вид v/e/f/q] */
+const H=[
+{id:'matild',name:'Matild Palace',full:'Matild Palace, a Luxury Collection Hotel',addr:'Váci utca 36, V район',brand:'Marriott · The Luxury Collection',year:'Дворец от 1902 · хотел от 2021',
+ph:['matild_0','klotild_4','matild_1'],cap:['Matild Palace нощем','Двата еднакви Клотилдини двореца на улица Ваци','Коледната елха в Matild'],
+intro:'Единият от двата еднакви двореца в стил Belle Époque при Елисабетинския мост. Построила ги е австрийската ерцхерцогиня Мария Клотилда. Днес е хотел със 130 стаи и два ключа Michelin, което е най-високото отличие в Будапеща. Отвътре: първият Spago на Волфганг Пук в Европа, таен бар на покрива с гледка към Дунава и легендарното кафене от 1901 г., с кабаре.',
+chips:[['Michelin','2 ключа'],['Expedia','9,8/10'],['Booking','~9,6'],['Стаи','130']],
+arch:'Belle Époque, кули с купол',roomsTxt:'Класически, с мозайки и полилеи',rest:'Spago (Puck)',view:'Дунав, Елисабетински мост',spa:'Турска баня, сауна',
+rooms:[['Matild Room','~30','Базова стая, някои с балкон, мозаечна баня с вана и душ','запитване',0,'q'],
+['King Deluxe','~35','Кристални полилеи, ламперия с бронзови инкрустации','788 €',788,'v'],
+['King City View Deluxe','~35','Същата, с изглед към града','836 €',836,'v'],
+['King Premium','~40','По-голяма, с кът за сядане','840 €',840,'v'],
+['Danube River View Loft','—','Двуетажна стая с изглед към Дунава','запитване',0,'q'],
+['Elisabeth Bridge Suite','—','Апартамент с изглед към Елисабетинския мост','запитване',0,'q'],
+['One Bedroom / Junior Suite','54–64','Отделна всекидневна и трапезария','от ~720 € / нощ',0,'f'],
+['Crown Tower Suite','—','В кулата на двореца','запитване',0,'q'],
+['Maria Klotild Royal Suite','150','С изглед към реката','от ~4 500 € / нощ',0,'f']],
+priceNote:'По твоите снимки, тарифа Member Advance Purchase (безплатно членство в Marriott Bonvoy, без възстановяване при отказ). Видяна е и друга, гъвкава тарифа за 1 102 € за престоя.',
+din:'<b>25 декември:</b> Spago е обявил коледна програма за 24-и. За 25-и още няма потвърждение, затова в писмото до хотела е поискано меню и маса за 19:30–20:00.',
+plus:'Местоположението, храната и закуската (за някои гости най-хубавата част от престоя), чистотата и внимателният персонал. Коктейлите в The Duchess се описват като едни от най-добрите, които гостите са пили.',
+minus:'В The Duchess обслужването понякога изостава, когато барът е пълен. Под 18 г. не се допускат в бара, а под 16 г. в спа центъра.',
+site:'https://www.marriott.com/en-us/hotels/budlc-matild-palace-a-luxury-collection-hotel-budapest/overview/',photos:'https://www.marriott.com/hotels/hotel-photos/budlc-matild-palace-a-luxury-collection-hotel-budapest/',mail:'reservations@matildpalace.com'},
+
+{id:'anantara',name:'Anantara New York Palace',full:'Anantara New York Palace Budapest',addr:'Erzsébet krt. 9–11, VII район',brand:'Anantara · Leading Hotels of the World',year:'Дворец от 1894 · арх. Алайош Хаусман',
+ph:['nycafe_2','nypalace_4','nycafe_0','nycafe2_0'],cap:['Кафене New York: злато, полилеи и фрески','Фасадата на двореца на New York Life','Часовниците и позлатените колони в кафенето','Главната зала на кафенето'],
+intro:'Някогашното европейско седалище на застрахователя New York Life. На партера е кафене New York, наричано най-красивото кафене в света, с венециански полилеи, фрески и позлатена гипсова украса. Хотелът е в оживения Еврейски квартал и има 185 стаи. Гостите закусват в самото кафене, без опашката, която чака отвън.',
+chips:[['Tripadvisor','4,6/5'],['Класиране','№30 от 383'],['Expedia','9,4'],['Стаи','185']],
+arch:'Belle Époque, най-пищният интериор',roomsTxt:'Класически, по-сдържани от кафенето',rest:'New York Café',view:'Булевардът',spa:'Басейн, сауна',
+rooms:[['Deluxe Room','30','Мраморна баня с вана, Nespresso','804 €',804,'v'],
+['Premium Room','40','По-просторна, мраморна баня','запитване',0,'q'],
+['Grand Premium City View','45','В историческата сграда, отделни душ и вана','запитване',0,'q'],
+['Grand Premium с тераса','55','Собствена тераса с изглед към града','запитване',0,'q'],
+['Junior Suite','65','Хол и спалня, мраморна баня','~280 000 HUF / нощ',0,'f'],
+['Junior Suite с тераса','70','Тераса над булеварда','запитване',0,'q'],
+['Executive Suite','80','Голям апартамент, вариант с тераса','запитване',0,'q'],
+['Ruby Presidential Suite','135','Президентският апартамент','запитване',0,'q']],
+priceNote:'Deluxe Room: по твоята снимка, без закуска и без възстановяване при отказ. Junior Suite: цена от ревю през 2024 г.',
+din:'<b>25 декември:</b> вечеря в New York Café или Atrium (с изглед към залата на кафенето). В запитването е поискана маса за 19:30–20:00.',
+plus:'Пищната обстановка, просторните и чисти стаи и персоналът, който често прави повече от очакваното. Закуската в кафенето е преживяване само по себе си.',
+minus:'Някои гости отбелязват пропуски в обслужването на закуската. Deluxe стаите са по-обикновени от кафенето, затова за истинския ефект гледайте Grand Premium или Junior Suite.',
+site:'https://www.anantara.com/en/new-york-palace-budapest',photos:'https://www.anantara.com/en/new-york-palace-budapest/rooms',mail:'newyorkpalace@anantara-hotels.com'},
+
+{id:'parisi',name:'Párisi Udvar',full:'Párisi Udvar Hotel Budapest',addr:'Petőfi Sándor u. 2–4, V район',brand:'Hyatt · Unbound Collection',year:'Сграда от 1912 · хотел от 2019',
+ph:['parisi_4','parisi_2','parisi_1','parisi_5'],cap:['Лаунджът под стъкления таван на пасажа','Входът с мавритански орнаменти','Пасажът: стъклени куполи и керамика Жолнаи','Фасадата при площад Ференциек'],
+intro:'Тук през 1817 г. е отворен първият търговски пасаж в Будапеща, по модел на Passage des Panoramas в Париж. Днешната сграда е от 1912 г., проектирана от Хенрик Шмал. Интериорът смесва мавритански, готически и сецесионни мотиви, със стъклени куполи и керамика Жолнаи. Michelin го описва като един от най-пищните хотели, които са виждали.',
+chips:[['Michelin','1 ключ'],['Trip.com','9,7/10'],['Booking','~9,4'],['Стаи','110']],
+arch:'Мавритански сецесион, най-уникален',roomsTxt:'По-модерни от фоайето',rest:'Párisi Passage под купола',view:'Град/вътрешен двор',spa:'Zafír Spa, джакузи',
+rooms:[['Standard King / Twin','24–30','Изглед към вътрешния двор','от ~302 $ / нощ',0,'f'],
+['Deluxe King','31–36','По-голяма, вариант с изглед към града','от ~381 $ / нощ',0,'f'],
+['Premium King','36–43','С кът за сядане','запитване',0,'q'],
+['Premium City View','35–42','Изглед към града','запитване',0,'q'],
+['Corner Suite','43–47','Ъглов апартамент','запитване',0,'q'],
+['Junior Suite','45–53','С една спалня','запитване',0,'q'],
+['Pollack / Brudern Suite','—','Апартаменти, кръстени на архитектите','запитване',0,'q'],
+['Hexagon Suite','99','Две спални, под шестоъгълния купол','запитване',0,'q'],
+['Paris Presidential Suite','291','Три спални, на последния етаж','запитване',0,'q']],
+priceNote:'Цени „от“ в щатски долари от PrivateUpgrades. Trip.com показва цени от 323 €. За вашите дати още няма оферта.',
+din:'<b>25 декември:</b> Párisi Passage Restaurant под стъклените куполи. В запитването е поискана романтична маса и коледно меню.',
+plus:'„Най-доброто място в Будапеща“, луксозните бани с душ и вана, хубавата закуска и внимателният персонал. Гостиня разказва, че сестра ѝ избрала хотела за рождения ѝ ден: просторни, красиви стаи и чудесна гледка.',
+minus:'Пасажът и кафенето са отворени и за външни посетители, затова през деня може да е оживено. Стаите са по-модерни от лобито, затова гледайте Premium и апартаментите.',
+site:'https://www.hyatt.com/unbound-collection/en-US/budub-parisi-udvar-hotel',photos:'https://www.hyatt.com/en-US/hotel/hungary/parisi-udvar-hotel/budub/rooms',mail:'info@parisiudvarhotel.com'},
+
+{id:'fourseasons',name:'Four Seasons Gresham Palace',full:'Four Seasons Hotel Gresham Palace Budapest',addr:'Széchenyi István tér 5–6, V район',brand:'Four Seasons',year:'Сецесионен дворец от 1906 · до Верижния мост',
+ph:['gresham_0','gresham2_2','gresham2_1','gresham_1'],cap:['Дворецът Грешам нощем','Стъкленият купол над пасажа и полилеят','Лобито под стъкления покрив','Фасадата към площада и Верижния мост'],
+intro:'Сецесионният дворец при Верижния мост е една от емблемите на Будапеща. Хотелът има 179 стаи, от които 19 апартамента, и два ключа Michelin, което е най-високото отличие в града. Стаите с изглед към Дунава гледат право към моста и Будайската крепост. Спа центърът е на последния етаж, с басейн пред огромни наклонени прозорци.',
+chips:[['Michelin','2 ключа'],['Expedia','10/10 (последни)'],['Стаи','179'],['Безплатен отказ','до 18.12']],
+arch:'Сецесия, стъклен купол',roomsTxt:'Класически, мраморни бани',rest:'KOLLÁZS',view:'Верижният мост и крепостта',spa:'Басейн на покрива',
+rooms:[['Superior Room','33','Към вътрешния двор или улицата, оферта −15%','1 276 €',1276,'v'],
+['Gresham Room','38–47','По-просторна, с изглед към двора','≈ 1 360 €',1362,'e'],
+['Danube River View Room','33–42','Изглед към Дунава, моста и крепостта','≈ 1 700 €',1702,'e'],
+['Tower Suite','64','Спалнята е в купола, на 5 стъпала над хола','запитване',0,'q'],
+['Park Suite','65','Голям апартамент към парка','≈ 3 200 €',3204,'e'],
+['River-View Park Suite','65–85','Апартамент с изглед към реката','≈ 4 730 €',4732,'e'],
+['Chain Bridge Suite','85','Хол и гледка към моста и хълмовете','запитване',0,'q'],
+['Budapest Royal Suite','136','Камина и балкон към Дунава','запитване',0,'q']],
+priceNote:'Superior: по твоята снимка (≈ 638 € на нощ). Останалите са изчислени спрямо нея по съотношението на публикуваните цени на хотела.',
+din:'<b>25 декември:</b> KOLLÁZS обявява коледна вечеря от 18:00 до 22:30, с меню от пет ястия и музика на живо. Онлайн нямаше свободни маси между 19 и 22 ч., затова е изпратено запитване до консиержа.',
+plus:'Обслужване от класа на Four Seasons, безупречна поддръжка, всичко е наблизо пеша. Консиержът урежда частни лодки по Дунава. Ако стаята е с гледка към реката, тя е причината да сте тук.',
+minus:'Стандартните стаи са по-малки, отколкото бихте очаквали за цената. В един от подробните отзиви закуската е посредствена. Това е най-скъпият хотел в списъка.',
+site:'https://www.fourseasons.com/budapest/',photos:'https://www.fourseasons.com/budapest/accommodations/',mail:'budapest.concierge@fourseasons.com'},
+
+{id:'stregis',name:'The St. Regis Budapest',full:'The St. Regis Budapest',addr:'Váci utca 34, V район',brand:'Marriott · St. Regis',year:'Отворен на 28.04.2026 · Клотилдин дворец',
+ph:['klotild_3','klotild_2','klotild_5'],cap:['Двете кули на Клотилдините дворци: St. Regis и Matild един срещу друг','Кулата на двореца','Близнаците при Елисабетинския мост'],
+intro:'Най-новият луксозен хотел в града. Отвори врати на 28 април 2026 г. в Клотилдиния дворец, близнака на Matild, точно отсреща. Стаите са в три цветови концепции: синя като Дунава, зелена като унгарската природа и лилава като кралското наследство. В избрани стаи има иконом.',
+chips:[['Отворен','IV.2026'],['Стаи','102'],['Иконом','в избрани стаи'],['Спа','масаж за двама']],
+arch:'Необарок, кули',roomsTxt:'Светли, в три цветови концепции',rest:'99 Sushi, St. Regis Bar',view:'Град, кулата',spa:'Басейн, хамам',
+rooms:[['Superior City View','35','Изглед към града','от ~618 $ / нощ',0,'f'],
+['Duplex','43','Двуетажна стая с king легло','от ~899 $ / нощ',0,'f'],
+['Deluxe City View','45','Голяма, с изглед към града','от ~806 $ / нощ',0,'f'],
+['Junior Suite City View','38','Отделен кът за сядане','от ~946 $ / нощ',0,'f'],
+['Executive Suite','57','Хол и спалня','от ~1 181 $ / нощ',0,'f'],
+['Deluxe Suite','67','Голям апартамент','запитване',0,'q'],
+['Klotild Tower Suite','134','В кулата на двореца','запитване',0,'q'],
+['Presidential Suite','169','С изглед към реката','запитване',0,'q']],
+priceNote:'Цени „от“ в щатски долари от PrivateUpgrades. Те са с привилегии и не са за вашите дати.',
+din:'<b>25 декември:</b> 99 Sushi или St. Regis Bar. В писмото до хотела е поискана информация за коледната вечеря.',
+plus:'Първите впечатления: елегантни, но уютни стаи, много светлина и сладкарница, хвалена за ванилията и капучиното. На пет минути пеша от Дунава.',
+minus:'Хотелът е нов и отзивите са още малко. Част от оценките в сайтовете за резервации са останали от стария хотел в сградата (Buddha-Bar).',
+site:'https://www.marriott.com/hotels/travel/budxr-the-st-regis-budapest/',photos:G('St. Regis Budapest rooms'),mail:''},
+
+{id:'w',name:'W Budapest',full:'W Budapest',addr:'Andrássy út 25, VI район',brand:'Marriott · W Hotels',year:'Дворецът Дрекслер · хотел от 2023',
+ph:['drechsler_1','drechsler_3','opera_3','drechsler_0'],cap:['Дворецът Дрекслер на булевард „Андраши“','Фасадата и арките','Залата на Операта, точно отсреща','Дрекслер и Операта'],
+intro:'Дворецът Дрекслер на булевард „Андраши“, точно срещу Държавната опера. Бил е луксозни апартаменти, голямо кафене и Балетният институт. W го превръща в първия си хотел в Източна Европа през 2023 г. Витражите и арките са реставрирани, а розовите нюанси напомнят за балета. Стаите имат най-смелия дизайн от седемте хотела.',
+chips:[['Michelin','1 ключ'],['Booking','~9,1'],['Стаи','151 (45 апартамента)'],['Цена','най-достъпен']],
+arch:'Неоренесанс + смел дизайн',roomsTxt:'Най-впечатляващ дизайн',rest:'Le Petit Beefbar',view:'Операта',spa:'Подземен спа',
+rooms:[['Wonderful Room','29–37','Изглед към града, King или Twin','от ~260 $ / нощ',0,'f'],
+['Cozy King','31','По-компактна','запитване',0,'q'],
+['Fabulous Room, Opera View','33–35','Изглед право към Операта','запитване',0,'q'],
+['Studio Suite','43–44','Отделен кът за сядане','запитване',0,'q'],
+['Cool Corner','52–58','Ъглова, светла, с прозорци от две страни','запитване',0,'q'],
+['Fantastic Suite','73','Първи ред към Операта','запитване',0,'q'],
+['WOW Suite','121','Тераса към Операта','запитване',0,'q'],
+['Extreme WOW Suite','198','Огромна тераса, изглед към Операта','запитване',0,'q']],
+priceNote:'Обхват 260–350 $ на нощ по Roomer. Expedia показва около 288 £ за нощ през септември.',
+din:'<b>25 декември:</b> Le Petit Beefbar, после коктейли в Society25. В писмото до хотела са поискани коледното меню и програмата.',
+plus:'Стил до последния детайл. Стаите гледат към Операта, а смесицата от стара архитектура и модерен дизайн впечатлява. The New York Times го нарича най-ярката звезда на хотелската сцена.',
+minus:'Почистването понякога не е постоянно, например при капсулите за кафе. Атмосферата е модерна и музикална, а не дворцова класика.',
+site:'https://www.marriott.com/en-us/hotels/budwh-w-budapest/overview/',photos:'https://marriott.com/en-us/hotels/budwh-w-budapest/rooms/suites',mail:''},
+
+{id:'dorothea',name:'Dorothea Hotel',full:'Dorothea Hotel, Budapest, Autograph Collection',addr:'Dorottya utca 2, V район',brand:'Marriott · Autograph Collection',year:'Три сгради · хотел от XI.2023',
+ph:['dorothea_3','dorothea_4','dorothea_5'],cap:['Лобито: колони и цветя','Входът нощем','Колонадата в лобито'],
+intro:'Хотелът е вдъхновен от ерцхерцогиня Дорота и палатин Йосиф, който е бил запален ботаник. Заема три сгради, свързани от архитекта Пиеро Лисони. Heritage стаите са в сградата Вебер от 1873 г., в неоренесансов стил, а Contemporary стаите тълкуват народни мотиви. На минута е от коледния базар на Вьорьошмарти и от сладкарница Гербо.',
+chips:[['Hotels.com','9,6/10'],['Booking','~9,1'],['Стаи','216 (46 апартамента)'],['Покривен бар','BiBo']],
+arch:'Неоренесанс + Лисони',roomsTxt:'Heritage или Contemporary',rest:'Pavilon под стъклен покрив',view:'Покривът BiBo',spa:'650 м², басейн 15 м',
+rooms:[['Atrium King / Twin','—','Собствена тераса към вътрешната градина','запитване',0,'q'],
+['Contemporary Twin / Superior King','—','Модерни, с народни мотиви','запитване',0,'q'],
+['Heritage Superior King','—','В сградата Вебер от 1873 г., неоренесанс','от ~300 € / нощ',0,'f'],
+['Heritage / Contemporary Studio Suite','38–44','King легло, кът за сядане','запитване',0,'q'],
+['Contemporary Junior Suite','—','Апартамент','запитване',0,'q'],
+['Contemporary Suite','50–53','С 45-минутен масаж и достъп до спа','запитване',0,'q'],
+['Executive Suite','65','На 7-ия етаж, с балкон','запитване',0,'q'],
+['Presidential Suite','162–200','Тераса около целия етаж, джакузи, кухня','запитване',0,'q']],
+priceNote:'Heritage Superior от около 300 € на нощ по Selling Travel. Закуската е отделно, 35 € на човек.',
+din:'<b>25 декември:</b> Pavilon под стъкления покрив или BiBo на покрива. В запитването са поискани коледното меню, жива музика и маса за 19:30–20:00.',
+plus:'Изключителното местоположение, вниманието на персонала и зеленият ресторант Pavilon, за който един архитектурен критик казва, че е най-хубавото в хотела. Спа центърът също е хвален.',
+minus:'Някои гости съобщават за бавно обслужване. Между Heritage и Contemporary стаите има голяма разлика, затова поискайте снимки на точната стая.',
+site:'https://www.marriott.com/en-us/hotels/budkc-dorothea-hotel-budapest-autograph-collection/overview/',photos:'https://www.marriott.com/en-us/hotels/budkc-dorothea-hotel-budapest-autograph-collection/photos/',mail:'reservations.dorothea@autographhotels.com'}
+];
+
+/* lightbox */
+let LB=[],LI=0;const lb=document.getElementById('lb'),lbi=document.getElementById('lbi'),lbc=document.getElementById('lbc');
+const crd=k=>{const c=CR[k];return c?`Снимка: ${c[0]} · ${c[1]}`:''};
+function show(){const [k,cap]=LB[LI];lbi.src='img/'+k+'.webp';lbi.alt=cap;lbc.textContent=cap+' — '+crd(k)}
+function openLB(list,i){LB=list;LI=i;show();lb.classList.add('on');document.getElementById('lbx').focus()}
+const close=()=>lb.classList.remove('on');
+document.getElementById('lbx').onclick=close;
+document.getElementById('lbp').onclick=()=>{LI=(LI-1+LB.length)%LB.length;show()};
+document.getElementById('lbn').onclick=()=>{LI=(LI+1)%LB.length;show()};
+lb.onclick=e=>{if(e.target===lb)close()};
+document.addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')document.getElementById('lbp').click();if(e.key==='ArrowRight')document.getElementById('lbn').click()});
+
+const tagT={v:'за 25–27.12',e:'оценка',f:'публикувана „от“',q:'запитване'};
+const li=a=>'<ul>'+a.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+document.getElementById('hotelList').innerHTML=H.map((h,i)=>`
+<article class="hotel" id="${h.id}">
+ <div class="hhead"><div><div class="num">№${i+1} · ${h.brand}</div><h3>${h.name}</h3><div class="meta"><span>${h.addr}</span><span>${h.year}</span></div></div>
+ <button class="fav" data-id="${h.id}" aria-pressed="${!!store[h.id]}">${store[h.id]?'♥ Харесано':'♡ Харесвам'}</button></div>
+ <div class="gal n${h.ph.length}" data-h="${i}">${h.ph.map((k,j)=>`<button data-j="${j}" aria-label="Увеличи: ${h.cap[j]}"><img src="img/${k}.webp" alt="${h.cap[j]}" loading="lazy"></button>`).join('')}</div>
+ <div class="hgrid">
+  <div>
+   <p>${h.intro}</p>
+   <div class="chips">${h.chips.map(c=>`<span class="chip">${c[0]}: <b>${c[1]}</b></span>`).join('')}</div>
+   <div class="din">${h.din}</div>
+   <div class="rev"><div class="p"><b>Хвалят</b>${h.plus}</div><div class="m"><b>Забележки</b>${h.minus}</div></div>
+  </div>
+  <div class="side">
+   <div class="box"><h4>Архитектура и стаи</h4>${li([h.arch,h.roomsTxt,'Изглед: '+h.view])}</div>
+   <div class="box"><h4>Ресторант и спа</h4>${li([h.rest,h.spa])}</div>
+   <div class="links"><a class="btn pri" href="${h.photos}" target="_blank" rel="noopener">Снимки на стаите ↗</a><a class="btn" href="${BK(h.full+' Budapest')}" target="_blank" rel="noopener">Цени в Booking за 25–27.12</a><a class="btn" href="${h.site}" target="_blank" rel="noopener">Официален сайт</a><a class="btn" href="${M(h.full+' Budapest')}" target="_blank" rel="noopener">Карта</a></div>
+  </div>
+ </div>
+ <div class="rooms">
+  <h4>Стаи и цени · 2 нощувки, 25–27 декември, двама</h4>
+  <div class="scroll"><table class="stack"><thead><tr><th>Тип стая</th><th>м²</th><th>Какво я отличава</th><th>Цена</th></tr></thead>
+  <tbody>${h.rooms.map(r=>`<tr><td><b>${r[0]}</b></td><td class="n">${r[1]}</td><td>${r[2]}</td><td class="n">${r[3]} <span class="tag ${r[5]}">${tagT[r[5]]}</span></td></tr>`).join('')}</tbody></table></div>
+  <p style="font-size:13px;color:var(--mute);margin-top:8px">${h.priceNote}</p>
+ </div>
+</article>`).join('');
+document.querySelectorAll('.gal').forEach(g=>{const h=H[g.dataset.h];g.querySelectorAll('button').forEach(b=>b.onclick=()=>openLB(h.ph.map((k,j)=>[k,h.cap[j]]),+b.dataset.j))});
+
+/* compare */
+function cheapest(h){const v=h.rooms.filter(r=>r[4]);return v.length?eur(Math.min(...v.map(r=>r[4])))+(v.some(r=>r[5]==='v')?' <span class="tag v">за 25–27.12</span>':''):h.rooms.find(r=>r[5]==='f')?.[3]+' <span class="tag f">„от“</span>'}
+function drawCmp(){document.getElementById('cmp').innerHTML=H.map(h=>`<tr><td>${store[h.id]?'♥ ':''}<a href="#${h.id}">${h.name}</a></td><td>${h.arch}</td><td>${h.roomsTxt}</td><td>${h.rest}</td><td>${h.view}</td><td>${h.spa}</td><td class="n">${cheapest(h)}</td></tr>`).join('')}
+drawCmp();
+document.querySelectorAll('.fav').forEach(b=>b.onclick=()=>{const id=b.dataset.id;store[id]=!store[id];if(!store[id])delete store[id];save();b.setAttribute('aria-pressed',!!store[id]);b.textContent=store[id]?'♥ Харесано':'♡ Харесвам';drawCmp();fillRooms()});
+
+/* calculator */
+const cRoom=document.getElementById('cRoom'),cDin=document.getElementById('cDin'),cCr=document.getElementById('cCr'),cEx=document.getElementById('cEx');
+function fillRooms(){const cur=cRoom.value;let o='<option value="568|Corinthia · Deluxe (оферта)">Corinthia · Deluxe – 568 € (оферта, със закуска)</option>';
+ H.forEach(h=>h.rooms.filter(r=>r[4]).forEach(r=>{o+=`<option value="${r[4]}|${h.name} · ${r[0]}">${store[h.id]?'♥ ':''}${h.name} · ${r[0]} – ${eur(r[4])}${r[5]==='e'?' (оценка)':''}</option>`}));
+ cRoom.innerHTML=o;if(cur&&[...cRoom.options].some(x=>x.value===cur))cRoom.value=cur;else cRoom.value='788|Matild Palace · King Deluxe';calc()}
+function calc(){const [rv,rn]=cRoom.value.split('|');const parts=[['Самолетни билети (платени)',392.47,'#22506e'],['Хотел: '+rn,+rv,'#7a2a3e'],['Вечеря 25.12',+cDin.value,'#c9a24a'],['Круиз 26.12',+cCr.value,'#4f8a6b'],['Други разходи',+cEx.value,'#9b8a92']];
+ const t=parts.reduce((a,p)=>a+p[1],0);document.getElementById('exV').textContent=cEx.value;
+ document.getElementById('tot').textContent=eur(t);
+ document.getElementById('bar').innerHTML=parts.map(p=>`<i style="width:${p[1]/t*100}%;background:${p[2]}" title="${p[0]}"></i>`).join('');
+ document.getElementById('rows').innerHTML=parts.map(p=>`<div><span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${p[2]};margin-right:8px"></span>${p[0]}</span><span>${eur(p[1])}</span></div>`).join('')+`<div><span>Остава да се плати</span><span><b>${eur(t-392.47)}</b></span></div>`}
+[cRoom,cDin,cCr].forEach(e=>e.onchange=calc);cEx.oninput=calc;fillRooms();
+
+/* cruises */
+const CRU=[
+['River Diva','danubecruise_4','Най-луксозен модерен интериор','Стилен кораб с големи прозорци, елегантен салон и горна палуба за снимки. Вечеря на бюфет, музика на живо, неограничени напитки.',[['Цена','99 € на човек'],['Вечеря','бюфет'],['Оценка','4,6 (68)'],['Прозорец','не е гарантиран'],['Палуба','да, панорамна']],'info@riverdiva.hu'],
+['Legenda · Candlelit Dinner','parliament_3','Най-романтична вечеря','Изцяло остъклен салон, свещи, вечеря от четири ястия, сервирана на масата, и спокойна музика на живо. Най-добрите отзиви за храната и обслужването.',[['Цена','110 € на човек'],['Вечеря','4 ястия, сервирана'],['Оценка','4,5 (7 454)'],['Прозорец','не е гарантиран'],['Палуба','да']],'info@legenda.hu'],
+['Silverline · Dinner & Lights (Táltos)','chainbridge_2','С платена маса до прозореца','Модерен катамаран, вечеря от четири ястия, около два часа плаване. Корабът Táltos няма открита палуба, затова масата до прозореца е още по-важна.',[['Цена','от 77 € + 12 € прозорец'],['Вечеря','4 ястия, сервирана'],['Оценка','4,1 (2 671)'],['Прозорец','платена опция*'],['Палуба','не (Táltos)']],'hello@silver-line.hu']];
+document.getElementById('cruise').innerHTML=CRU.map((c,i)=>`<div class="crc"><div class="ph" style="background-image:url(img/${c[1]}.webp)" role="img" aria-label="${c[0]}"></div><div class="b"><div class="num" style="font-size:16px">${c[2]}</div><h3>${c[0]}</h3><p style="font-size:15px;margin-top:6px">${c[3]}</p><dl>${c[4].map(d=>`<dt>${d[0]}</dt><dd>${d[1]}</dd>`).join('')}</dl><p style="font-size:13px;color:var(--mute);margin:10px 0 0">Запитване: ${c[5]}</p></div></div>`).join('');
+document.getElementById('cruise').insertAdjacentHTML('afterend','<div class="note" style="background:var(--card)">* За 26 декември онлайн не се показа опция за маса до прозореца. Ако никой не я гарантира, планът е луксозна вечеря на сушата и отделен панорамен круиз за около 25 € на човек, без да се рискува със средна маса. На 25-и Silverline има и коледен круиз с вечеря (19:30–22:30, 310 € за двама, маса до прозореца +55 € на човек), но решихте вечерята на 25-и да е в хотела.</div>');
+
+/* itinerary */
+const D=[
+['Петък, 25','Рожденият ден','basilica_4',[['14:35','Полет от София','Кацане в 15:00. Трансфер от летището, около 35 мин.'],['16:30','Настаняване','Торта и пенливо вино в стаята, ако хотелът ги уреди за рождения ден.'],['17:30','Коледният базар пред Базиликата','Отворен на 25-и до 20 ч. Греяно вино, курточ калач, светлинно шоу върху фасадата.'],['19:30','Коледна вечеря в хотела','Spago, KOLLÁZS, New York Café, Párisi Passage или Pavilon, според избрания хотел.'],['22:00','Коктейл с гледка','The Duchess, Múzsa, Society25 или хотелският бар.']]],
+['Събота, 26','Буда, бани и Дунав','bastion_0',[['09:30','Закуска без бързане','Или в New York Café, или в сладкарница Gerbeaud, за торта „Добош“.'],['11:00','Рибарският бастион и църквата „Матиаш“','Фуникулерът от Верижния мост, гледката към Парламента отгоре.'],['13:00','Будайската крепост','Разходка по Крепостния хълм и обяд в Буда.'],['15:00','Банята Сечени','На 26-и е отворена 10–20 ч. Външните басейни сред пара, по здрач.'],['19:00','Круиз с вечеря по Дунава','Осветеният Парламент, мостовете и крепостта, от маса до прозореца.'],['22:00','Нощна Будапеща','Руинният бар Szimpla Kert или покривен бар.']]],
+['Неделя, 27','Последна сутрин','vorosmarty_1',[['09:00','Закуска','Последно кафе с гледка.'],['10:00','Улица Ваци и базарът на Вьорьошмарти','Подаръци, сувенири, последни снимки.'],['11:00','Напускане и трансфер','Полетът е в 13:25, а на летището е добре да сте до 12:00.'],['13:25','Полет до София','Кацане в 15:45.']]]];
+document.getElementById('days').innerHTML=D.map(d=>`<div class="day"><div class="ph"><img src="img/${d[2]}.webp" alt="" loading="lazy"><div><h3>${d[0]} декември</h3><span>${d[1]}</span></div></div><div class="sl">${d[3].map(s=>`<div class="slot"><time>${s[0]}</time><div><b>${s[1]}</b><span>${s[2]}</span></div></div>`).join('')}</div></div>`).join('');
+
+/* activities: [име, снимка, цена, описание, 25.12, 26.12 (y/c/n), безплатно, вечер, на топло, кога, колко време, как, карта] */
+const A=[
+['Коледните базари','christmas_5','Безплатно','<b>Advent Bazilika</b> пред Базиликата е най-фотогеничният базар, със светлинно шоу върху фасадата. <b>Vörösmarty Classic Xmas</b> е най-големият, с унгарски занаяти. Опитайте курточ калач, лангош, греяно вино и палинка.','y','y',1,1,0,'След 17 ч., когато светнат лампичките','1–2 часа','Пеша от всеки хотел. Метро M1 до Vörösmarty tér','Advent Bazilika Budapest','25 и 26.12 пред Базиликата: 11–20 ч.'],
+['Банята Сечени','szechenyi_5','Билет от ~34 €','Най-големият термален комплекс в Европа, с 18 басейна. Външните басейни парят и през зимата, а около тях стоят жълти необарокови сгради. По здрач е магия.','c','y',0,1,1,'Следобед, до здрач','2–3 часа','Метро M1 до Széchenyi fürdő','Széchenyi Thermal Bath','26.12: 10–20 ч. Билетите са по-изгодни онлайн'],
+['Банята Рудаш','rudas_2','Билет ~26 € и нагоре','Османска баня от XVI век и басейн на покрива с гледка към Дунава и мостовете. По-интимна и романтична от Сечени.','c','c',0,1,1,'По залез, на покрива','2 часа','Трамвай 19 или 41 до Rudas fürdő','Rudas Baths Budapest','Празничното работно време трябва да се провери'],
+['Рибарският бастион','bastion_1','Безплатно (горната тераса се плаща)','Седемте кули над Дунава с най-хубавата гледка към Парламента. Сутрин е без тълпи, а вечер е осветен.','y','y',1,1,0,'Рано сутрин или вечер','45 мин','Фуникулер от Верижния мост или автобус 16','Fisherman\'s Bastion','Открито място, достъпно и по празниците'],
+['Църквата „Матиаш“','matthias_3','Вход с билет','Готическа църква с покрив от керамика Жолнаи. Тук са коронясвани унгарските крале.','c','c',0,0,1,'Преди обяд','30 мин','До Рибарския бастион','Matthias Church Budapest','По Коледа има служби, затова туристическите часове се променят'],
+['Будайската крепост','castle_3','Безплатно','Кралският дворец, разходка по крепостните стени и гледка към целия град. Нощем дворецът е осветен.','y','y',1,1,0,'Следобед, до залез','1–2 часа','Фуникулерът от Верижния мост','Buda Castle','Откритата част е достъпна винаги. Галериите работят с празнично време'],
+['Разходка по Дунава','chainbridge_2','Безплатно','Корзото по брега на Пеща, Верижният мост и „Обувките на брега на Дунава“. Нощем мостовете и Парламентът светят.','y','y',1,1,0,'Вечер','1 час','Пеша от всеки хотел','Danube Promenade Budapest','Открито, винаги достъпно'],
+['Трамвай 2','duna_1','Обикновен билет','Най-евтиният „круиз“: трамваят минава по брега на Дунава с изглед към Парламента и Крепостта.','y','y',0,1,1,'Вечер, по тъмно','20 мин','Спирка Vigadó tér или Jászai Mari tér','Vigadó tér tram stop Budapest','По празниците върви по празнично разписание'],
+['Парламентът','parliament_1','Обиколка от ~35 €','Една от най-големите сгради на парламент в Европа. Отвътре: куполната зала и короната на Свети Стефан. Нощем е най-красив откъм реката.','n','c',0,1,1,'С предварителна резервация','1 час','Метро M2 до Kossuth Lajos tér','Hungarian Parliament Building','На 25.12 обиколките обикновено не работят, а за 26.12 трябва да се провери'],
+['Базиликата „Св. Стефан“','basilica_0','Купол с билет','Най-голямата църква в Будапеща. От купола се вижда 360° панорама на града. Отпред е коледният базар.','c','c',0,0,1,'Привечер, преди базара','45 мин','Пеша, метро до Bajcsy-Zsilinszky út','St. Stephen\'s Basilica','25.12: коледни служби, туристическото време е ограничено'],
+['Държавната опера','opera_4','Обиколка или спектакъл','Неоренесансова зала със стенописи и златен полилей, срещу W Budapest. Вечер на спектакъл е подарък сам по себе си.','c','c',0,1,1,'Вечер на спектакъл','1–3 часа','Метро M1 до Opera','Hungarian State Opera','Проверете програмата и билетите за 25–26.12'],
+['„Андраши“','andrassy_2','Безплатно','Булевардът в списъка на ЮНЕСКО: дворци, бутици, Операта. Стига до Площада на героите и Градския парк.','y','y',1,0,0,'Преди обяд','1 час','Пеша или метро M1','Andrássy út Budapest','Открито. На празниците магазините са затворени'],
+['Gerbeaud','gerbeaud_4','Кафе и торта','Историческата сладкарница на площад Вьорьошмарти, от 1858 г. Торта „Добош“ и кафе в салон с полилеи.','c','c',0,0,1,'Следобед','1 час','До базара на Вьорьошмарти','Gerbeaud Budapest','Празничното работно време трябва да се провери'],
+['Руинните барове','szimpla_3','Вечер','Szimpla Kert е бар в полуразрушена сграда, пълна с вехтории и светлини. Еврейският квартал до Anantara и W е центърът на нощния живот.','c','c',0,1,1,'След 21 ч.','1–3 часа','Kazinczy utca 14','Szimpla Kert','Празничното работно време трябва да се провери'],
+['Синагогата на улица „Дохан“','dohany_0','Вход с билет','Най-голямата синагога в Европа, в мавритански стил. Наоколо е Еврейският квартал с графити и малки дворове.','c','n',0,0,1,'Преди обяд','1 час','Метро M2 до Astoria','Dohány Street Synagogue','26.12 е събота, а в събота синагогата е затворена'],
+['Сентендре','szentendre_5','Излет · 40 мин с HÉV','Художническо градче на Дунава, с цветни къщи и музей на марципана. Голямата елха на главния площад е много красива.','c','c',1,0,0,'Цял ден','Половин ден','Влак HÉV H5 от Batthyány tér','Szentendre Fő tér','За по-дълъг престой. На празниците влаковете се движат по празнично разписание']];
+const FL={y:['y','отворено'],c:['c','провери'],n:['n','затворено']};
+let plan={};try{plan=JSON.parse(localStorage.getItem('bp-plan')||'{}')}catch(e){}
+const savePlan=()=>{try{localStorage.setItem('bp-plan',JSON.stringify(plan))}catch(e){}};
+const AL=A.map(a=>[a[1],a[0]]);
+document.getElementById('acts').innerHTML=A.map((a,i)=>`<div class="act" data-i="${i}"><div class="ph"><button class="zoom" data-i="${i}" aria-label="Увеличи: ${a[0]}"><img src="img/${a[1]}.webp" alt="${a[0]}" loading="lazy"></button><button class="add" data-i="${i}" aria-pressed="${!!plan[i]}">${plan[i]?'♥ В плана':'♡ Добави'}</button></div><div class="b"><div class="tg">${a[2]}</div><h3>${a[0]}</h3><p>${a[3]}</p><div class="flags"><span class="fl ${FL[a[4]][0]}">25.12: ${FL[a[4]][1]}</span><span class="fl ${FL[a[5]][0]}">26.12: ${FL[a[5]][1]}</span>${a[6]?'<span class="fl y">безплатно</span>':''}${a[8]?'<span class="fl c">на топло</span>':''}</div><button class="more" aria-expanded="false">Подробности</button><div class="det"><dl><dt>Кога</dt><dd>${a[9]}</dd><dt>Време</dt><dd>${a[10]}</dd><dt>Как</dt><dd>${a[11]}</dd><dt>Празници</dt><dd>${a[13]}</dd></dl><a href="${M(a[12])}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px">Отвори в Google Maps ↗</a></div></div></div>`).join('')+'<div class="empty" id="empty" hidden>Няма нищо тук. Добавете места с ♡ или сменете филтъра.</div>';
+document.querySelectorAll('.act .zoom').forEach(b=>b.onclick=()=>openLB(AL,+b.dataset.i));
+document.querySelectorAll('.act .more').forEach(b=>b.onclick=()=>{const c=b.closest('.act');c.classList.toggle('open');const o=c.classList.contains('open');b.setAttribute('aria-expanded',o);b.textContent=o?'Скрий':'Подробности'});
+let F='all';
+function filt(){let n=0;document.querySelectorAll('.act').forEach(c=>{const a=A[+c.dataset.i];const ok=F==='all'||(F==='d25'&&a[4]==='y')||(F==='d26'&&a[5]==='y')||(F==='free'&&a[6])||(F==='night'&&a[7])||(F==='warm'&&a[8])||(F==='plan'&&plan[c.dataset.i]);c.classList.toggle('hide',!ok);if(ok)n++});document.getElementById('empty').hidden=n>0}
+document.querySelectorAll('.fch').forEach(b=>b.onclick=()=>{document.querySelectorAll('.fch').forEach(x=>x.classList.remove('on'));b.classList.add('on');F=b.dataset.f;filt()});
+function drawPlan(){const ks=Object.keys(plan).map(Number).sort((a,b)=>a-b);const el=document.getElementById('plan');
+ el.innerHTML=ks.length?`<b>Моят план: ${ks.length} ${ks.length===1?'място':'места'}</b><ol>${ks.map(k=>`<li>${A[k][0]}</li>`).join('')}</ol><button id="clr">Изчисти</button> <button id="cpy">Копирай списъка</button> <span id="cpm"></span>`:'<b>Моят план е празен.</b> Натиснете ♡ върху снимка, за да добавите място.';
+ const c=document.getElementById('clr');if(c)c.onclick=()=>{plan={};savePlan();sync()};
+ const p=document.getElementById('cpy');if(p)p.onclick=()=>{const t='Будапеща – моят план:\n'+ks.map((k,i)=>`${i+1}. ${A[k][0]}`).join('\n');navigator.clipboard.writeText(t).then(()=>document.getElementById('cpm').textContent='Копирано ✓').catch(()=>document.getElementById('cpm').textContent='Не можа да се копира')}}
+function sync(){document.querySelectorAll('.act .add').forEach(b=>{const on=!!plan[b.dataset.i];b.setAttribute('aria-pressed',on);b.textContent=on?'♥ В плана':'♡ Добави'});drawPlan();filt()}
+document.querySelectorAll('.act .add').forEach(b=>b.onclick=()=>{const i=b.dataset.i;if(plan[i])delete plan[i];else plan[i]=1;savePlan();sync()});
+sync();
+
+const MI=[['Stand','2 звезди','Модерна унгарска кухня, най-високо оцененият ресторант в града. Дегустационно меню ~230 €.'],['Babel','1 звезда','Шеф Акош Шаркьози, около 100 вида вино.'],['Borkonyha','1 звезда','До Базиликата. Над 200 унгарски вина.'],['Costes','1 звезда','Първата звезда Michelin в Унгария, от 2010 г.'],['Essência','1 звезда','Унгарско-португалска кухня.'],['Rumour','1 звезда','Малко маси, експериментално меню.'],['Salt','1 звезда','Зелена звезда, ферментации, унгарски корени.']];
+document.getElementById('mich').innerHTML=MI.map(m=>`<div><b>${m[0]}</b><span class="chip" style="display:inline-block;margin:4px 0 6px">${m[1]}</span><br>${m[2]}</div>`).join('');
+const BA=[['New York Café','В Anantara. Отидете рано сутрин или вечер.'],['Gerbeaud','Историческата сладкарница на площад Вьорьошмарти.'],['Matild Café & Cabaret','Belle Époque кафене от 1901 г., с кабаре.'],['The Duchess','Тайният покривен бар на Matild, с изглед към Дунава.'],['BiBo','Най-големият покривен бар в града, на 7-ия етаж в Dorothea.'],['Múzsa','Сецесионен коктейл бар във Four Seasons.'],['Society25','Speakeasy в W, с коктейли по мотиви от сградите в града.'],['High Note SkyBar','Покривен бар с изглед към купола на Базиликата.']];
+document.getElementById('bars').innerHTML=BA.map(m=>`<div><b>${m[0]}</b>${m[1]}</div>`).join('');
+
+/* credits */
+document.getElementById('credits').innerHTML=Object.entries(CR).map(([k,c])=>`<a href="${c[2]}" target="_blank" rel="noopener">${k.replace(/_\d$/,'')}: ${c[0]} · ${c[1]}</a>`).join('');
+
+/* countdown */
+const T=new Date('2026-12-25T14:35:00+02:00');
+function tick(){const d=T-new Date(),el=document.getElementById('count');if(d<=0){el.innerHTML='<div><b>Честит рожден ден!</b><span>Весела Коледа</span></div>';return}
+ const D=Math.floor(d/864e5),Hh=Math.floor(d/36e5)%24,Mm=Math.floor(d/6e4)%60;
+ el.innerHTML=`<div><b>${D}</b><span>дни</span></div><div><b>${Hh}</b><span>часа</span></div><div><b>${Mm}</b><span>минути</span></div><div><b>14:35</b><span>излитане, 25.12</span></div>`}
+tick();setInterval(tick,30000);
+}
+</script>
+</body>
+</html>
