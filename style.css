@@ -531,3 +531,22 @@ input[type=range]{margin:0;max-width:100%}
 .ugrid .ph0{display:grid;place-items:center;background:rgba(212,176,106,.06);color:var(--gold2);font-size:.85rem}
 .duo .dh{background:#14352a;font-size:14px;animation:swing 3s ease-in-out infinite}
 @keyframes swing{0%,100%{transform:translateX(-50%) rotate(-8deg)}50%{transform:translateX(-50%) rotate(8deg)}}
+
+/* карта: икони и ден/нощ */
+.mk{background:none;border:0}
+.mpin{position:relative;width:34px;height:34px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;border:2px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.45);transition:transform .2s}
+.mpin:after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-5px;border:5px solid transparent;border-top:6px solid #fff;border-bottom:0}
+.mk:hover .mpin{transform:scale(1.15) translateY(-2px)}
+.mpin.h{animation:none}
+.mpin.h:before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--c);animation:ring 2.2s infinite}
+@keyframes ring{0%{opacity:.8;transform:scale(.8)}100%{opacity:0;transform:scale(1.5)}}
+.mlab{background:rgba(255,255,255,.95);color:#1a1216;border:0;border-radius:8px;padding:3px 8px;font:600 12px Inter,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.mlab:before{display:none}
+#map.mnight .mtiles{filter:invert(1) hue-rotate(195deg) brightness(.85) contrast(.9) saturate(.35)}
+#map.mday .mtiles{filter:saturate(.75) brightness(1.02)}
+#map.mday{background:#f2efe9}
+#map.mnight .mlab{background:rgba(28,18,22,.92);color:#f2d99b;border:1px solid rgba(212,176,106,.4)}
+.mtheme{background:rgba(14,10,12,.85);color:#f2d99b;border:1px solid rgba(212,176,106,.5)!important;border-radius:999px;padding:8px 14px;font:600 13px Inter,sans-serif;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+#map.mday .mtheme{background:#fff;color:#5b1a2b}
+.mfi{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;margin-right:7px;vertical-align:-5px}
+.ptype{display:inline-flex;align-items:center;gap:5px;color:#fff;font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;margin-bottom:6px}

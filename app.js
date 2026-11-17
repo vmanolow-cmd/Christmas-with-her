@@ -199,17 +199,28 @@ $$('#food .flip').forEach(f=>{f.onclick=()=>f.classList.toggle('on');f.onkeydown
 slider($('#food').parentElement);
 
 /* ---------- карта ---------- */
-const COL={h:'#e9a3b4',s:'#8cc0e0',r:'#d4b06a',k:'#8fe0a8'};
+const COL={h:'#c2546f',s:'#3f7fb0',r:'#b8862f',k:'#2f8f6a'};
+const ICO={h:'<path d="M3 18V7m0 7h18v4m0-4v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="10.5" r="1.8"/>',
+ s:'<path d="M3 20h18M5 20v-8m4 8v-8m6 8v-8m4 8v-8M3 10l9-6 9 6z"/>',
+ r:'<path d="M7 3v8m-3-8v5a3 3 0 0 0 6 0V3m-3 8v10M17 21V3c-2.5 1.5-3.5 4-3.5 8h3.5"/>',
+ k:'<path d="M3 15l2 5h14l2-5zM6 15V9h12v6M9 9V5h4l2 4"/><path d="M2 21c2 0 2-1 4-1s2 1 4 1 2-1 4-1 2 1 4 1 2-1 4-1"/>'};
+const svgI=(t,s=16)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[t]}</svg>`;
 const MF=[['all','Всички'],['h','Хотели'],['s','Забележителности'],['r','Ядене и пиене'],['k','Круизи']];
-$('#mf').innerHTML=MF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">${f[1]}</button>`).join('');
-let MAP,LAY={};
+$('#mf').innerHTML=MF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">${f[0]==='all'?'':`<i class="mfi" style="background:${COL[f[0]]}">${svgI(f[0],13)}</i>`}${f[1]}</button>`).join('');
+let MAP,LAY={},TL,MKS=[],LABP=null;
+const isDay=()=>{const h=new Date().getHours()+new Date().getMinutes()/60;return h>=7&&h<17};
+let DAY=isDay();
+function setTheme(d){DAY=d;const m=$('#map');m.classList.toggle('mday',d);m.classList.toggle('mnight',!d);const b=$('#mtheme');if(b){b.innerHTML=d?'☾ Нощ':'☀ Ден';b.setAttribute('aria-label',d?'Тъмна карта':'Светла карта')}}
 function initMap(){if(typeof L==='undefined'){$('#map').innerHTML='<p style="padding:20px">Картата не можа да се зареди.</p>';return}
  MAP=L.map('map',{scrollWheelZoom:false}).setView([47.4995,19.056],14);
- L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap',className:'darktiles'}).addTo(MAP);
+ TL=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap',className:'mtiles'}).addTo(MAP);
  'hsrk'.split('').forEach(t=>LAY[t]=L.layerGroup().addTo(MAP));
- P.forEach(p=>{const ic=L.divIcon({className:'',html:`<div class="pin ${p[3]}" style="background:${COL[p[3]]}"></div>`,iconSize:[30,30],iconAnchor:[15,30],popupAnchor:[0,-28]});
-  L.marker([p[1],p[2]],{icon:ic,title:p[0]}).bindPopup(`<b>${p[0]}</b><br>${p[4]}<br><a href="${M(p[0]+' Budapest')}" target="_blank" rel="noopener">Упътване ↗</a>`).addTo(LAY[p[3]])});
- MAP.fitBounds(P.filter(p=>p[2]<19.075).map(p=>[p[1],p[2]]),{padding:[20,20]})}
+ P.forEach(p=>{const ic=L.divIcon({className:'mk',html:`<div class="mpin ${p[3]}" style="--c:${COL[p[3]]}">${svgI(p[3])}</div>`,iconSize:[34,42],iconAnchor:[17,40],popupAnchor:[0,-36],tooltipAnchor:[0,-20]});
+  const mk=L.marker([p[1],p[2]],{icon:ic,title:p[0]});MKS.push([mk,p[0]]);mk.bindPopup(`<span class="ptype" style="background:${COL[p[3]]}">${svgI(p[3],12)} ${MF.find(f=>f[0]===p[3])[1]}</span><b>${p[0]}</b><br>${p[4]}<br><a href="${M(p[0]+' Budapest')}" target="_blank" rel="noopener">Упътване ↗</a>`).addTo(LAY[p[3]])});
+ const lab=()=>{const on=MAP.getZoom()>=15;if(on===LABP)return;LABP=on;MKS.forEach(([m,n])=>{m.unbindTooltip();m.bindTooltip(n,{direction:'right',offset:[16,-22],className:'mlab',permanent:on})})};MAP.on('zoomend',lab);
+ const Ctl=L.Control.extend({onAdd(){const b=L.DomUtil.create('button','mtheme');b.id='mtheme';b.type='button';L.DomEvent.disableClickPropagation(b);b.onclick=()=>setTheme(!DAY);return b}});
+ new Ctl({position:'topright'}).addTo(MAP);setTheme(DAY);
+ MAP.fitBounds(P.filter(p=>p[2]<19.075).map(p=>[p[1],p[2]]),{padding:[20,20]});lab()}
 const mo=new IntersectionObserver(e=>{if(e[0].isIntersecting){initMap();mo.disconnect()}},{rootMargin:'400px'});mo.observe($('#map'));
 $$('#mf button').forEach(b=>b.onclick=()=>{$$('#mf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');if(!MAP)return;const f=b.dataset.f;Object.entries(LAY).forEach(([k,g])=>f==='all'||f===k?g.addTo(MAP):MAP.removeLayer(g))});
 
