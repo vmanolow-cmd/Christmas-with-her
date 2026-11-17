@@ -6,6 +6,8 @@
 <title>Коледа в Будапеща</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin>
+<meta name="theme-color" content="#5b1a2b">
 <style>
 /* VOICE: празнично, елегантно, като покана за коледен бал в дворец
    IDEA: луксозна туристическа брошура + бележник за избор на хотел
@@ -164,6 +166,104 @@ input[type=range]{width:100%;accent-color:#7a2a3e;min-height:30px}
 .tips{columns:2 320px;column-gap:30px}.tips p{break-inside:avoid;font-size:15px}
 .src{font-size:13px;color:var(--mute);columns:2 320px}.src a,.src span{display:block;margin:3px 0;word-break:break-word}
 footer{background:var(--wine);color:#ecd9d0;font-size:14px;text-align:center}
+
+/* ===== v3: ефекти, мобилно, нови раздели ===== */
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,#c9a24a,#e08ea3);z-index:60}
+.hero>img{animation:kb 26s ease-in-out infinite alternate;transform-origin:60% 50%}
+@keyframes kb{from{transform:scale(1)}to{transform:scale(1.09)}}
+#snow{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.snowbtn{position:absolute;top:14px;right:14px;z-index:3;min-height:40px;padding:0 14px;border-radius:999px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.3);color:#fff;font:600 13px Inter,sans-serif;cursor:pointer}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.hero>img{animation:none}}
+h2.shine{background:linear-gradient(100deg,var(--ink) 40%,var(--gold2) 50%,var(--ink) 60%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 7s ease-in-out infinite}
+.dark h2.shine{background-image:linear-gradient(100deg,#fff 40%,#f0cf86 50%,#fff 60%)}
+@keyframes sh{0%,60%{background-position:100% 0}100%{background-position:0 0}}
+/* мобилна долна лента */
+.tabbar{display:none}
+@media(max-width:760px){
+ nav.scroll{display:none}
+ body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+ .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:50;background:light-dark(rgba(255,255,255,.88),rgba(28,17,22,.9));backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+ .tabbar a,.tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;text-decoration:none;color:var(--ink);font:600 11px Inter,sans-serif;background:none;border:0;border-radius:12px;cursor:pointer;position:relative}
+ .tabbar svg{width:22px;height:22px}
+ .tabbar .badge{position:absolute;top:2px;right:calc(50% - 20px);min-width:18px;height:18px;border-radius:9px;background:var(--wine);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 4px}
+ .hero{min-height:88svh}
+ .hero h1{font-size:clamp(46px,13vw,64px)}
+ .band{padding:34px 16px}
+ h2{font-size:34px}
+ .gal,.gal.n3,.gal.n4{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;grid-template-rows:none;border-radius:14px;scrollbar-width:none}
+ .gal::-webkit-scrollbar{display:none}
+ .gal button,.gal button:first-child,.gal.n4 button:nth-child(2){flex:0 0 86%;height:250px;scroll-snap-align:center;display:block!important;grid-column:auto;grid-row:auto;border-radius:12px}
+ .dots{display:flex;justify-content:center;gap:6px;margin-top:8px}.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--wine2);width:18px;border-radius:4px}
+ .links .btn{flex:1 1 calc(50% - 8px);justify-content:center;text-align:center}
+ .count div{min-width:70px;padding:8px 12px}.count b{font-size:30px}
+}
+@media(min-width:761px){.dots{display:none}}
+.badge[hidden]{display:none!important}
+.sheet{position:fixed;inset:0;z-index:70;display:none;background:rgba(10,4,8,.5)}
+.sheet.on{display:block}
+.sheet .in{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:80vh;overflow:auto;animation:up .25s ease}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.sheet a{display:flex;align-items:center;min-height:50px;padding:0 12px;border-radius:12px;text-decoration:none;color:var(--ink);font-weight:600;border-bottom:1px solid var(--line)}
+/* ресторанти */
+.rest{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;margin-top:16px}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s}
+.rc:hover{transform:translateY(-3px);box-shadow:0 16px 34px -18px rgba(60,10,25,.45)}
+.rc.hide{display:none}
+.rc .ph{position:relative;height:190px;background:linear-gradient(135deg,#5b1a2b,#2a0d18);display:grid;place-items:center;overflow:hidden}
+.rc .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.rc .ph .mono{font-family:"Cormorant Garamond",serif;font-size:64px;color:rgba(240,207,134,.85);font-style:italic}
+.rc .ph .stars{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);color:#f6dfa6;font:700 12px Inter,sans-serif;padding:5px 10px;border-radius:999px}
+.rc .add{position:absolute;right:10px;top:10px;min-height:40px;padding:0 14px;border-radius:999px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);color:#fff;border:1px solid rgba(255,255,255,.35);font:600 13px Inter,sans-serif;cursor:pointer}
+.rc .add[aria-pressed=true]{background:#f0cf86;color:#1b2a35}
+.rc .b{padding:16px 18px;display:flex;flex-direction:column;flex:1}
+.rc h3{font-size:28px}.rc .k{font-size:13px;color:var(--gold2);font-weight:600}
+.rc p{font-size:15px;margin:6px 0 0}
+.rc dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:10px 0 0;font-size:14px}.rc dt{color:var(--mute)}.rc dd{margin:0}
+.rc .det{display:none}.rc.open .det{display:block}
+.rbtn{margin-top:12px;align-self:flex-start;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);font:500 13px Inter,sans-serif;cursor:pointer}
+.chipbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chipbar button{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 14px Inter,sans-serif;cursor:pointer}
+.chipbar button.on{background:var(--wine);color:#fff;border-color:var(--wine)}
+/* храна */
+.food2{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 14px;scrollbar-width:thin}
+.fd{flex:0 0 min(78%,280px);scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;perspective:900px}
+.fd img{width:100%;height:180px;object-fit:cover}
+.fd .b{padding:14px 16px}.fd h3{font-size:26px}.fd .hu{font-size:13px;color:var(--gold2);font-weight:600}.fd p{font-size:14.5px;margin:6px 0 0}
+.fd .where{margin-top:8px;font-size:13px;color:var(--mute)}
+/* карта */
+#map{height:min(70vh,560px);border-radius:18px;border:1px solid var(--line);z-index:1}
+.mapfall{padding:20px;border:1px dashed var(--line);border-radius:14px}
+.leaflet-popup-content{font:14px/1.45 Inter,sans-serif}.leaflet-popup-content b{font-family:"Cormorant Garamond",serif;font-size:19px}
+.pin{width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+/* разговорник */
+.phr{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin-top:14px}
+.ph1{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.ph1 button{flex:none;width:46px;height:46px;border-radius:50%;border:0;background:var(--wine);color:#fff;font-size:18px;cursor:pointer}
+.ph1 b{display:block;font-size:17px}.ph1 span{font-size:14px;color:var(--mute)}.ph1 i{font-style:normal;color:var(--gold2);font-size:13px}
+/* инструменти */
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
+.tool{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.tool h3{font-size:28px;margin-bottom:8px}
+.cv{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:end}
+.cv label{font-size:13px;color:var(--mute);display:block;margin-bottom:4px}
+.cv input{width:100%;min-height:50px;font:600 20px Inter,sans-serif;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.cv .sw{min-height:50px;width:50px;border-radius:12px;border:1px solid var(--line);background:var(--soft);font-size:18px;cursor:pointer;color:var(--ink)}
+.quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.quick button{min-height:38px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;font:500 13px Inter,sans-serif}
+.chk{list-style:none;padding:0;margin:0}.chk li{border-bottom:1px dashed var(--line)}
+.chk label{display:flex;gap:12px;align-items:center;min-height:46px;cursor:pointer;font-size:15px}
+.chk input{width:22px;height:22px;accent-color:#7a2a3e}
+.chk input:checked+span{text-decoration:line-through;color:var(--mute)}
+.pbar{height:8px;border-radius:99px;background:var(--soft);overflow:hidden;margin:8px 0 12px}.pbar i{display:block;height:100%;background:linear-gradient(90deg,#7a2a3e,#c9a24a);transition:width .3s}
+.share{background:linear-gradient(135deg,#5b1a2b,#2a0d18);color:#f3e9e4;border-radius:22px;padding:clamp(20px,4vw,36px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center}
+@media(max-width:700px){.share{grid-template-columns:1fr}}
+.share h3{color:#fff;font-size:34px}.share p{color:#ecd9d0}
+.share ul{margin:8px 0 0;padding-left:18px;font-size:15px}
+.share .bt{min-height:52px;padding:0 22px;border-radius:999px;border:0;background:#f0cf86;color:#2a0d18;font:700 16px Inter,sans-serif;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#22161b;color:#fff;padding:12px 18px;border-radius:999px;font-size:14px;opacity:0;transition:.3s;z-index:90;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%)}
+
 /* lightbox */
 #lb{position:fixed;inset:0;background:rgba(10,4,8,.94);z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;padding:16px}
 #lb.on{display:flex}#lb img{max-height:80vh;max-width:min(96vw,1280px);border-radius:8px;object-fit:contain}
@@ -176,8 +276,11 @@ footer{background:var(--wine);color:#ecd9d0;font-size:14px;text-align:center}
 </head>
 <body>
 
+<div id="prog"></div>
 <header class="hero">
  <img src="img/castle_0.webp" alt="Верижният мост и Будайската крепост нощем" fetchpriority="high">
+ <canvas id="snow" aria-hidden="true"></canvas>
+ <button class="snowbtn" id="snowbtn" aria-pressed="true">❄ Сняг</button>
  <div class="in">
   <div class="kick">25 – 27 декември 2026 · Коледа и рожден ден</div>
   <h1>Коледа в <i>Будапеща</i></h1>
@@ -188,7 +291,7 @@ footer{background:var(--wine);color:#ecd9d0;font-size:14px;text-align:center}
 </header>
 
 <nav class="scroll" aria-label="Раздели">
- <a href="#putuvane">Пътуването</a><a href="#hoteli">Хотелите</a><a href="#sravnenie">Сравнение</a><a href="#budjet">Бюджет</a><a href="#kruiz">Круиз 26.12</a><a href="#programa">Програма</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти</a><a href="#praktichno">Практично</a><a href="#iztochnici">Източници</a>
+ <a href="#putuvane">Пътуването</a><a href="#hoteli">Хотелите</a><a href="#sravnenie">Сравнение</a><a href="#budjet">Бюджет</a><a href="#kruiz">Круиз</a><a href="#programa">Програма</a><a href="#karta">Карта</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти</a><a href="#vkusno">Храна</a><a href="#ezik">Унгарски</a><a href="#instrumenti">Инструменти</a><a href="#izbor">Нашият избор</a>
 </nav>
 
 <section class="band" id="putuvane"><div class="wrap">
@@ -264,10 +367,47 @@ footer{background:var(--wine);color:#ecd9d0;font-size:14px;text-align:center}
 </div></section>
 
 <section class="band" id="hrana"><div class="wrap">
- <h2>Ресторанти, кафенета, барове</h2>
- <p class="lead">Будапеща има седем ресторанта със звезди Michelin през 2026 г. На Коледа много от тях са затворени или предлагат само празнично меню, затова резервирайте рано.</p>
- <h3 style="margin:18px 0 10px">Звезди Michelin</h3><div class="food" id="mich"></div>
- <h3 style="margin:26px 0 10px">Исторически кафенета и барове с гледка</h3><div class="food" id="bars"></div>
+ <h2 class="shine">Ресторанти, кафенета, барове</h2>
+ <p class="lead">Седемте ресторанта със звезди Michelin, легендарните кафенета и баровете с гледка. Натиснете карта за подробности, а с ♡ я добавяте към вашия избор. На Коледа много места работят само с празнично меню или са затворени, затова резервирайте рано.</p>
+ <div class="chipbar" id="rf"><button class="on" data-f="all">Всички</button><button data-f="x">Коледна вечеря</button><button data-f="m">Michelin</button><button data-f="c">Кафенета</button><button data-f="b">Барове с гледка</button><button data-f="fav">♥ Избрани</button></div>
+ <div class="rest" id="rest"></div>
+</div></section>
+
+<section class="band" id="vkusno" style="background:var(--soft)"><div class="wrap">
+ <h2 class="shine">Какво да опитаме</h2>
+ <p class="lead">Осем вкуса на Будапеща. Плъзнете настрани.</p>
+ <div class="food2" id="food"></div>
+</div></section>
+
+<section class="band" id="karta"><div class="wrap">
+ <h2 class="shine">Всичко на една карта</h2>
+ <p class="lead">Хотели, забележителности, ресторанти и пристанища за круиза. Натиснете точка, за да видите какво е. Всичко е на пешеходно разстояние: от Four Seasons до Matild се стига за около 10 минути.</p>
+ <div class="chipbar" id="mf"><button class="on" data-f="all">Всички</button><button data-f="h">Хотели</button><button data-f="s">Забележителности</button><button data-f="r">Ядене и пиене</button><button data-f="k">Круизи</button></div>
+ <div id="map" style="margin-top:14px"></div>
+</div></section>
+
+<section class="band" id="ezik" style="background:var(--soft)"><div class="wrap">
+ <h2 class="shine">Унгарски за три дни</h2>
+ <p class="lead">Натиснете ▶, за да чуете произношението. Телефонът го чете на унгарски, ако има унгарски глас, а при повечето телефони има. Едно „Köszönöm“ отваря много врати.</p>
+ <div class="phr" id="phr"></div>
+</div></section>
+
+<section class="band" id="instrumenti"><div class="wrap">
+ <h2 class="shine">Полезни инструменти</h2>
+ <div class="tools">
+  <div class="tool"><h3>Форинти ↔ евро</h3>
+   <div class="cv"><div><label for="huf">Форинти (HUF)</label><input id="huf" type="number" inputmode="decimal" value="10000"></div><button class="sw" id="sw" aria-label="Нулирай">↺</button><div><label for="eurI">Евро (€)</label><input id="eurI" type="number" inputmode="decimal"></div></div>
+   <div class="quick" id="quick"></div>
+   <p style="font-size:13px;color:var(--mute);margin-top:10px">Курс: 1 € ≈ <input id="rate" type="number" value="395" style="width:70px;min-height:32px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:2px 6px"> HUF (ориентир за 2026 г., може да се промени).</p></div>
+  <div class="tool"><h3>Какво да вземем</h3><div class="pbar"><i id="pb"></i></div><ul class="chk" id="chk"></ul><p style="font-size:13px;color:var(--mute);margin-top:8px">Отметките се пазят на този телефон.</p></div>
+ </div>
+</div></section>
+
+<section class="band" id="izbor" style="padding-top:0"><div class="wrap">
+ <div class="share">
+  <div><h3>Нашият избор</h3><p>Всичко, което сте отбелязали със сърце: хотели, места и ресторанти. Изпратете го с едно натискане във Viber, WhatsApp или Messenger.</p><div id="mine"></div></div>
+  <button class="bt" id="shareBtn">Сподели избора ↗</button>
+ </div>
 </div></section>
 
 <section class="band" id="praktichno" style="background:var(--soft)"><div class="wrap">
@@ -322,12 +462,23 @@ footer{background:var(--wine);color:#ecd9d0;font-size:14px;text-align:center}
 
 <footer class="band">Коледа в Будапеща · 25–27 декември 2026 · събрано през ноември 2026</footer>
 
+<nav class="tabbar" aria-label="Бърза навигация">
+ <a href="#hoteli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6"/></svg>Хотели</a>
+ <a href="#programa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Програма</a>
+ <a href="#karta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Карта</a>
+ <a href="#izbor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Избор<span class="badge" id="badge" hidden>0</span></a>
+ <button id="moreBtn" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Още</button>
+</nav>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Всички раздели"><div class="in">
+ <a href="#putuvane">Пътуването</a><a href="#sravnenie">Сравнение на хотелите</a><a href="#budjet">Калкулатор на бюджета</a><a href="#kruiz">Круиз на 26.12</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти и барове</a><a href="#vkusno">Какво да опитаме</a><a href="#ezik">Унгарски за три дни</a><a href="#instrumenti">Обменник и багаж</a><a href="#praktichno">Практично</a><a href="#iztochnici">Източници</a>
+</div></div>
+<div class="toast" id="toast" role="status"></div>
 <div id="lb" role="dialog" aria-modal="true" aria-label="Снимка на цял екран"><button id="lbx" aria-label="Затвори">✕</button><button id="lbp" aria-label="Предишна">‹</button><img id="lbi" alt=""><p id="lbc"></p><button id="lbn" aria-label="Следваща">›</button></div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin></script>
 <script>
 {
-const CR={"castle_0": ["Paul Mannix", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:The_Szechenyi_Chain_Bridge_and_Royal_Palace_(Buda_Castle),_Budapest,_Hungary.jpg", 1280, 857], "matild_0": ["Yair-haklai", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Matild_Palace_(Budapest).jpg", 1280, 891], "klotild_4": ["Dguendel", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_the_Klotild_Palace.jpg", 1280, 1065], "matild_1": ["Elekes Andor", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Matild_Palace.jpg", 871, 1280], "nycafe_2": ["Sandy Horvath-Dori from Grand Junction, CO, USA", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Interior_of_New_York_Palace,_Cafe_Budapest_(8344808702).jpg", 1280, 852], "nypalace_4": ["Fred Romero from Paris, France", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_-_New_York-palota_(37595301645).jpg", 1280, 853], "nycafe_0": ["Gzzz", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Clocks_in_New_York_Caf%C3%A9_Budapest_(2).jpg", 1280, 946], "nycafe2_0": ["Globetrotter19", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Tower_of_New_York_Palace._-_9-11_Erzs%C3%A9bet_Boulevard,_Budapest.JPG", 1280, 853], "parisi_4": ["Jorge Franganillo", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_P%C3%A1risi_Udvar_(54204580532).jpg", 1280, 853], "parisi_2": ["Jorge Franganillo", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_P%C3%A1risi_Udvar_(54175977849).jpg", 1280, 855], "parisi_1": ["I would appreciate being notified if you use my work outside", "CC BY 3.0", "https://commons.wikimedia.org/wiki/File:Budape%C5%A1%C5%A5,_Belv%C3%A1ros,_V%C3%A1ci_%C3%BAt,_Parisi_udvar.JPG", 1280, 914], "parisi_5": ["Jorge Franganillo", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_P%C3%A1risi_Udvar_(54175952733).jpg", 1280, 853], "gresham_0": ["Ivanhoe", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Gresham_Palace_Budapest_2009-12.jpg", 1280, 781], "gresham2_2": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Gresham-palota,_19.jpg", 1280, 871], "gresham2_1": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Gresham-palota,_20.jpg", 1280, 871], "gresham_1": ["michael clarke stuff", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Gresham_palota.jpg", 1280, 860], "klotild_3": ["Dguendel", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_the_Klotild_Palaces,_the_Inner_City_Parish_Church_and_the_Elisabeth_bridge.jpg", 943, 1280], "klotild_2": ["Yelkrokoyade", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Klotild_Palaces_Budapest.jpg", 960, 1280], "klotild_5": ["Takkk", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Franciscan_Square_%26_Klotild_Palaces_-_20_February_1963.jpg", 1280, 828], "drechsler_1": ["Salome mi", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Drechsler_Palace.jpg", 1280, 960], "drechsler_3": ["Fred Romero from Paris, France", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_-_Drechsler-palota_(38386823532).jpg", 1280, 853], "drechsler_0": ["Yair-haklai", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Drechsler_Palace-Former_Ballet_Institute,_Budapest.jpg", 1280, 721], "opera_3": ["Stavros Argyropoulos", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_-_Hungarian_state_opera.jpg", 1280, 669], "dorothea_3": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Dorottya_utca_2,_Dorothea_Hotel,_2.jpg", 1280, 871], "dorothea_4": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Dorottya_utca_2,_Dorothea_Hotel,_4.jpg", 1280, 871], "dorothea_5": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Dorottya_utca_2,_Dorothea_Hotel,_1.jpg", 1280, 871], "christmas_5": ["Top Budapest", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_Christmas_Market_(8228486664).jpg", 1280, 960], "vorosmarty_1": ["ucsendre", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Budapest,_V%C3%B6r%C3%B6smarty_t%C3%A9r_(2009_kar%C3%A1csonyi_v%C3%A1s%C3%A1r)_-_panoramio_(2)-crop.jpg", 1280, 853], "vorosmarty_4": ["Elekes Andor", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Kar%C3%A1csonyi_V%C3%A1s%C3%A1r_(3).jpg", 1280, 960], "basilica_4": ["Random photos 1989", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Szent_Istv%C3%A1n_Bazilika,_l%C3%A9pcs%C5%91.jpg", 1280, 960], "basilica_0": ["Carlos Delgado", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Szent_Istv%C3%A1n-bazilika_-_01.jpg", 1280, 960], "szechenyi_5": ["Mister No", "CC BY 3.0", "https://commons.wikimedia.org/wiki/File:Sz%C3%A9chenyi_Thermal_Bath_-_panoramio.jpg", 1280, 853], "szechenyi_3": ["Slyronit", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Sz%C3%A9chenyi_thermal_bath,_Budapest.jpg", 1280, 853], "parliament_1": ["Bengt Olof ÅRADSSON", "CC BY 2.5", "https://commons.wikimedia.org/wiki/File:BP_parliament_at_night_B%C3%85n.JPG", 1280, 720], "parliament_3": ["HoremWeb", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest_Parlament_by_night_WUXGA.jpg", 1280, 960], "danubecruise_4": ["Bybbisch94, Christian Gebhardt", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:20230430.Budapest_bei_Nacht.-022.jpg", 1280, 960], "bastion_0": ["Perituss", "CC0", "https://commons.wikimedia.org/wiki/File:Fisherman%27s_Bastion_2014.jpg", 1280, 853], "bastion_1": ["Ermell", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest_Fisherman%27s_Bastion-20080321-RM-100000.jpg", 1280, 960], "matthias_3": ["John Samuel", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Roof_of_Matthias_Church,_Budapest_01.jpg", 1280, 853], "castle_3": ["Jorge Láscar from Australia", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Lascar_Buda_Castle_(4544182334).jpg", 1280, 850], "opera_4": ["Chad K", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Painted_Ceiling,_Hungarian_State_Opera_House.jpg", 1280, 960], "andrassy_2": ["Christo", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Andr%C3%A1ssy_%C3%BAt,_2.jpg", 1280, 721], "szimpla_3": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Szimpla_Kert,_2.jpg", 1280, 960], "dohany_0": ["Acediscovery", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Dohany-Street-Synagogue-Budapest.jpg", 1280, 960], "szentendre_5": ["Rengier", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:F%C5%91_t%C3%A9r,_Szentendre.jpg", 1280, 960], "gerbeaud_4": ["G Da", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:The_Gerbeaud_cafe_in_Budapest_-_panoramio.jpg", 1280, 960], "gerbeaud_2": ["Gmihail at Serbian Wikipedia", "CC BY-SA 3.0 rs", "https://commons.wikimedia.org/wiki/File:Caf%C3%A9_Gerbeaud,_Budapest1.jpg", 1280, 853], "chainbridge_2": ["Arian Zwegers", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Sz%C3%A9chenyi_Chain_Bridge_(6931125833).jpg", 1280, 853], "duna_1": ["Karelj", "Public domain", "https://commons.wikimedia.org/wiki/File:Budapest_Danube_panorama_1.jpg", 1280, 853], "rudas_2": ["Globetrotter19", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:T%C3%A1ltos_(ship,_2014)_and_Rudas_Baths_from_Jane_Haining_quay,_2016_Budapest.jpg", 1280, 960], "christmas_2": ["Top Budapest", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:De%C3%A1k_Ferenc_utca,_Budapest_Christmas_Market_2012_(8227168833).jpg", 1280, 960]}
-;
+const CR={"castle_0": ["Paul Mannix", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:The_Szechenyi_Chain_Bridge_and_Royal_Palace_(Buda_Castle),_Budapest,_Hungary.jpg", 1280, 857], "matild_0": ["Yair-haklai", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Matild_Palace_(Budapest).jpg", 1280, 891], "klotild_4": ["Dguendel", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_the_Klotild_Palace.jpg", 1280, 1065], "matild_1": ["Elekes Andor", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Matild_Palace.jpg", 871, 1280], "nycafe_2": ["Sandy Horvath-Dori from Grand Junction, CO, USA", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Interior_of_New_York_Palace,_Cafe_Budapest_(8344808702).jpg", 1280, 852], "nypalace_4": ["Fred Romero from Paris, France", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_-_New_York-palota_(37595301645).jpg", 1280, 853], "nycafe_0": ["Gzzz", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Clocks_in_New_York_Caf%C3%A9_Budapest_(2).jpg", 1280, 946], "nycafe2_0": ["Globetrotter19", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Tower_of_New_York_Palace._-_9-11_Erzs%C3%A9bet_Boulevard,_Budapest.JPG", 1280, 853], "parisi_4": ["Jorge Franganillo", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_P%C3%A1risi_Udvar_(54204580532).jpg", 1280, 853], "parisi_2": ["Jorge Franganillo", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_P%C3%A1risi_Udvar_(54175977849).jpg", 1280, 855], "parisi_1": ["I would appreciate being notified if you use my work outside", "CC BY 3.0", "https://commons.wikimedia.org/wiki/File:Budape%C5%A1%C5%A5,_Belv%C3%A1ros,_V%C3%A1ci_%C3%BAt,_Parisi_udvar.JPG", 1280, 914], "parisi_5": ["Jorge Franganillo", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_P%C3%A1risi_Udvar_(54175952733).jpg", 1280, 853], "gresham_0": ["Ivanhoe", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Gresham_Palace_Budapest_2009-12.jpg", 1280, 781], "gresham2_2": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Gresham-palota,_19.jpg", 1280, 871], "gresham2_1": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Gresham-palota,_20.jpg", 1280, 871], "gresham_1": ["michael clarke stuff", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Gresham_palota.jpg", 1280, 860], "klotild_3": ["Dguendel", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_the_Klotild_Palaces,_the_Inner_City_Parish_Church_and_the_Elisabeth_bridge.jpg", 943, 1280], "klotild_2": ["Yelkrokoyade", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Klotild_Palaces_Budapest.jpg", 960, 1280], "klotild_5": ["Takkk", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Franciscan_Square_%26_Klotild_Palaces_-_20_February_1963.jpg", 1280, 828], "drechsler_1": ["Salome mi", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Drechsler_Palace.jpg", 1280, 960], "drechsler_3": ["Fred Romero from Paris, France", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_-_Drechsler-palota_(38386823532).jpg", 1280, 853], "drechsler_0": ["Yair-haklai", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Drechsler_Palace-Former_Ballet_Institute,_Budapest.jpg", 1280, 721], "opera_3": ["Stavros Argyropoulos", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_-_Hungarian_state_opera.jpg", 1280, 669], "dorothea_3": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Dorottya_utca_2,_Dorothea_Hotel,_2.jpg", 1280, 871], "dorothea_4": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Dorottya_utca_2,_Dorothea_Hotel,_4.jpg", 1280, 871], "dorothea_5": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Dorottya_utca_2,_Dorothea_Hotel,_1.jpg", 1280, 871], "christmas_5": ["Top Budapest", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest_Christmas_Market_(8228486664).jpg", 1280, 960], "vorosmarty_1": ["ucsendre", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Budapest,_V%C3%B6r%C3%B6smarty_t%C3%A9r_(2009_kar%C3%A1csonyi_v%C3%A1s%C3%A1r)_-_panoramio_(2)-crop.jpg", 1280, 853], "vorosmarty_4": ["Elekes Andor", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Kar%C3%A1csonyi_V%C3%A1s%C3%A1r_(3).jpg", 1280, 960], "basilica_4": ["Random photos 1989", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Szent_Istv%C3%A1n_Bazilika,_l%C3%A9pcs%C5%91.jpg", 1280, 960], "basilica_0": ["Carlos Delgado", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Szent_Istv%C3%A1n-bazilika_-_01.jpg", 1280, 960], "szechenyi_5": ["Mister No", "CC BY 3.0", "https://commons.wikimedia.org/wiki/File:Sz%C3%A9chenyi_Thermal_Bath_-_panoramio.jpg", 1280, 853], "szechenyi_3": ["Slyronit", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Sz%C3%A9chenyi_thermal_bath,_Budapest.jpg", 1280, 853], "parliament_1": ["Bengt Olof ÅRADSSON", "CC BY 2.5", "https://commons.wikimedia.org/wiki/File:BP_parliament_at_night_B%C3%85n.JPG", 1280, 720], "parliament_3": ["HoremWeb", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest_Parlament_by_night_WUXGA.jpg", 1280, 960], "danubecruise_4": ["Bybbisch94, Christian Gebhardt", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:20230430.Budapest_bei_Nacht.-022.jpg", 1280, 960], "bastion_0": ["Perituss", "CC0", "https://commons.wikimedia.org/wiki/File:Fisherman%27s_Bastion_2014.jpg", 1280, 853], "bastion_1": ["Ermell", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest_Fisherman%27s_Bastion-20080321-RM-100000.jpg", 1280, 960], "matthias_3": ["John Samuel", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Roof_of_Matthias_Church,_Budapest_01.jpg", 1280, 853], "castle_3": ["Jorge Láscar from Australia", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Lascar_Buda_Castle_(4544182334).jpg", 1280, 850], "opera_4": ["Chad K", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Painted_Ceiling,_Hungarian_State_Opera_House.jpg", 1280, 960], "andrassy_2": ["Christo", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Andr%C3%A1ssy_%C3%BAt,_2.jpg", 1280, 721], "szimpla_3": ["Random photos 1989", "CC0", "https://commons.wikimedia.org/wiki/File:Budapest,_Szimpla_Kert,_2.jpg", 1280, 960], "dohany_0": ["Acediscovery", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Dohany-Street-Synagogue-Budapest.jpg", 1280, 960], "szentendre_5": ["Rengier", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:F%C5%91_t%C3%A9r,_Szentendre.jpg", 1280, 960], "gerbeaud_4": ["G Da", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:The_Gerbeaud_cafe_in_Budapest_-_panoramio.jpg", 1280, 960], "gerbeaud_2": ["Gmihail at Serbian Wikipedia", "CC BY-SA 3.0 rs", "https://commons.wikimedia.org/wiki/File:Caf%C3%A9_Gerbeaud,_Budapest1.jpg", 1280, 853], "chainbridge_2": ["Arian Zwegers", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Budapest,_Sz%C3%A9chenyi_Chain_Bridge_(6931125833).jpg", 1280, 853], "duna_1": ["Karelj", "Public domain", "https://commons.wikimedia.org/wiki/File:Budapest_Danube_panorama_1.jpg", 1280, 853], "rudas_2": ["Globetrotter19", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:T%C3%A1ltos_(ship,_2014)_and_Rudas_Baths_from_Jane_Haining_quay,_2016_Budapest.jpg", 1280, 960], "christmas_2": ["Top Budapest", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:De%C3%A1k_Ferenc_utca,_Budapest_Christmas_Market_2012_(8227168833).jpg", 1280, 960], "costes_x0": ["Antissimo", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Costes_Restaurant,_Budapest_02.JPG", 1280, 960], "babel_x0": ["Jacob Bøtter from Copenhagen, Denmark", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Babel_Delicate_Restaurant,_Budapest_01.jpg", 1280, 956], "goulash_x0": ["ainudil", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Goulash_soup_2014.jpg", 1280, 853], "langos_x0": ["MichalPL", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Hungarian_L%C3%A1ngos.jpg", 1280, 960], "langos_x1": ["SonoGrazy", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:L%C3%A1ngos,_13_December_2023.jpg", 1280, 960], "kurtos_x0": ["Cyril5555", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:K%C3%BCrt%C5%91skal%C3%A1cs2011.jpg", 1025, 1280], "kurtos_x1": ["Cluj Napoca", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:K%C3%BCrt%C5%91skal%C3%A1cs.jpg", 1280, 960], "dobos_x0": ["Savannah Grandfather", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Dobos_cake_(Gerbeaud_Confectionery_Budapest_Hungary).jpg", 1280, 853], "somloi_x0": ["Toben", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Soml%C3%B3i_galuska.jpg", 1280, 960], "somloi_x1": ["Illustratedjc", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Somloi-galuska.JPG", 1280, 851], "paprikas_x1": ["stu_spivack", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Chicken_paprikash.jpg", 1280, 851], "palinka_x0": ["Rachael Ludwick", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Kecskem%C3%A9ti_barack_p%C3%A1linka.jpg", 960, 1280], "palinka_x1": ["T.MESE", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:02._Szekeres_p%C3%A1linka.jpg", 1280, 852], "fourseasonslobby_x0": ["Adam Jones, Ph.D.", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Four_Seasons_Gresham_Palace_Hotel_-_Interior_-_Pest_Side_-_Budapest_-_Hungary_-_02.jpg", 1280, 960], "fourseasonslobby_x1": ["benjgibbs", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Four_Seasons_Hotel_Lobby_-_Budapest_(28923825034).jpg", 853, 1280], "tokaji_x0": ["Igor.vizner", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Bottles_of_Tokaji_Asz%C3%BA.JPG", 1024, 768]};
 const G=q=>'https://www.google.com/search?tbm=isch&q='+encodeURIComponent(q);
 const M=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
 const BK=s=>'https://www.booking.com/searchresults.html?ss='+encodeURIComponent(s)+'&checkin=2026-12-25&checkout=2026-12-27&group_adults=2&no_rooms=1&group_children=0&selected_currency=EUR';
@@ -491,7 +642,7 @@ document.getElementById('hotelList').innerHTML=H.map((h,i)=>`
 <article class="hotel" id="${h.id}">
  <div class="hhead"><div><div class="num">№${i+1} · ${h.brand}</div><h3>${h.name}</h3><div class="meta"><span>${h.addr}</span><span>${h.year}</span></div></div>
  <button class="fav" data-id="${h.id}" aria-pressed="${!!store[h.id]}">${store[h.id]?'♥ Харесано':'♡ Харесвам'}</button></div>
- <div class="gal n${h.ph.length}" data-h="${i}">${h.ph.map((k,j)=>`<button data-j="${j}" aria-label="Увеличи: ${h.cap[j]}"><img src="img/${k}.webp" alt="${h.cap[j]}" loading="lazy"></button>`).join('')}</div>
+ <div class="gal n${h.ph.length}" data-h="${i}">${h.ph.map((k,j)=>`<button data-j="${j}" aria-label="Увеличи: ${h.cap[j]}"><img src="img/${k}.webp" alt="${h.cap[j]}" loading="lazy"></button>`).join('')}</div><div class="dots">${h.ph.map((_,j)=>`<i class="${j?'':'on'}"></i>`).join('')}</div>
  <div class="hgrid">
   <div>
    <p>${h.intro}</p>
@@ -583,10 +734,142 @@ function sync(){document.querySelectorAll('.act .add').forEach(b=>{const on=!!pl
 document.querySelectorAll('.act .add').forEach(b=>b.onclick=()=>{const i=b.dataset.i;if(plan[i])delete plan[i];else plan[i]=1;savePlan();sync()});
 sync();
 
-const MI=[['Stand','2 звезди','Модерна унгарска кухня, най-високо оцененият ресторант в града. Дегустационно меню ~230 €.'],['Babel','1 звезда','Шеф Акош Шаркьози, около 100 вида вино.'],['Borkonyha','1 звезда','До Базиликата. Над 200 унгарски вина.'],['Costes','1 звезда','Първата звезда Michelin в Унгария, от 2010 г.'],['Essência','1 звезда','Унгарско-португалска кухня.'],['Rumour','1 звезда','Малко маси, експериментално меню.'],['Salt','1 звезда','Зелена звезда, ферментации, унгарски корени.']];
-document.getElementById('mich').innerHTML=MI.map(m=>`<div><b>${m[0]}</b><span class="chip" style="display:inline-block;margin:4px 0 6px">${m[1]}</span><br>${m[2]}</div>`).join('');
-const BA=[['New York Café','В Anantara. Отидете рано сутрин или вечер.'],['Gerbeaud','Историческата сладкарница на площад Вьорьошмарти.'],['Matild Café & Cabaret','Belle Époque кафене от 1901 г., с кабаре.'],['The Duchess','Тайният покривен бар на Matild, с изглед към Дунава.'],['BiBo','Най-големият покривен бар в града, на 7-ия етаж в Dorothea.'],['Múzsa','Сецесионен коктейл бар във Four Seasons.'],['Society25','Speakeasy в W, с коктейли по мотиви от сградите в града.'],['High Note SkyBar','Покривен бар с изглед към купола на Базиликата.']];
-document.getElementById('bars').innerHTML=BA.map(m=>`<div><b>${m[0]}</b>${m[1]}</div>`).join('');
+/* ===== ресторанти ===== */
+/* [име, типове (x=коледна вечеря, m=Michelin, c=кафене, b=бар), снимка|null, етикет, кикер, описание, какво да поръчате, цена, адрес, Коледа, карта] */
+const R=[
+['KOLLÁZS','x',"fourseasonslobby_x0",'Four Seasons','Брасери във Four Seasons','Елегантна брасери до Верижния мост. Унгарска и международна кухня, дегустации на вина от 22-та винени региона на Унгария.','Октопод и миди, френски тост','150–250 € за двама (празнично меню)','Széchenyi István tér 5–6','25.12: коледна вечеря 18:00–22:30, меню от 5 ястия и жива музика. Онлайн нямаше свободни маси, затова е изпратено запитване','KOLLÁZS Brasserie Budapest'],
+['Spago by Wolfgang Puck','x',"matild_0",'Matild Palace','Първият Spago в Европа','Калифорнийската кухня на Волфганг Пук, приготвена с унгарски продукти, в двореца Matild.','Сезонното меню на шефа','140–220 € за двама','Váci utca 36','Коледна програма е обявена за 24.12. За 25.12 се чака потвърждение от хотела','Spago Budapest'],
+['New York Café','xc',"nycafe_2",'Anantara','„Най-красивото кафене в света“','Позлата, венециански полилеи и фрески от 1894 г. Сутрин е закуска за гостите на хотела, през деня и вечер има унгарски специалитети.','Закуска, гулаш, торта на заведението','€€€','Erzsébet krt. 9–11','Отворено и по празниците, но с опашка. Резервирайте','New York Café Budapest'],
+['Párisi Passage','xc',"parisi_4",'Párisi Udvar','Под стъклените куполи','Ресторант, кафене и бар в пасажа от 1912 г. Унгарска и международна кухня с открита кухня.','Кафе и десерт под купола, вечеря в брасерито','€€€','Petőfi Sándor u. 2–4','Попитайте хотела за коледното меню','Párisi Passage Budapest'],
+['Pavilon','xc',"dorothea_3",'Dorothea','Зелена градина под стъклен покрив','Ресторант във вътрешния двор на Dorothea, сред растения, с ферма-до-масата кухня.','Следобеден чай на порцелан Жолнаи','€€€','Dorottya utca 2','Попитайте хотела за коледното меню','Pavilon Restaurant Dorothea Budapest'],
+['Stand','m',null,'★★ Michelin','Най-високо оцененият в града','Модерна унгарска кухня на шеф Сабина Сюло. Единственият ресторант в Будапеща с две звезди.','Дегустационното меню','~89 500 HUF (~230 €) на човек','Székely Mihály u. 2','Обикновено е затворен по Коледа, проверете','Stand Restaurant Budapest'],
+['Babel','m',"babel_x0",'★ Michelin','Прецизна модерна кухня','Шеф Акош Шаркьози, местни продукти и около 100 вина, най-вече унгарски.','Дегустационното меню с вино','€€€€','Piarista köz 2','Проверете празничното работно време','Babel Budapest'],
+['Borkonyha','m',"basilica_0",'★ Michelin','Вино преди всичко','До Базиликата. По-спокойното лице на звездите Michelin, с над 200 унгарски вина.','Фоа гра, унгарски вина на чаша','€€€','Sas u. 3','Проверете празничното работно време','Borkonyha Winekitchen Budapest'],
+['Costes','m',"costes_x0",'★ Michelin','Първата звезда в Унгария','Тук през 2010 г. е присъдена първата звезда Michelin в Унгария.','Дегустационното меню','€€€€','Ráday u. 4','Проверете празничното работно време','Costes Restaurant Budapest'],
+['Essência','m',null,'★ Michelin','Унгария + Португалия','Кухня, съчетаваща унгарски продукти и португалски корени.','Менюто на шефа','€€€€','Sas u. 17','Проверете празничното работно време','Essência Restaurant Budapest'],
+['Rumour','m',null,'★ Michelin','Шоу на шефа','Малко маси около кухнята, експериментално дегустационно преживяване.','Цялото меню','€€€€','—','Проверете празничното работно време','Rumour Restaurant Budapest'],
+['Salt','m',null,'★ Michelin + зелена','Ферментации и корени','Зелена звезда за устойчивост. Унгарски традиции, преоткрити по модерен начин.','Менюто на шефа','€€€€','—','Проверете празничното работно време','Salt Restaurant Budapest'],
+['Gerbeaud','c',"dobos_x0",'от 1858','Историческата сладкарница','Салони с полилеи на площад Вьорьошмарти, точно до коледния базар.','Торта „Добош“ и горещ шоколад','€€','Vörösmarty tér 7–8','Проверете празничното работно време','Gerbeaud Budapest'],
+['Matild Café & Cabaret','c',"matild_1",'Matild Palace','Кафене от 1901 г.','Някогашното литературно кафене, преоткрито с хидравлична сцена за кабаре.','Торти и вечер с кабаре','€€€','Váci utca 36','Попитайте за коледната програма','Matild Cafe Cabaret Budapest'],
+['Klotild Patisserie','c',"klotild_3",'St. Regis','Сладкарница в стара аптека','Унгарски и френски сладкиши в някогашната аптека на Клотилдиния дворец.','Ванилов сладолед и капучино','€€','Váci utca 34','Проверете празничното работно време','Klotild Patisserie Budapest'],
+['The Duchess','b',"matild_0",'Matild, покрив','Тайният бар на покрива','Скрит асансьор води до бар-библиотека с гледка към Дунава, Елисабетинския мост и залеза. Под 18 г. не се допускат.','Авторските коктейли','31–50 € на човек','Váci utca 36','Проверете дали работи по празниците','The Duchess Budapest'],
+['BiBo','b',"dorothea_4",'Dorothea, 7-и етаж','Най-големият покривен бар','Андалуска брасери на шеф Дани Гарсия, с изглед към Дунава, хълма Гелерт и Крепостта.','Тапас и коктейли по залез','€€€','Dorottya utca 2','Проверете дали работи по празниците','BiBo Budapest rooftop'],
+['Múzsa','b',"gresham2_1",'Four Seasons','Сецесионен коктейл бар','Първият луксозен сецесионен коктейл бар в Будапеща, с танцово шоу всеки първи четвъртък от месеца.','Коктейл след вечерята в KOLLÁZS','€€€','Széchenyi István tér 5–6','Отворен за гостите на хотела','Múzsa Bar Four Seasons Budapest'],
+['Society25','b',"drechsler_1",'W Budapest','Скритият бар на W','Коктейли, вдъхновени от сградите на Belle Époque, например „Délice Pêche“ по мотиви от двореца Дрекслер.','„Avant-Garde“ (пикантен)','€€€','Andrássy út 25','Проверете дали работи по празниците','Society25 W Budapest'],
+['High Note SkyBar','b',"basilica_4",'покрив','Гледка към купола на Базиликата','Покривен бар с изглед към купола на Базиликата, на две крачки от коледния базар.','Коктейл с гледка към купола','€€€','Hercegprímás u. 5','Проверете дали работи по празниците','High Note SkyBar Budapest'],
+['Szimpla Kert','b',"szimpla_3",'руинен бар','Легендата на нощния живот','Лабиринт от стаи, пълни с вехтории, светлини и музика, в полуразрушена сграда.','Бира, фрьосч и лангош','€','Kazinczy u. 14','Проверете празничното работно време','Szimpla Kert'],
+];
+let rfav={};try{rfav=JSON.parse(localStorage.getItem('bp-rest')||'{}')}catch(e){}
+const saveR=()=>{try{localStorage.setItem('bp-rest',JSON.stringify(rfav))}catch(e){}};
+const RL=R.filter(r=>r[2]).map(r=>[r[2],r[0]]);
+document.getElementById('rest').innerHTML=R.map((r,i)=>`<article class="rc" data-i="${i}"><div class="ph">${r[2]?`<img src="img/${r[2]}.webp" alt="${r[0]}" loading="lazy">`:`<span class="mono">${r[0][0]}</span>`}<span class="stars">${r[3]}</span><button class="add" data-i="${i}" aria-pressed="${!!rfav[i]}">${rfav[i]?'♥ Избрано':'♡'}</button></div>
+<div class="b"><div class="k">${r[4]}</div><h3>${r[0]}</h3><p>${r[5]}</p>
+<div class="det"><dl><dt>Да опитате</dt><dd>${r[6]}</dd><dt>Цена</dt><dd>${r[7]}</dd><dt>Адрес</dt><dd>${r[8]}</dd><dt>Коледа</dt><dd>${r[9]}</dd></dl><a href="${M(r[10])}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px">Google Maps ↗</a></div>
+<button class="rbtn" aria-expanded="false">Подробности</button></div></article>`).join('');
+document.querySelectorAll('.rc .ph img').forEach(im=>im.style.cursor='zoom-in');
+document.querySelectorAll('.rc .ph img').forEach(im=>im.onclick=()=>{const k=R[+im.closest('.rc').dataset.i][2];openLB(RL,RL.findIndex(x=>x[0]===k))});
+document.querySelectorAll('.rc .rbtn').forEach(b=>b.onclick=()=>{const c=b.closest('.rc');c.classList.toggle('open');const o=c.classList.contains('open');b.setAttribute('aria-expanded',o);b.textContent=o?'Скрий':'Подробности'});
+let RF='all';
+function rfilt(){document.querySelectorAll('.rc').forEach(c=>{const i=c.dataset.i,r=R[i];c.classList.toggle('hide',!(RF==='all'||(RF==='fav'?rfav[i]:r[1].includes(RF))))})}
+document.querySelectorAll('#rf button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#rf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');RF=b.dataset.f;rfilt()});
+document.querySelectorAll('.rc .add').forEach(b=>b.onclick=()=>{const i=b.dataset.i;if(rfav[i])delete rfav[i];else rfav[i]=1;saveR();b.setAttribute('aria-pressed',!!rfav[i]);b.textContent=rfav[i]?'♥ Избрано':'♡';rfilt();upd();toast(rfav[i]?R[i][0]+' е добавен към избора':'Премахнато')});
+
+/* ===== храна ===== */
+const FD=[['Гулаш','Gulyásleves','goulash_x0','Супа с говеждо, паприка и картофи. Често се сервира в купичка от хляб, идеална в студена вечер.','Във всеки класически унгарски ресторант'],
+['Лангош','Lángos','langos_x0','Пържено тесто със заквасена сметана, настъргано сирене и чесън. Най-добрата улична храна.','На коледните базари'],
+['Курточ калач','Kürtőskalács','kurtos_x1','Тесто, навито на дървен цилиндър и изпечено на жар, със захар, канела или орехи. Ухае на Коледа.','На коледните базари, пресен от жарта'],
+['Торта „Добош“','Dobos torta','dobos_x0','Пет блата с шоколадов крем и хрупкав карамелен капак. Създадена в Будапеща през 1885 г.','В Gerbeaud'],
+['Шомлойска галушка','Somlói galuska','somloi_x0','Пандишпан с ванилов крем, орехи, шоколадов сос и сметана. Любимият десерт на унгарците.','В класическите ресторанти'],
+['Пилешки паприкаш','Csirkepaprikás','paprikas_x1','Пиле в сос от паприка и сметана, с малки домашни галушки.','В унгарските ресторанти'],
+['Токай Асу','Tokaji Aszú','tokaji_x0','Сладко златисто вино, наричано „виното на кралете“. Идеално с десерта на рождения ден.','В Borkonyha и винените барове'],
+['Палинка','Pálinka','palinka_x1','Плодова ракия: кайсиева (barack), сливова или крушова. Пие се с „Egészségedre!“.','В баровете и на базарите']];
+const FL2=FD.map(f=>[f[2],f[0]]);
+document.getElementById('food').innerHTML=FD.map((f,i)=>`<div class="fd"><img src="img/${f[2]}.webp" alt="${f[0]}" loading="lazy" data-i="${i}" style="cursor:zoom-in"><div class="b"><div class="hu">${f[1]}</div><h3>${f[0]}</h3><p>${f[3]}</p><div class="where">Къде: ${f[4]}</div></div></div>`).join('');
+document.querySelectorAll('.fd img').forEach(im=>im.onclick=()=>openLB(FL2,+im.dataset.i));
+
+/* ===== карта ===== */
+const P=[
+['Matild Palace',47.4914,19.0543,'h','Хотел · дворец от 1902'],['The St. Regis',47.4921,19.0543,'h','Хотел · Клотилдиният дворец'],['Párisi Udvar',47.4930,19.0556,'h','Хотел · пасажът под куполите'],['Anantara New York Palace',47.4983,19.0707,'h','Хотел · кафене New York'],['Four Seasons Gresham Palace',47.4995,19.0478,'h','Хотел · до Верижния мост'],['W Budapest',47.5031,19.0587,'h','Хотел · срещу Операта'],['Dorothea Hotel',47.4974,19.0502,'h','Хотел · до коледния базар'],
+['Парламентът',47.5071,19.0456,'s','Обиколки с резервация'],['Рибарският бастион',47.5022,19.0347,'s','Най-хубавата гледка'],['Църквата „Матиаш“',47.5019,19.0341,'s','Цветният покрив'],['Кралският дворец',47.4961,19.0397,'s','Будайската крепост'],['Верижният мост',47.4990,19.0438,'s','Най-красив нощем'],['Базиликата + Advent Bazilika',47.5009,19.0539,'s','Коледният базар, 25–26.12: 11–20 ч.'],['Базарът на Вьорьошмарти',47.4968,19.0512,'s','Най-големият коледен базар'],['Банята Сечени',47.5186,19.0823,'s','26.12: 10–20 ч.'],['Банята Рудаш',47.4893,19.0469,'s','Басейн на покрива'],['Държавната опера',47.5025,19.0580,'s','Срещу W'],['Синагогата на улица „Дохан“',47.4958,19.0608,'s','В събота е затворена'],['Обувките на брега на Дунава',47.5043,19.0449,'s','Паметник на брега'],['Площадът на героите',47.5149,19.0779,'s','Краят на „Андраши“'],
+['Gerbeaud',47.4972,19.0505,'r','Торта „Добош“'],['Borkonyha',47.4994,19.0516,'r','★ Michelin'],['Essência',47.5013,19.0527,'r','★ Michelin'],['Babel',47.4926,19.0522,'r','★ Michelin'],['Costes',47.4887,19.0619,'r','★ Michelin'],['Stand',47.4996,19.0597,'r','★★ Michelin'],['Szimpla Kert',47.4970,19.0633,'r','Руинен бар'],['High Note SkyBar',47.5011,19.0534,'r','Покривен бар'],
+['Legenda · пристанище',47.4963,19.0484,'k','Вечеря на свещи'],['Silverline · пристанище',47.4940,19.0503,'k','Dinner & Lights']];
+const COL={h:'#7a2a3e',s:'#22506e',r:'#c9a24a',k:'#4f8a6b'};
+let MAP,LAY={};
+function initMap(){if(typeof L==='undefined'){document.getElementById('map').outerHTML='<div class="mapfall">Картата не можа да се зареди. Отворете местата в Google Maps от бутоните при всеки хотел и всяко място.</div>';return}
+ MAP=L.map('map',{scrollWheelZoom:false,tap:true}).setView([47.4995,19.0560],14);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(MAP);
+ 'hsrk'.split('').forEach(t=>LAY[t]=L.layerGroup().addTo(MAP));
+ P.forEach(p=>{const ic=L.divIcon({className:'',html:`<div class="pin" style="background:${COL[p[3]]}"></div>`,iconSize:[28,28],iconAnchor:[14,28],popupAnchor:[0,-26]});
+  L.marker([p[1],p[2]],{icon:ic,title:p[0]}).bindPopup(`<b>${p[0]}</b><br>${p[4]}<br><a href="${M(p[0]+' Budapest')}" target="_blank" rel="noopener">Упътване ↗</a>`).addTo(LAY[p[3]])});
+ MAP.fitBounds(P.filter(p=>p[3]!=='s'||p[2]<19.07).map(p=>[p[1],p[2]]),{padding:[24,24]})}
+const mo=new IntersectionObserver(e=>{if(e[0].isIntersecting){initMap();mo.disconnect()}},{rootMargin:'300px'});mo.observe(document.getElementById('map'));
+document.querySelectorAll('#mf button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#mf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');if(!MAP)return;const f=b.dataset.f;Object.entries(LAY).forEach(([k,g])=>{if(f==='all'||f===k)g.addTo(MAP);else MAP.removeLayer(g)})});
+
+/* ===== разговорник ===== */
+const PH=[['Szia!','сия','Здрасти / Чао'],['Jó estét!','йо ещет','Добър вечер'],['Köszönöm!','кьосьоньом','Благодаря'],['Kérem','керем','Моля'],['Egészségedre!','егесшегедре','Наздраве!'],['Boldog karácsonyt!','болдог карачоньт','Весела Коледа!'],['Boldog születésnapot!','болдог сюлетешнапот','Честит рожден ден!'],['Szeretlek','серетлек','Обичам те'],['Egy forralt bort kérek','едь форалт борт керек','Едно греяно вино, моля'],['A számlát kérem','а самлат керем','Сметката, моля'],['Mennyibe kerül?','меньибе керюл','Колко струва?'],['Finom!','фином','Вкусно!'],['Jó étvágyat!','йо етвадят','Добър апетит!'],['Bocsánat','бочанат','Извинете'],['Igen / Nem','иген / нем','Да / Не']];
+document.getElementById('phr').innerHTML=PH.map((p,i)=>`<div class="ph1"><button data-i="${i}" aria-label="Чуй: ${p[0]}">▶</button><div><b>${p[0]}</b><span>${p[2]}</span><br><i>${p[1]}</i></div></div>`).join('');
+document.querySelectorAll('.ph1 button').forEach(b=>b.onclick=()=>{try{const u=new SpeechSynthesisUtterance(PH[+b.dataset.i][0].replace(' / ',', '));u.lang='hu-HU';u.rate=.85;const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith('hu'));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){toast('Телефонът не може да го прочете')}});
+
+/* ===== обменник ===== */
+const huf=document.getElementById('huf'),eurI=document.getElementById('eurI'),rate=document.getElementById('rate');
+const r2=()=>+rate.value||395;
+huf.oninput=()=>{eurI.value=huf.value?(huf.value/r2()).toFixed(2):''};
+eurI.oninput=()=>{huf.value=eurI.value?Math.round(eurI.value*r2()):''};
+rate.oninput=()=>huf.oninput();
+document.getElementById('sw').onclick=()=>{huf.value='';eurI.value='';huf.focus()};
+document.getElementById('quick').innerHTML=[1000,2500,5000,10000,20000,45000].map(v=>`<button data-v="${v}">${v.toLocaleString('bg-BG')} Ft</button>`).join('');
+document.querySelectorAll('#quick button').forEach(b=>b.onclick=()=>{huf.value=b.dataset.v;huf.oninput()});
+huf.oninput();
+
+/* ===== багаж ===== */
+const CK=['Лична карта или паспорт','Бордни карти в приложението на Wizz Air','Малка чанта 40×30×20 см','Бански и джапанки за банята','Шапка за басейна (ако плувате)','Елегантен тоалет за коледната вечеря','Топло яке, шал, шапка, ръкавици','Удобни обувки за разходки','Зарядно и външна батерия','Карта за плащане без такса за обмяна','Подарък за рождения ден'];
+let ck={};try{ck=JSON.parse(localStorage.getItem('bp-ck')||'{}')}catch(e){}
+document.getElementById('chk').innerHTML=CK.map((c,i)=>`<li><label><input type="checkbox" data-i="${i}" ${ck[i]?'checked':''}><span>${c}</span></label></li>`).join('');
+const pb=()=>{document.getElementById('pb').style.width=(Object.keys(ck).length/CK.length*100)+'%'};pb();
+document.querySelectorAll('#chk input').forEach(x=>x.onchange=()=>{if(x.checked)ck[x.dataset.i]=1;else delete ck[x.dataset.i];try{localStorage.setItem('bp-ck',JSON.stringify(ck))}catch(e){}pb()});
+
+/* ===== нашият избор + споделяне ===== */
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)}
+function picks(){return{h:H.filter(h=>store[h.id]).map(h=>h.name),a:Object.keys(plan).map(k=>A[k][0]),r:Object.keys(rfav).map(k=>R[k][0])}}
+function upd(){const p=picks(),n=p.h.length+p.a.length+p.r.length;const bd=document.getElementById('badge');bd.hidden=!n;bd.textContent=n;
+ const sec=(t,l)=>l.length?`<p style="margin:10px 0 0"><b style="color:#f0cf86">${t}:</b> ${l.join(', ')}</p>`:'';
+ document.getElementById('mine').innerHTML=n?sec('Хотели',p.h)+sec('Места',p.a)+sec('Ресторанти и барове',p.r):'<p style="margin-top:10px;opacity:.85">Още нищо не е избрано. Натискайте ♡ при хотелите, местата и ресторантите.</p>'}
+document.querySelectorAll('.fav,.act .add').forEach(b=>b.addEventListener('click',()=>setTimeout(upd,0)));
+upd();
+document.getElementById('shareBtn').onclick=async()=>{const p=picks();const t='Будапеща, 25–27.12 · нашият избор\n'+(p.h.length?'\nХотели: '+p.h.join(', '):'')+(p.a.length?'\nМеста: '+p.a.join(', '):'')+(p.r.length?'\nРесторанти: '+p.r.join(', '):'')+(p.h.length+p.a.length+p.r.length?'':'\n(още нищо не е избрано)');
+ const url=location.href.split('#')[0];
+ try{if(navigator.share){await navigator.share({title:'Коледа в Будапеща',text:t,url});return}}catch(e){if(e.name==='AbortError')return}
+ try{await navigator.clipboard.writeText(t+'\n'+url);toast('Копирано, поставете го в чата')}catch(e){toast('Не можа да се сподели')}};
+
+/* ===== мобилна навигация ===== */
+const sh=document.getElementById('sheet');
+document.getElementById('moreBtn').onclick=()=>sh.classList.add('on');
+sh.onclick=e=>{if(e.target===sh||e.target.tagName==='A')sh.classList.remove('on')};
+
+/* точки под галериите */
+document.querySelectorAll('.gal').forEach(g=>{const d=g.nextElementSibling;if(!d||!d.classList.contains('dots'))return;g.addEventListener('scroll',()=>{const w=g.firstElementChild.offsetWidth+8;const i=Math.round(g.scrollLeft/w);[...d.children].forEach((x,j)=>x.classList.toggle('on',j===i))},{passive:true})});
+
+/* прогрес */
+const pg=document.getElementById('prog');
+addEventListener('scroll',()=>{const h=document.documentElement;pg.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+
+/* появяване */
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(!RM&&'IntersectionObserver'in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
+ document.querySelectorAll('.hotel,.day,.act,.rc,.tcard,.crc,.tool,.fd,.calc,.share,.ph1').forEach(el=>{el.classList.add('reveal');io.observe(el)})}
+
+/* сняг */
+(()=>{const c=document.getElementById('snow'),btn=document.getElementById('snowbtn'),x=c.getContext('2d');let on=!RM,F=[],raf,vis=true;
+ const hero=c.parentElement;const rs=()=>{c.width=hero.clientWidth*devicePixelRatio;c.height=hero.clientHeight*devicePixelRatio};rs();addEventListener('resize',rs);
+ for(let i=0;i<110;i++)F.push({x:Math.random(),y:Math.random(),r:Math.random()*1.8+.5,s:Math.random()*.6+.25,d:Math.random()*Math.PI*2});
+ function loop(){x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.85)';const W=c.width,Hh=c.height,dp=devicePixelRatio;
+  F.forEach(f=>{f.y+=f.s*.0016;f.d+=.01;f.x+=Math.sin(f.d)*.0004;if(f.y>1.02){f.y=-.02;f.x=Math.random()}x.beginPath();x.arc(f.x*W,f.y*Hh,f.r*dp,0,7);x.fill()});
+  raf=requestAnimationFrame(loop)}
+ const set=v=>{on=v;btn.setAttribute('aria-pressed',v);btn.textContent=v?'❄ Сняг':'❄ Без сняг';cancelAnimationFrame(raf);if(v&&vis)loop();else x.clearRect(0,0,c.width,c.height)};
+ btn.onclick=()=>set(!on);
+ new IntersectionObserver(e=>{vis=e[0].isIntersecting;if(on)set(true)}).observe(c);
+ set(on)})();
+
 
 /* credits */
 document.getElementById('credits').innerHTML=Object.entries(CR).map(([k,c])=>`<a href="${c[2]}" target="_blank" rel="noopener">${k.replace(/_\d$/,'')}: ${c[0]} · ${c[1]}</a>`).join('');
