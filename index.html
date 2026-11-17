@@ -20,9 +20,9 @@
 <div id="intro" aria-modal="true" role="dialog" aria-label="Покана">
  <div class="env">
   <div class="seal">В</div>
-  <p class="script">Венито</p>
-  <p class="inv">Коледа в Будапеща · 25 – 27 декември</p>
-  <button class="btn" id="openInv">Влез</button>
+  <p class="script">Венито,</p>
+  <p class="inv">имам една коледна покана за теб…</p>
+  <button class="btn" id="openInv">Отвори ♥</button>
  </div>
  <canvas id="isnow"></canvas>
 </div>
@@ -45,7 +45,7 @@
 <div class="marquee" aria-hidden="true"><div>Коледа ✦ Будапеща ✦ Дунав ✦ дворци ✦ греяно вино ✦ Парламентът нощем ✦ шампанско ✦ коледни базари ✦ термални бани ✦ Коледа ✦ Будапеща ✦ Дунав ✦ дворци ✦ греяно вино ✦ Парламентът нощем ✦ шампанско ✦ коледни базари ✦ термални бани ✦</div></div>
 
 <nav class="topnav" aria-label="Раздели"><div class="navin">
- <a href="#putuvane">Пътуването</a><a href="#igra">Бърз избор</a><a href="#hoteli">Хотелите</a><a href="#sravni">Сравни</a><a href="#programa">Програма</a><a href="#rd">Рожден ден</a><a href="#kruiz">Круиз</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти</a><a href="#vkusno">Кухня</a><a href="#karta">Карта</a><a href="#advent">Адвент</a><a href="#ezik">Унгарски</a><a href="#budjet">Варианти</a><a href="#instrumenti">Инструменти</a><a href="#galeria">Галерия</a><a href="#izbor">Избраното</a>
+ <a href="#putuvane">Пътуването</a><a href="#igra">Бърз избор</a><a href="#hoteli">Хотелите</a><a href="#sravni">Сравни</a><a href="#programa">Програма</a><a href="#rd">Рожден ден</a><a href="#vizii">Визии</a><a href="#kruiz">Круиз</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти</a><a href="#vkusno">Кухня</a><a href="#karta">Карта</a><a href="#transport">Транспорт</a><a href="#advent">Адвент</a><a href="#ezik">Унгарски</a><a href="#budjet">Варианти</a><a href="#instrumenti">Инструменти</a><a href="#klipove">Клипове</a><a href="#galeria">Галерия</a><a href="#izbor">Избраното</a>
 </div></nav>
 
 <main>
@@ -98,6 +98,13 @@
  <div class="grid3" id="bd"></div>
 </section>
 
+<!-- ВИЗИИ -->
+<section class="sec" id="vizii">
+ <div class="sh"><span class="kk">в тон</span><h2>Еднакви визии</h2><p class="lead">Идеи за облекла в тон за всеки момент от пътуването. Всяка има цветова палитра и линк към Pinterest с примери. С ♡ отбелязвате любимите.</p></div>
+ <div class="chips" id="of"></div>
+ <div class="grid3" id="outfits"></div>
+</section>
+
 <!-- КРУИЗ -->
 <section class="sec" id="kruiz">
  <div class="sh"><span class="kk">26 декември · вечерта</span><h2>Круиз с вечеря</h2><p class="lead">Двучасова вечеря на кораб покрай осветения Парламент, мостовете и Крепостта. Важното е маса до панорамния прозорец, затова питаме трите компании дали могат да я гарантират. Натиснете карта, за да видите подробностите.</p></div>
@@ -143,7 +150,20 @@
  <div class="phr" id="phr"></div>
 </section>
 
-<!-- БЮДЖЕТ -->
+<!-- ТРАНСПОРТ -->
+<section class="sec" id="transport">
+ <div class="sh"><span class="kk">как се придвижваме</span><h2>Транспорт</h2><p class="lead">От летището до хотела, такси и приложения, метро и трамваи. Отдолу: колко далеч е всичко от избрания хотел и калкулатор за разстояния.</p></div>
+ <h3 class="sub3">От летището до центъра</h3>
+ <div class="grid4" id="air"></div>
+ <h3 class="sub3">В града</h3>
+ <div class="grid4" id="city"></div>
+ <div class="grid2" style="margin-top:20px">
+  <div class="card tool"><h3>Колко далеч е от хотела</h3><select id="dHotel" aria-label="Хотел"></select><div class="dlist" id="dlist"></div></div>
+  <div class="card tool"><h3>От… до…</h3><label class="lbl">От<select id="dFrom"></select></label><label class="lbl">До<select id="dTo"></select></label><div class="dres" id="dres"></div><p class="note">Разстоянията са по права линия, умножени по 1,3 за реалния маршрут. Времената са ориентировъчни.</p></div>
+ </div>
+</section>
+
+<!-- ВАРИАНТИ -->
 <section class="sec" id="budjet">
  <div class="sh"><span class="kk">планиране</span><h2>Варианти</h2><p class="lead">Изберете хотел и стая, вечеря и круиз, за да видите как се променя общата картина. Самолетните билети вече са купени и също са включени.</p></div>
  <div class="calc card">
@@ -169,6 +189,13 @@
   <div class="card tool"><h3>Времето</h3><div class="wx"><div><b>~ 3°</b><span>през деня</span></div><div><b>~ −2°</b><span>нощем</span></div><div><b>8 ч.</b><span>светлина</span></div></div><p class="note">Типичното време в края на декември: студено и влажно, понякога с първия сняг. Залезът е около 16:00, така че Будапеща свети от ранна вечер. Пълната прогноза ще е ясна седмица преди заминаването.</p></div>
   <div class="card tool"><h3>Добре е да знаем</h3><div class="acc" id="tips"></div></div>
  </div>
+</section>
+
+<!-- КЛИПОВЕ -->
+<section class="sec" id="klipove">
+ <div class="sh"><span class="kk">видео</span><h2>Клипове</h2><p class="lead">Разходки в 4K и влогове от Будапеща по Коледа, за да видите атмосферата отсега. Натиснете клип, за да тръгне тук.</p></div>
+ <div class="chips" id="vf"></div>
+ <div class="vids" id="vids"></div>
 </section>
 
 <!-- ГАЛЕРИЯ -->

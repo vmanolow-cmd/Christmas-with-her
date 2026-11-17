@@ -130,6 +130,24 @@ $$('#bd .chkbtn').forEach(b=>b.onclick=()=>{const i=b.dataset.i;bd[i]?delete bd[
 function bdc(){const n=Object.keys(bd).length,d=Math.max(0,Math.ceil((new Date(2026,11,25)-new Date())/864e5));$('#bdcount').innerHTML=`<div><b>${d}</b><span>дни до 25 декември</span></div><div><b>${n} / ${BD.length}</b><span>идеи отбелязани</span></div><div><b>„Boldog születésnapot!“</b><span>честит рожден ден на унгарски · „болдог сюлетешнапот“</span></div>`}
 bdc();
 
+
+/* ---------- визии ---------- */
+const OF=[['Бордо и злато','Коледната вечеря · 25.12','x',[['#5b1a2b','бордо'],['#d4b06a','злато'],['#151012','черно']],'Тя: рокля от бордо кадифе и златни бижута. Той: тъмен костюм с вратовръзка или кърпичка в бордо. Класически коледен тон, който прилича на интериора в дворците.','couple matching burgundy velvet christmas dinner outfit'],
+['Черно и шампанско','Круизът · 26.12','x',[['#0e0c0d','черно'],['#e8d6b0','шампанско'],['#8a8a8a','сребро']],'Тя: черна рокля с акцент в цвят шампанско. Той: черно поло и сако. Елегантно и топло на кораба, а на снимка до прозореца с осветения Парламент изглежда страхотно.','couple matching black champagne evening outfit'],
+['Камел палта','Разходка в Буда · 26.12','d',[['#b98a5a','камел'],['#efe6d8','крем'],['#3b2a20','кафяво']],'Палта в цвят камел, кремави плетени шалове и тъмни ботуши. Топло за Рибарския бастион и много красиво на фона на белите кули.','couple matching camel coat winter outfit'],
+['Коледни плетени шапки','Коледните базари','d',[['#9e1b2c','червено'],['#f4f1ea','бяло'],['#1e4a3a','елхово']],'Еднакви плетени шапки и шалове в червено и бяло, с норвежка шарка. Забавни, топли и идеални за снимка с греяно вино.','couple matching christmas knit beanie scarf'],
+['Коледна сутрин','В хотела · 26.12 сутрин','h',[['#7a1f2b','червено каре'],['#f2ece4','кремаво'],['#2d4a36','зелено']],'Еднакви коледни пижами за закуската в стаята или за снимка на леглото. Класика, която винаги става за хубав спомен.','couple matching christmas pajamas'],
+['Бани по здрач','Банята Сечени','h',[['#111111','черно'],['#ffffff','бяло'],['#d4b06a','злато']],'Бански в един цвят (черно е безпроблемно) и бели халати и джапанки. Минималистично и изглежда добре на снимка сред парата.','couple matching black swimwear thermal bath'],
+['Летищен комфорт','Пътуването · 25 и 27.12','d',[['#d9cbb8','бежово'],['#f5f2ec','бяло'],['#6e6259','тауп']],'Еднакви анцузи или суитшърти в бежово, бели маратонки и голямо палто отгоре. Удобно за полета, а и изглежда добре.','couple matching beige tracksuit airport outfit'],
+['Пастел пред бастиона','Сутрешна снимка','d',[['#efe2d2','крем'],['#d9a7a7','пудра'],['#9fb3c8','синьо']],'Светли пастелни тонове за сутрешната снимка на Рибарския бастион. Меката светлина и белият камък ги правят още по-красиви.','couple matching pastel winter outfit photoshoot']];
+const OFF=[['all','Всички'],['x','Вечер'],['d','Ден'],['h','В хотела'],['fav','♥ Избрани']];
+let ofav=ld('bp-of',{});
+$('#of').innerHTML=OFF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">${f[1]}</button>`).join('');
+$('#outfits').innerHTML=OF.map((o,i)=>`<article class="card ac outfit" data-i="${i}"><div class="sw">${o[3].map(c=>`<span style="background:${c[0]}"><i>${c[1]}</i></span>`).join('')}<button class="heartbtn" data-i="${i}" aria-pressed="${!!ofav[i]}" aria-label="Харесвам"></button></div><div class="bd"><div class="k">${o[1]}</div><h3>${o[0]}</h3><p>${o[4]}</p><a class="btn ghost sm" style="margin-top:14px" href="https://www.pinterest.com/search/pins/?q=${encodeURIComponent(o[5])}" target="_blank" rel="noopener">Примери в Pinterest ↗</a></div></article>`).join('');
+let OFc='all';const ofilt=()=>$$('#outfits .ac').forEach(c=>{const i=c.dataset.i;c.classList.toggle('hide',!(OFc==='all'||(OFc==='fav'?ofav[i]:OF[i][2]===OFc)))});
+$$('#of button').forEach(b=>b.onclick=()=>{$$('#of button').forEach(x=>x.classList.remove('on'));b.classList.add('on');OFc=b.dataset.f;ofilt()});
+$$('#outfits .heartbtn').forEach(b=>b.onclick=()=>{const i=b.dataset.i;ofav[i]?delete ofav[i]:(ofav[i]=1);sv('bp-of',ofav);b.setAttribute('aria-pressed',!!ofav[i]);if(ofav[i]){burst(b);toast(OF[i][0]+' е в избора ♥')}ofilt();refreshFav()});
+
 /* ---------- круиз ---------- */
 $('#cruise').innerHTML=CRU.map(c=>`<div class="flip" tabindex="0" role="button" aria-label="Обърни: ${c[0]}"><div class="fin"><div class="face"><div class="ph"><img src="img/${c[1]}.webp" alt="${c[0]}"></div><div class="fc"><div class="k">${c[2]}</div><h3>${c[0]}</h3><p>${c[3]}</p></div><span class="turn">обърни ↻</span></div><div class="face back"><div class="k">подробности</div><h3>${c[0]}</h3><dl>${c[4].map(d=>`<dt>${d[0]}</dt><dd>${d[1]}</dd>`).join('')}</dl><p style="margin-top:16px">Запитването е изпратено до ${c[5]}.</p><span class="turn">обърни ↻</span></div></div></div>`).join('')+`<div class="cnote" style="grid-column:1/-1">За 26 декември онлайн не се показа опция за маса до прозореца, затова чакаме отговор от компаниите. Ако никоя не гарантира такава маса, вечеряме в ресторант на сушата и правим отделен едночасов панорамен круиз, за около 25 € на човек.</div>`;
 $$('.flip').forEach(f=>{f.onclick=()=>f.classList.toggle('on');f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f.click()}}});
@@ -202,6 +220,36 @@ function initMap(){if(typeof L==='undefined'){$('#map').innerHTML='<p style="pad
 const mo=new IntersectionObserver(e=>{if(e[0].isIntersecting){initMap();mo.disconnect()}},{rootMargin:'400px'});mo.observe($('#map'));
 $$('#mf button').forEach(b=>b.onclick=()=>{$$('#mf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');if(!MAP)return;const f=b.dataset.f;Object.entries(LAY).forEach(([k,g])=>f==='all'||f===k?g.addTo(MAP):MAP.removeLayer(g))});
 
+
+/* ---------- транспорт ---------- */
+const AIR=[['Трансфер от хотела','Най-удобното на 25-и вечер: шофьорът чака с табела на изхода, а цената е фиксирана. Резервира се през хотела.','~35 мин','по запитване','duna_1'],
+['Такси Főtaxi','Официалното такси на летището, със стойка точно пред терминала. Плаща се с карта.','25–35 мин','~13 500–15 500 Ft (~35–40 €)','chainbridge_2'],
+['Bolt или Uber','И двете работят в Будапеща с лицензирани таксита по същата регулирана тарифа. Цената се вижда в приложението предварително.','25–35 мин','~13 500–15 500 Ft','parliament_3'],
+['Автобус 100E','Директно до Kálvin tér и Deák Ferenc tér, денонощно. Нужен е отделен билет за 2 500 Ft, който се плаща с карта на машините или в автобуса.','~40 мин','2 500 Ft на човек','vorosmarty_1']];
+const CITY=[['Пеша','Целият център между Парламента, Базиликата, Вьорьошмарти и Матилд се обикаля пеша. От хотелите до повечето места са 5–20 минути.',''],
+['Метро и трамваи','Четири линии метро, трамваи и автобуси с един билет. Трамвай 2 минава по брега на Дунава с гледка към Парламента и Крепостта.',''],
+['Билети','Единичен 500 Ft, 24-часов 2 750 Ft, 72-часов 5 750 Ft. Най-лесно е през приложението BudapestGO. Фуникулерът не е включен.',''],
+['До Крепостта','Фуникулер от Верижния мост или автобус 16 от Deák Ferenc tér, който е с обикновен билет и излиза по-евтино.',''],
+['Такси в града','Таксита, Bolt и Uber карат по една и съща регулирана тарифа. Удобно е вечер или за банята Сечени.',''],
+['Сигурност','Не се качвайте при шофьори, които сами ви предлагат превоз на летището. Ползвайте стойката на Főtaxi или приложение.','']];
+$('#air').innerHTML=AIR.map(a=>`<article class="card ac"><div class="ph" style="height:150px"><img src="img/${a[4]}.webp" alt="" loading="lazy"></div><div class="bd"><h3>${a[0]}</h3><p>${a[1]}</p><div class="flags"><span class="fl c">${a[2]}</span><span class="fl y">${a[3]}</span></div></div></article>`).join('');
+$('#city').innerHTML=CITY.map(c=>`<article class="card ac tip"><div class="bd"><h3>${c[0]}</h3><p>${c[1]}</p></div></article>`).join('');
+const AP=['Летище Будапеща',47.4386,19.2520,'k','Летището'];
+const PTS=[...P.filter(p=>p[3]!=='k'),...P.filter(p=>p[3]==='k'),AP];
+const hav=(a,b)=>{const R=6371,toR=x=>x*Math.PI/180,dLa=toR(b[1]-a[1]),dLo=toR(b[2]-a[2]);const q=Math.sin(dLa/2)**2+Math.cos(toR(a[1]))*Math.cos(toR(b[1]))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(q))};
+const route=(a,b)=>{const km=hav(a,b)*1.3,walk=Math.round(km/4.8*60),car=Math.round(km/(km>10?45:16)*60+4);return{km,walk,car}};
+const fmtKm=km=>km<1?Math.round(km*1000/10)*10+' м':km.toFixed(1).replace('.',',')+' км';
+const hotels=P.filter(p=>p[3]==='h');
+$('#dHotel').innerHTML=hotels.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
+function dlist(){const h=hotels[+$('#dHotel').value];const L=PTS.filter(p=>p!==h&&p[3]!=='h').map(p=>[p,route(h,p)]).sort((a,b)=>a[1].km-b[1].km);
+ $('#dlist').innerHTML=L.map(([p,r])=>`<div class="drow"><span>${p[0]}</span><span class="dm">${r.km>4?'такси '+r.car+' мин':'пеша '+r.walk+' мин'}</span><span class="dk">${fmtKm(r.km)}</span></div>`).join('')}
+$('#dHotel').onchange=dlist;dlist();
+const po=PTS.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');$('#dFrom').innerHTML=po;$('#dTo').innerHTML=po;
+$('#dFrom').value=PTS.findIndex(p=>p[0]==='Matild Palace');$('#dTo').value=PTS.findIndex(p=>p[0]==='Рибарският бастион');
+function dres(){const a=PTS[+$('#dFrom').value],b=PTS[+$('#dTo').value],r=route(a,b);
+ $('#dres').innerHTML=a===b?'<p class="note">Изберете две различни места.</p>':`<div class="wx"><div><b>${fmtKm(r.km)}</b><span>разстояние</span></div><div><b>${r.walk>90?'—':r.walk+' мин'}</b><span>пеша</span></div><div><b>${r.car} мин</b><span>с такси</span></div></div><a class="btn ghost sm" style="margin-top:12px" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=${a[1]},${a[2]}&destination=${b[1]},${b[2]}&travelmode=walking">Маршрут в Google Maps ↗</a>`}
+$('#dFrom').onchange=dres;$('#dTo').onchange=dres;dres();
+
 /* ---------- адвент ---------- */
 const ADV=[['Три града в един','Будапеща се ражда през 1873 г., когато Буда, Пеща и Обуда се обединяват в един град.','duna_1'],
 ['Първият мост','Верижният мост е открит през 1849 г. Това е първият постоянен мост между Буда и Пеща.','chainbridge_2'],
@@ -263,19 +311,37 @@ $$('#chk input').forEach(x=>x.onchange=()=>{x.checked?ck[x.dataset.i]=1:delete c
 const TIPS=[['Пари','Плаща се във форинти (HUF), около 395 HUF за 1 €. С карта се плаща навсякъде. Ако терминалът предложи сметка в евро, изберете форинти, защото курсът е по-добър.'],['От летището','До центъра се стига за около 35 минути с кола. Хотелите предлагат трансфер, а на 25-и вечер това е най-лесното. Официалните таксита са на Főtaxi.'],['Празниците','25 и 26 декември са официални празници. Магазините почиват, а ресторантите работят с празнично меню. Резервирайте всичко предварително.'],['Банята','Вземете бански, джапанки и шапка за басейна. Билетите за Сечени е по-добре да са онлайн. Най-красиво е по здрач, сред парата.'],['Облекло','Студено и влажно, с вятър откъм Дунава. За вечерите е подходящо нещо елегантно, а за разходките удобни топли обувки.'],['Бакшиш','Обичайно е 10–15%. Проверете дали в сметката вече е включена такса обслужване („szervizdíj“).'],['Транспорт','Центърът се обикаля пеша. Трамвай 2 по брега на Дунава е най-красивият евтин маршрут.']];
 $('#tips').innerHTML=TIPS.map(t=>`<details><summary>${t[0]}</summary><p>${t[1]}</p></details>`).join('');
 
+
+/* ---------- клипове ---------- */
+const VID=[['MjY8_MDtBUU','Advent Bazilika в 4K','Разходка по коледния базар пред Базиликата, в първия уикенд','m'],
+['1lIWaKuci4Q','Базарът на Вьорьошмарти','От Deák tér през Fashion Street до площад Вьорьошмарти','m'],
+['0kCdqc3wFdI','Будапеща в сняг','Разходка от Буда до базара пред Базиликата под силен снеговалеж','m'],
+['JxGckAY0VsM','Вечерен круиз по Дунава','Покрай осветения Парламент, Крепостта и Верижния мост','n'],
+['Dj9v7DRLsQU','Вечер по брега на Дунава','Парламентът и Верижният мост нощем, в 4K','n'],
+['sOpZbfZBoD0','Будайската крепост нощем','Крепостта, Парламентът и Дунавът, в 4K HDR','n'],
+['3a7ACWbBJAI','Зимна разходка по „Андраши“','От Операта до банята Сечени','n'],
+['AjlIU7jpL7M','Банята Сечени през зимата','Какво е да се къпеш навън в студа','b'],
+['7YFfpgSgSvE','Коледа в Будапеща','Влог: Будайската крепост, банята Сечени и базарът на Вьорьошмарти','v'],
+['NguI9egy8pE','Будапеща през декември','Влог: Парламентът, коледните базари и банята Сечени','v']];
+const VF=[['all','Всички'],['m','Коледни базари'],['n','Нощем'],['b','Бани'],['v','Влогове']];
+$('#vf').innerHTML=VF.map((f,i)=>`<button class="${i?'':'on'}" data-f="${f[0]}">${f[1]}</button>`).join('');
+$('#vids').innerHTML=VID.map((v,i)=>`<article class="card vid" data-c="${v[3]}"><button class="vth" data-id="${v[0]}" aria-label="Пусни: ${v[1]}"><img src="https://i.ytimg.com/vi/${v[0]}/hqdefault.jpg" alt="" loading="lazy"><span class="play">▶</span></button><div class="bd"><h3>${v[1]}</h3><p>${v[2]}</p><a href="https://www.youtube.com/watch?v=${v[0]}" target="_blank" rel="noopener" class="note">Отвори в YouTube ↗</a></div></article>`).join('');
+$$('.vth').forEach(b=>b.onclick=()=>{$$('.vid iframe').forEach(f=>{const p=f.parentElement;p.innerHTML=p.dataset.orig});const box=b;box.dataset.orig=box.innerHTML;box.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1&rel=0&playsinline=1" title="YouTube" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;box.onclick=null});
+$$('#vf button').forEach(b=>b.onclick=()=>{$$('#vf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');const f=b.dataset.f;$$('.vid').forEach(v=>v.classList.toggle('hide',!(f==='all'||v.dataset.c===f)))});
+
 /* ---------- галерия ---------- */
 const GAL=[['castle_0','Крепостта и Верижният мост'],['nycafe_2','Кафене New York'],['parisi_4','Párisi Udvar'],['basilica_4','Базиликата по Коледа'],['gresham2_2','Куполът на Gresham'],['szechenyi_5','Сечени нощем'],['matild_0','Matild Palace'],['christmas_5','Коледният базар'],['parliament_3','Парламентът от Дунава'],['bastion_1','Рибарският бастион'],['opera_4','Операта'],['dobos_x0','Торта „Добош“'],['drechsler_1','Дворецът Дрекслер'],['matthias_3','Църквата „Матиаш“'],['szentendre_5','Сентендре по Коледа'],['dorothea_3','Dorothea'],['vorosmarty_1','Вьорьошмарти'],['kurtos_x1','Курточ калач'],['gerbeaud_4','Gerbeaud'],['chainbridge_2','Верижният мост']];
 $('#gal').innerHTML=GAL.map((g,i)=>`<button data-i="${i}" aria-label="${g[1]}"><img src="img/${g[0]}.webp" alt="${g[1]}" loading="lazy"><span>${g[1]}</span></button>`).join('');
 $$('#gal button').forEach(b=>b.onclick=()=>openLB(GAL,+b.dataset.i));
 
 /* ---------- избор и споделяне ---------- */
-function picks(){return{h:H.filter(h=>fav[h.id]).map(h=>h.name),a:Object.keys(plan).filter(k=>A[k]).map(k=>A[k][0]),r:Object.keys(rfav).filter(k=>R[k]).map(k=>R[k][0])}}
-function refreshFav(){const p=picks(),n=p.h.length+p.a.length+p.r.length;$('#badge').hidden=!n;$('#badge').textContent=n;
+function picks(){const o=typeof OF!=='undefined'?Object.keys(ld('bp-of',{})).filter(k=>OF[k]).map(k=>OF[k][0]):[];return{h:H.filter(h=>fav[h.id]).map(h=>h.name),a:Object.keys(plan).filter(k=>A[k]).map(k=>A[k][0]),r:Object.keys(rfav).filter(k=>R[k]).map(k=>R[k][0]),o}}
+function refreshFav(){const p=picks(),n=p.h.length+p.a.length+p.r.length+p.o.length;$('#badge').hidden=!n;$('#badge').textContent=n;
  const sec=(t,l)=>l.length?`<p><b>${t}:</b> ${l.join(' · ')}</p>`:'';
- $('#mine').innerHTML=n?sec('Хотели',p.h)+sec('Места',p.a)+sec('Ресторанти и барове',p.r):'<p style="opacity:.8">Още нищо не е избрано. Натискай ♡ при хотелите, местата и ресторантите или в „Бърз избор“.</p>';
+ $('#mine').innerHTML=n?sec('Хотели',p.h)+sec('Места',p.a)+sec('Ресторанти и барове',p.r)+sec('Визии',p.o):'<p style="opacity:.8">Още нищо не е избрано. Натискай ♡ при хотелите, местата и ресторантите или в „Бърз избор“.</p>';
  htabs();fillRooms()}
 refreshFav();
-$('#shareBtn').onclick=async()=>{const p=picks();const t='♥ Коледа в Будапеща · моят избор\n'+(p.h.length?'\nХотели: '+p.h.join(', '):'')+(p.a.length?'\nМеста: '+p.a.join(', '):'')+(p.r.length?'\nРесторанти: '+p.r.join(', '):'')+((p.h.length+p.a.length+p.r.length)?'':'\n(още нищо не е избрано)');
+$('#shareBtn').onclick=async()=>{const p=picks();const t='♥ Коледа в Будапеща · моят избор\n'+(p.h.length?'\nХотели: '+p.h.join(', '):'')+(p.a.length?'\nМеста: '+p.a.join(', '):'')+(p.r.length?'\nРесторанти: '+p.r.join(', '):'')+(p.o.length?'\nВизии: '+p.o.join(', '):'')+((p.h.length+p.a.length+p.r.length+p.o.length)?'':'\n(още нищо не е избрано)');
  const url=location.origin+location.pathname;
  try{if(navigator.share){await navigator.share({title:'Коледа с Венито ♥',text:t,url});return}}catch(e){if(e.name==='AbortError')return}
  try{await navigator.clipboard.writeText(t+'\n'+url);toast('Копирано, поставете го в чата')}catch(e){toast('Не можа да се сподели')}};
@@ -300,5 +366,5 @@ spot();
 if(FINE&&!RM)$$('.tilt').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-4px)`});c.addEventListener('pointerleave',()=>c.style.transform='')});
 if(!RM&&'IntersectionObserver'in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'});
  const add=(sel,stag)=>$$(sel).forEach((el,i)=>{el.classList.add('rv');if(stag)el.style.setProperty('--d',(i%3)*.08+'s');io.observe(el)});
- add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('#bd .ac',1);add('.bdcount');add('.pc',1);add('#gal button',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
+ add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('#bd .ac',1);add('#air .ac',1);add('#outfits .ac',1);add('#city .ac',1);add('.bdcount');add('.pc',1);add('#gal button',1);add('.vid',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
 })();
