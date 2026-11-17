@@ -550,3 +550,6 @@ input[type=range]{margin:0;max-width:100%}
 #map.mday .mtheme{background:#fff;color:#5b1a2b}
 .mfi{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;margin-right:7px;vertical-align:-5px}
 .ptype{display:inline-flex;align-items:center;gap:5px;color:#fff;font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;margin-bottom:6px}
+
+.shot .tip{font-size:.88rem;color:var(--gold2);opacity:.9;margin-top:8px}
+.shot .ph{cursor:zoom-in}
