@@ -45,7 +45,7 @@
 <div class="marquee" aria-hidden="true"><div>Коледа ✦ Будапеща ✦ Дунав ✦ дворци ✦ греяно вино ✦ Парламентът нощем ✦ шампанско ✦ коледни базари ✦ термални бани ✦ Коледа ✦ Будапеща ✦ Дунав ✦ дворци ✦ греяно вино ✦ Парламентът нощем ✦ шампанско ✦ коледни базари ✦ термални бани ✦</div></div>
 
 <nav class="topnav" aria-label="Раздели"><div class="navin">
- <a href="#putuvane">Пътуването</a><a href="#igra">Бърз избор</a><a href="#hoteli">Хотелите</a><a href="#sravni">Сравни</a><a href="#programa">Програма</a><a href="#kruiz">Круиз</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти</a><a href="#vkusno">Кухня</a><a href="#karta">Карта</a><a href="#advent">Адвент</a><a href="#ezik">Унгарски</a><a href="#budjet">Бюджет</a><a href="#instrumenti">Инструменти</a><a href="#galeria">Галерия</a><a href="#izbor">Избраното</a>
+ <a href="#putuvane">Пътуването</a><a href="#igra">Бърз избор</a><a href="#hoteli">Хотелите</a><a href="#sravni">Сравни</a><a href="#programa">Програма</a><a href="#rd">Рожден ден</a><a href="#kruiz">Круиз</a><a href="#aktivnosti">Какво да правим</a><a href="#hrana">Ресторанти</a><a href="#vkusno">Кухня</a><a href="#karta">Карта</a><a href="#advent">Адвент</a><a href="#ezik">Унгарски</a><a href="#budjet">Варианти</a><a href="#instrumenti">Инструменти</a><a href="#galeria">Галерия</a><a href="#izbor">Избраното</a>
 </div></nav>
 
 <main>
@@ -89,6 +89,13 @@
  <div class="sh"><span class="kk">час по час</span><h2>Програма</h2><p class="lead">Програмата е по реалните полети. Изберете ден.</p></div>
  <div class="daytabs" id="daytabs" role="tablist"></div>
  <div class="daypanel" id="daypanel"></div>
+</section>
+
+<!-- РОЖДЕН ДЕН -->
+<section class="sec" id="rd">
+ <div class="sh"><span class="kk">25 декември</span><h2>И рожден ден</h2><p class="lead">Двайсет и пети е Коледа, но е и рожден ден. Ето идеи как да стане специален. Отметнатите остават тайна: пазят се само на този телефон и не влизат в „Избраното“.</p></div>
+ <div class="bdcount card" id="bdcount"></div>
+ <div class="grid3" id="bd"></div>
 </section>
 
 <!-- КРУИЗ -->
@@ -138,7 +145,7 @@
 
 <!-- БЮДЖЕТ -->
 <section class="sec" id="budjet">
- <div class="sh"><span class="kk">сметките</span><h2>Бюджет</h2><p class="lead">Изберете хотел и стая, вечеря и круиз. Сумата е за двама и включва вече платените 392,47 € за самолетните билети.</p></div>
+ <div class="sh"><span class="kk">планиране</span><h2>Варианти</h2><p class="lead">Изберете хотел и стая, вечеря и круиз, за да видите как се променя общата картина. Самолетните билети вече са купени и също са включени.</p></div>
  <div class="calc card">
   <div class="cl">
    <label for="cRoom">Хотел и стая · 2 нощувки</label><select id="cRoom"></select>
@@ -146,7 +153,7 @@
    <label for="cCr">Круиз на 26 декември</label><select id="cCr"><option value="178">Silverline + маса до прозореца (~178 €)</option><option value="198">River Diva (~198 €)</option><option value="220">Legenda, вечеря на свещи (~220 €)</option><option value="0">Без круиз</option></select>
    <label for="cEx">Други разходи · <b id="exV">300</b> €</label><input type="range" id="cEx" min="100" max="800" step="25" value="300">
   </div>
-  <div class="cr"><span class="kk2">общо за двама</span><div class="total" id="tot">—</div><div class="donut" id="donut"></div><div class="rows" id="rows"></div></div>
+  <div class="cr"><span class="kk2">общо</span><div class="total" id="tot">—</div><div class="donut" id="donut"></div><div class="rows" id="rows"></div></div>
  </div>
 </section>
 

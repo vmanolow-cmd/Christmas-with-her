@@ -89,7 +89,7 @@ function hpanel(){const h=H[cur],p=$('#hpanel');p.style.animation='none';p.offse
   <div class="revs"><div class="box p"><b>Гостите хвалят</b><p>${h.plus}</p></div><div class="box m"><b>Забележки</b><p>${h.minus}</p></div></div></div>
   <div><div class="box"><h4>Архитектура</h4><p>${h.arch}</p></div><div class="box"><h4>Стаите</h4><p>${h.roomsTxt}</p></div><div class="box"><h4>Ресторант и гледка</h4><p>${h.rest} · ${h.view}</p></div><div class="box"><h4>Спа</h4><p>${h.spa}</p></div>
   <div class="btnrow"><a class="btn sm" href="${h.photos}" target="_blank" rel="noopener">Снимки на стаите ↗</a><a class="btn ghost sm" href="https://www.booking.com/searchresults.html?ss=${encodeURIComponent(h.full+' Budapest')}&checkin=2026-12-25&checkout=2026-12-27&group_adults=2&no_rooms=1&selected_currency=EUR" target="_blank" rel="noopener">Booking за 25–27.12</a><a class="btn ghost sm" href="${h.site}" target="_blank" rel="noopener">Сайт</a></div></div></div>
- <div class="rooms"><h4>Стаите и цените · 2 нощувки за двама</h4><div class="rlist">${h.rooms.map(r=>`<div class="room"><b>${r[0]}</b><span class="sz">${r[1]!=='—'?r[1]+' м²':''}</span><p>${r[2]}</p><div class="pr"><strong>${r[3]}</strong><span class="t ${r[5]}">${TT[r[5]]}</span></div></div>`).join('')}</div><p class="note">${h.priceNote}</p></div>`;
+ <div class="rooms"><h4>Стаите и цените · 2 нощувки</h4><div class="rlist">${h.rooms.map(r=>`<div class="room"><b>${r[0]}</b><span class="sz">${r[1]!=='—'?r[1]+' м²':''}</span><p>${r[2]}</p><div class="pr"><strong>${r[3]}</strong><span class="t ${r[5]}">${TT[r[5]]}</span></div></div>`).join('')}</div><p class="note">${h.priceNote}</p></div>`;
  const tr=$('#htrack');slider(tr.parentElement);
  tr.addEventListener('scroll',()=>{const w=tr.firstElementChild.offsetWidth+14;const i=Math.round(tr.scrollLeft/w);$$('#hdots i').forEach((d,j)=>d.classList.toggle('on',j===i))},{passive:true});
  $$('.hslide').forEach(f=>f.onclick=()=>openLB(h.ph.map((k,j)=>[k,h.cap[j]]),+f.dataset.j));
@@ -112,6 +112,23 @@ function days(){$('#daytabs').innerHTML=D.map((d,i)=>`<button class="daytab ${i=
  const d=D[dcur];$('#daypanel').style.animation='none';$('#daypanel').offsetHeight;$('#daypanel').style.animation='';
  $('#daypanel').innerHTML=`<div class="dayhero card ph"><img src="img/${d[2]}.webp" alt=""><div class="cap"><h3>${d[0]} декември</h3><span>${d[1]}</span></div></div><div class="tl">${d[3].map((s,i)=>`<div class="slot" style="animation-delay:${i*.09}s"><time>${s[0]}</time><b>${s[1]}</b><span>${s[2]}</span></div>`).join('')}</div>`}
 days();
+
+
+/* ---------- рожден ден ---------- */
+const BD=[['Торта в стаята','dobos_x0','Хотелите могат да сложат торта и пенливо вино в стаята. Corinthia вече го предложи сам, а при останалите е достатъчно едно изречение в имейла или на рецепцията.','Пишете на хотела или кажете на рецепцията при настаняване.'],
+['Свещичка на десерта','nycafe_2','На коледната вечеря помолете сервитьора да донесе десерта със свещичка. Кажете му „születésnap“, което значи рожден ден.','Шепнешком на сервитьора, докато другият не гледа.'],
+['Унгарско пенливо','tokaji_x0','Унгария има отлични пенливи вина, например Törley. За финал на вечерта има и сладко Токай Асу.','В хотелския бар, в стаята или на покривен бар.'],
+['Коктейл на покрива','matild_0','След вечерята: The Duchess в Matild, BiBo в Dorothea или High Note с изглед към Базиликата.','Проверете дали работят на 25-и вечерта.'],
+['Подарък от базара','christmas_5','Коледните базари са пълни с ръчна изработка: керамика, кожа, бижута, дърворезба. Нещо малко и унгарско, което да остане за спомен.','Базарът пред Базиликата е отворен на 25-и до 20 ч.'],
+['Частна лодка','parliament_3','Вместо общ круиз: малка частна лодка по Дунава за час, само за двама. Консиержът на Four Seasons урежда такива разходки.','Попитайте хотела 1–2 седмици по-рано.'],
+['Масаж за двама','fourseasonslobby_x0','St. Regis е от малкото места в Будапеща с масаж за двама. В Four Seasons и Matild също има спа процедури.','Резервирайте предварително, на празниците местата са малко.'],
+['Сутрешна снимка','bastion_0','На 26-и сутрин Рибарският бастион е почти празен и светлината е мека. Идеално за общата снимка от рождения ден.','Около 9:00, преди групите.'],
+['Картичка','castle_0','Няколко реда на хартия, оставени на възглавницата или подадени на вечерята. Нищо не струва и се помни най-дълго.','Напишете я още в София.']];
+let bd=ld('bp-bd',{});
+$('#bd').innerHTML=BD.map((b,i)=>`<article class="card ac bdc" data-i="${i}"><div class="ph"><img src="img/${b[1]}.webp" alt="${b[0]}" loading="lazy"><button class="heartbtn chkbtn" data-i="${i}" aria-pressed="${!!bd[i]}" aria-label="Ще го направя"></button></div><div class="bd"><h3>${b[0]}</h3><p>${b[2]}</p><p class="note" style="margin-top:10px">${b[3]}</p></div></article>`).join('');
+$$('#bd .chkbtn').forEach(b=>b.onclick=()=>{const i=b.dataset.i;bd[i]?delete bd[i]:(bd[i]=1);sv('bp-bd',bd);b.setAttribute('aria-pressed',!!bd[i]);if(bd[i]){burst(b);toast('Отбелязано, остава тайна')}bdc()});
+function bdc(){const n=Object.keys(bd).length,d=Math.max(0,Math.ceil((new Date(2026,11,25)-new Date())/864e5));$('#bdcount').innerHTML=`<div><b>${d}</b><span>дни до 25 декември</span></div><div><b>${n} / ${BD.length}</b><span>идеи отбелязани</span></div><div><b>„Boldog születésnapot!“</b><span>честит рожден ден на унгарски · „болдог сюлетешнапот“</span></div>`}
+bdc();
 
 /* ---------- круиз ---------- */
 $('#cruise').innerHTML=CRU.map(c=>`<div class="flip" tabindex="0" role="button" aria-label="Обърни: ${c[0]}"><div class="fin"><div class="face"><div class="ph"><img src="img/${c[1]}.webp" alt="${c[0]}"></div><div class="fc"><div class="k">${c[2]}</div><h3>${c[0]}</h3><p>${c[3]}</p></div><span class="turn">обърни ↻</span></div><div class="face back"><div class="k">подробности</div><h3>${c[0]}</h3><dl>${c[4].map(d=>`<dt>${d[0]}</dt><dd>${d[1]}</dd>`).join('')}</dl><p style="margin-top:16px">Запитването е изпратено до ${c[5]}.</p><span class="turn">обърни ↻</span></div></div></div>`).join('')+`<div class="cnote" style="grid-column:1/-1">За 26 декември онлайн не се показа опция за маса до прозореца, затова чакаме отговор от компаниите. Ако никоя не гарантира такава маса, вечеряме в ресторант на сушата и правим отделен едночасов панорамен круиз, за около 25 € на човек.</div>`;
@@ -228,10 +245,10 @@ const cRoom=$('#cRoom');
 function fillRooms(){const cv=cRoom.value;let o='<option value="568|Corinthia · Deluxe">Corinthia · Deluxe – 568 € (оферта)</option>';
  H.forEach(h=>h.rooms.filter(r=>r[4]).forEach(r=>{o+=`<option value="${r[4]}|${h.name} · ${r[0]}">${fav[h.id]?'♥ ':''}${h.name} · ${r[0]} – ${eur(r[4])}${r[5]==='e'?' (оценка)':''}</option>`}));
  cRoom.innerHTML=o;cRoom.value=[...cRoom.options].some(x=>x.value===cv)?cv:'788|Matild Palace · King Deluxe';calc()}
-function calc(){const [rv,rn]=cRoom.value.split('|');const P2=[['Самолетни билети (платени)',392.47,'#8cc0e0'],[rn,+rv,'#e9a3b4'],['Вечеря 25.12',+$('#cDin').value,'#d4b06a'],['Круиз 26.12',+$('#cCr').value,'#8fe0a8'],['Други разходи',+$('#cEx').value,'#b8a7ad']];
+function calc(){const [rv,rn]=cRoom.value.split('|');const P2=[['Самолетни билети (купени)',392.47,'#8cc0e0'],[rn,+rv,'#e9a3b4'],['Вечеря 25.12',+$('#cDin').value,'#d4b06a'],['Круиз 26.12',+$('#cCr').value,'#8fe0a8'],['Други разходи',+$('#cEx').value,'#b8a7ad']];
  const t=P2.reduce((a,p)=>a+p[1],0);$('#exV').textContent=$('#cEx').value;const tot=$('#tot');tot.textContent=eur(t);tot.classList.add('bump');setTimeout(()=>tot.classList.remove('bump'),250);
  $('#donut').innerHTML=P2.map(p=>`<i style="width:${p[1]/t*100}%;background:${p[2]}"></i>`).join('');
- $('#rows').innerHTML=P2.map(p=>`<div><span><span class="dot" style="background:${p[2]}"></span>${p[0]}</span><span>${eur(p[1])}</span></div>`).join('')+`<div><span><b>Остава да се плати</b></span><span><b>${eur(t-392.47)}</b></span></div>`}
+ $('#rows').innerHTML=P2.map(p=>`<div><span><span class="dot" style="background:${p[2]}"></span>${p[0]}</span><span>${eur(p[1])}</span></div>`).join('')+``}
 [cRoom,$('#cDin'),$('#cCr')].forEach(e=>e.onchange=calc);$('#cEx').oninput=calc;fillRooms();
 
 /* ---------- инструменти ---------- */
@@ -283,5 +300,5 @@ spot();
 if(FINE&&!RM)$$('.tilt').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-4px)`});c.addEventListener('pointerleave',()=>c.style.transform='')});
 if(!RM&&'IntersectionObserver'in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'});
  const add=(sel,stag)=>$$(sel).forEach((el,i)=>{el.classList.add('rv');if(stag)el.style.setProperty('--d',(i%3)*.08+'s');io.observe(el)});
- add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('.pc',1);add('#gal button',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
+ add('.sh');add('.tcard',1);add('#acts .ac',1);add('#rest .ac',1);add('.flip:not(.food)',1);add('.tool',1);add('.calc');add('.quiz');add('.share');add('.door',1);add('#bd .ac',1);add('.bdcount');add('.pc',1);add('#gal button',1);add('.deckwrap');add('.mapwrap');add('.cmpgrid')}
 })();
