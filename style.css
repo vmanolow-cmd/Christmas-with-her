@@ -529,3 +529,5 @@ input[type=range]{margin:0;max-width:100%}
 .ugrid .ud.sure{background:var(--wine)}
 .ugrid .empty{grid-column:1/-1;text-align:center;padding:40px 16px;border:1px dashed var(--line);border-radius:18px;opacity:.75}
 .ugrid .ph0{display:grid;place-items:center;background:rgba(212,176,106,.06);color:var(--gold2);font-size:.85rem}
+.duo .dh{background:#14352a;font-size:14px;animation:swing 3s ease-in-out infinite}
+@keyframes swing{0%,100%{transform:translateX(-50%) rotate(-8deg)}50%{transform:translateX(-50%) rotate(8deg)}}
