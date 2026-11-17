@@ -38,8 +38,8 @@ function snow(canvas,n){const x=canvas.getContext('2d'),host=canvas.parentElemen
 
 /* ---------- покана ---------- */
 const intro=$('#intro');
-if(ld('bp-intro',0)){intro.remove()}else{const s=snow($('#isnow'),70);s(true);document.body.style.overflow='hidden';
- $('#openInv').onclick=()=>{intro.classList.add('gone');document.body.style.overflow='';sv('bp-intro',1);burst($('#openInv'));setTimeout(()=>{s(false);intro.remove()},1000)}}
+if(sessionStorage.getItem('bp-intro')){intro.remove()}else{const s=snow($('#isnow'),70);s(true);document.body.style.overflow='hidden';
+ $('#openInv').onclick=()=>{intro.classList.add('gone');document.body.style.overflow='';try{sessionStorage.setItem('bp-intro','1')}catch(e){};burst($('#openInv'));setTimeout(()=>{s(false);intro.remove()},1000)}}
 
 /* ---------- хиро ---------- */
 const setSnow=snow($('#snow'),110);let snowOn=true;setSnow(true);
