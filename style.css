@@ -599,3 +599,5 @@ input[type=range]{margin:0;max-width:100%}
 .rplay.again{left:auto;top:auto;right:12px;bottom:70px;transform:none;padding:10px 16px;font-size:.88rem}
 .rplay.again:hover{transform:scale(1.04)}
 .rplay.again span{width:24px;height:24px}
+
+.htop{display:inline-block;white-space:nowrap;flex:none;margin-left:6px;padding:2px 7px;border-radius:999px;background:linear-gradient(135deg,#d4b06a,#f2d99b);color:#2a0f18;font-size:.68rem;font-weight:700;letter-spacing:.04em;vertical-align:2px}

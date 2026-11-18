@@ -59,7 +59,7 @@ function deckRender(){const dk=$('#deck');dk.innerHTML='';
  order.slice(pos,pos+3).reverse().forEach((hi,k,arr)=>{const h=H[hi],top=k===arr.length-1;const c=document.createElement('div');c.className='dcard';
   const depth=arr.length-1-k;c.style.transform=`translateY(${depth*12}px) scale(${1-depth*.04})`;c.style.zIndex=10-depth;
   const cheap=h.rooms.filter(r=>r[4]).map(r=>r[4]);
-  c.innerHTML=`<img src="img/${h.ph[0]}.webp" alt="${h.name}"><span class="stamp s-yes">ХАРЕСВАМ</span><span class="stamp s-no">НЕ</span><div class="dc"><span class="pill">${h.brand}</span><h3>${h.name}</h3><p>${h.arch} · ${h.view}${cheap.length?' · от '+eur(Math.min(...cheap))+' за 2 нощи':''}</p></div>`;
+  c.innerHTML=`<img src="img/${h.ph[0]}.webp" alt="${h.name}"><span class="stamp s-yes">ХАРЕСВАМ</span><span class="stamp s-no">НЕ</span><div class="dc"><span class="pill">${h.top?'★ Фаворит · ':''}${h.brand}</span><h3>${h.name}</h3><p>${h.arch} · ${h.view}${cheap.length?' · от '+eur(Math.min(...cheap))+' за 2 нощи':''}</p></div>`;
   dk.appendChild(c);if(top)drag(c,hi)});
  $('#deckres').textContent=`${pos+1} от ${order.length}`}
 function decide(hi,yes,c){hist.push([hi,fav[H[hi].id]]);if(yes){fav[H[hi].id]=1;burst($('#dYes'))}else delete fav[H[hi].id];sv('bp-fav',fav);
@@ -77,11 +77,11 @@ deckRender();
 /* ---------- хотели ---------- */
 const TT={v:'за 25–27.12',e:'оценка',f:'публикувана „от“',q:'по запитване'};
 let cur=0;
-function htabs(){$('#htabs').innerHTML=H.map((h,i)=>`<button class="htab ${i===cur?'on':''}" role="tab" aria-selected="${i===cur}" data-i="${i}"><img src="img/${h.ph[0]}.webp" alt="">${h.name}${fav[h.id]?' <span class="h">♥</span>':''}</button>`).join('');
+function htabs(){$('#htabs').innerHTML=H.map((h,i)=>`<button class="htab ${i===cur?'on':''}" role="tab" aria-selected="${i===cur}" data-i="${i}"><img src="img/${h.ph[0]}.webp" alt="">${h.name}${h.top?' <span class="htop">фаворит</span>':''}${fav[h.id]?' <span class="h">♥</span>':''}</button>`).join('');
  $$('.htab').forEach(b=>b.onclick=()=>{cur=+b.dataset.i;htabs();hpanel();hcenter($('#htabs'),$(`.htab[data-i="${cur}"]`))})}
 function hpanel(){const h=H[cur],p=$('#hpanel');p.style.animation='none';p.offsetHeight;p.style.animation='';
  const st=h.chips.slice(0,4);
- p.innerHTML=`<div class="hp-top"><div><span class="kk">№${cur+1} · ${h.brand}</span><h3>${h.name}</h3><div class="meta">${h.addr} · ${h.year}</div></div><button class="heartbtn" style="position:static" aria-pressed="${!!fav[h.id]}" id="hfav" aria-label="Харесвам"></button></div>
+ p.innerHTML=`<div class="hp-top"><div><span class="kk">${h.top?'★ Фаворит · ':''}${h.brand}</span><h3>${h.name}</h3><div class="meta">${h.addr} · ${h.year}</div></div><button class="heartbtn" style="position:static" aria-pressed="${!!fav[h.id]}" id="hfav" aria-label="Харесвам"></button></div>
  <div class="slider"><button class="arr l" aria-label="Назад">‹</button><div class="track" id="htrack">${h.ph.map((k,j)=>`<figure class="hslide" data-j="${j}"><img src="img/${k}.webp" alt="${h.cap[j]}" loading="lazy"><figcaption>${h.cap[j]}</figcaption></figure>`).join('')}</div><button class="arr r" aria-label="Напред">›</button></div>
  <div class="dots" id="hdots">${h.ph.map((_,j)=>`<i class="${j?'':'on'}"></i>`).join('')}</div>
  <div class="hgrid"><div><p class="intro">${h.intro}</p><div class="stats">${st.map(c=>`<div class="stat"><b>${c[1]}</b><span>${c[0]}</span></div>`).join('')}</div>
@@ -100,7 +100,7 @@ function slider(wrap){const t=wrap.querySelector('.track'),l=wrap.querySelector(
 htabs();hpanel();
 
 /* ---------- сравни ---------- */
-const opts=H.map((h,i)=>`<option value="${i}">${h.name}</option>`).join('');$('#c1').innerHTML=opts;$('#c2').innerHTML=opts;$('#c1').value=0;$('#c2').value=3;
+const opts=H.map((h,i)=>`<option value="${i}">${h.name}</option>`).join('');$('#c1').innerHTML=opts;$('#c2').innerHTML=opts;$('#c1').value=0;$('#c2').value=1;
 function cheapest(h){const v=h.rooms.filter(r=>r[4]);return v.length?eur(Math.min(...v.map(r=>r[4]))):(h.rooms.find(r=>r[5]==='f')||['','','','по запитване'])[3]}
 function cmp(){$('#cmpgrid').innerHTML=[$('#c1').value,$('#c2').value].map(i=>{const h=H[i];return `<div class="cmpcol"><div class="ph card"><img src="img/${h.ph[0]}.webp" alt="${h.name}"></div><h3>${h.name}</h3>${[['Архитектура',h.arch],['Стаите',h.roomsTxt],['Ресторант',h.rest],['Гледка',h.view],['Спа',h.spa],['Оценка',(h.chips.find(c=>/Booking|Expedia|Trip|Hotels|Michelin/.test(c[0]))||['','нов хотел']).join(' ').trim()],['2 нощувки от',cheapest(h)]].map(r=>`<div class="crow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}</div>`}).join('')}
 $('#c1').onchange=cmp;$('#c2').onchange=cmp;cmp();
@@ -331,7 +331,7 @@ $$('.vth').forEach(b=>b.onclick=()=>{$$('.vid iframe').forEach(f=>{const p=f.par
 $$('#vf button').forEach(b=>b.onclick=()=>{$$('#vf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');const f=b.dataset.f;$$('.vid').forEach(v=>v.classList.toggle('hide',!(f==='all'||v.dataset.c===f)))});
 
 /* ---------- галерия ---------- */
-const GAL=[['castle_0','Крепостта и Верижният мост'],['nycafe_2','Кафене New York'],['parisi_4','Párisi Udvar'],['basilica_4','Базиликата по Коледа'],['gresham2_2','Куполът на Gresham'],['szechenyi_5','Сечени нощем'],['matild_0','Matild Palace'],['christmas_5','Коледният базар'],['parliament_3','Парламентът от Дунава'],['bastion_1','Рибарският бастион'],['opera_4','Операта'],['dobos_x0','Торта „Добош“'],['drechsler_1','Дворецът Дрекслер'],['matthias_3','Църквата „Матиаш“'],['szentendre_5','Сентендре по Коледа'],['dorothea_3','Dorothea'],['vorosmarty_1','Вьорьошмарти'],['kurtos_x1','Курточ калач'],['gerbeaud_4','Gerbeaud'],['chainbridge_2','Верижният мост']];
+const GAL=[['castle_0','Крепостта и Верижният мост'],['nycafe_2','Кафене New York'],['parisi_4','Párisi Udvar'],['basilica_4','Базиликата по Коледа'],['gresham2_2','Куполът на Gresham'],['szechenyi_5','Сечени нощем'],['matild_0','Matild Palace'],['christmas_5','Коледният базар'],['parliament_3','Парламентът от Дунава'],['bastion_1','Рибарският бастион'],['opera_4','Операта'],['dobos_x0','Торта „Добош“'],['drechsler_1','Дворецът Дрекслер'],['matthias_3','Църквата „Матиаш“'],['szentendre_5','Сентендре по Коледа'],['vorosmarty_1','Вьорьошмарти'],['kurtos_x1','Курточ калач'],['gerbeaud_4','Gerbeaud'],['chainbridge_2','Верижният мост']];
 $('#gal').innerHTML=GAL.map((g,i)=>`<button data-i="${i}" aria-label="${g[1]}"><img src="img/${g[0]}.webp" alt="${g[1]}" loading="lazy"><span>${g[1]}</span></button>`).join('');
 $$('#gal button').forEach(b=>b.onclick=()=>openLB(GAL,+b.dataset.i));
 
